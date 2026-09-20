@@ -1,0 +1,56 @@
+{
+  "name": "aurivodash",
+  "version": "1.0.0",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tailwindcss -i ./src/input.css -o ./assets/css/app.css --minify",
+    "dev": "tailwindcss -i ./src/input.css -o ./assets/css/app.css --watch",
+    "icons": "node tools/build-icons.mjs",
+    "pages": "node tools/build-pages.mjs",
+    "serve": "python3 -m http.server 8080",
+    "offline": "node tools/build-offline.mjs",
+    "i18n": "node tools/build-i18n.mjs",
+    "qrcode": "node tools/build-qrcode.mjs",
+    "all": "npm run pages && npm run i18n && npm run build && npm run satureport && npm run offline",
+    "satureport": "node tools/build-satureport.mjs"
+  },
+  "keywords": [
+    "dashboard",
+    "template",
+    "banking",
+    "perbankan",
+    "tailwindcss",
+    "alpinejs",
+    "vanilla-js",
+    "offline",
+    "dark-mode",
+    "admin-template"
+  ],
+  "author": {
+    "name": "Radian Adhi C.",
+    "email": "radianac@gmail.com",
+    "url": "https://github.com/radianadhic"
+  },
+  "license": "MIT",
+  "description": "Aurivo Dash — template dashboard perbankan bergaya AdminLTE v3 (Tailwind CSS v4 + Alpine.js + vanilla JS), dwibahasa ID/EN dan 100% offline.",
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.3.3",
+    "alpinejs": "^3.17.3",
+    "bootstrap-icons": "^1.13.1",
+    "qrcode-generator": "^2.0.4",
+    "sortablejs": "^1.15.7",
+    "tailwindcss": "^4.3.3",
+    "terser": "^5.36.0"
+  },
+  "dependencies": {
+    "ag-grid-community": "^36.2.0"
+  },
+  "homepage": "https://aurivodash.com",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aurivodash/aurivodash.git"
+  },
+  "bugs": {
+    "url": "https://github.com/aurivodash/aurivodash/issues"
+  }
+}

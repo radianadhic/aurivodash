@@ -1,0 +1,316 @@
+---
+path: pages/kanban.html
+title: Papan Kanban
+pageTitle: Papan Kanban
+crumb: Home|index.html, Komponen, Kanban
+description: Papan kanban dengan drag & drop (SortableJS lokal), tambah kartu, dan penyaring tugas.
+scripts: sortable.min.js
+---
+<!--#navbar-->
+<button type="button" class="nav-icon-btn" title="Kartu baru"
+        onclick="addDemoCard()" aria-label="Tambah kartu kanban">
+  <i data-icon="plus-lg" data-size="17"></i>
+</button>
+<button type="button" class="nav-icon-btn" title="Reset papan kanban"
+        onclick="resetKanban()" aria-label="Reset papan kanban">
+  <i data-icon="arrow-counterclockwise" data-size="17"></i>
+</button>
+<!--/#navbar-->
+
+<!--#actions-->
+<div class="input-group">
+  <span class="input-group-text"><i data-icon="search" data-size="14"></i></span>
+  <input type="search" id="kanbanSearch" class="form-control" placeholder="Cari kartu…" oninput="filterKanban(this.value)">
+</div>
+<button class="btn btn-light" onclick="resetKanban()"><i data-icon="arrow-counterclockwise"></i> Reset papan</button>
+<button class="btn btn-primary" onclick="addDemoCard()"><i data-icon="plus-lg"></i> Kartu baru</button>
+<!--/#actions-->
+
+<div class="alert alert-info items-start no-print">
+  <i data-icon="kanban" class="mt-0.5"></i>
+  <div>
+    <b>Drag &amp; drop berfungsi penuh, sepenuhnya offline.</b> Papan ini memakai
+    <code>assets/js/sortable.min.js</code> (SortableJS, MIT) yang disalin ke folder <code>assets</code> —
+    jadi tidak ada permintaan ke CDN. Coba geser kartu antar kolom, urutan tersimpan di
+    <code>localStorage</code> peramban Anda.
+  </div>
+</div>
+
+<div class="grid gap-4 lg:grid-cols-4" id="kanbanBoard">
+  <!-- Belum dikerjakan -->
+  <div class="card card-danger">
+    <div class="card-header !py-2">
+      <h3 class="card-title text-base">
+        <span class="badge badge-soft-danger">4</span> Belum dikerjakan
+      </h3>
+      <div class="card-tools">
+        <button class="nav-icon-btn !h-7 !w-7" onclick="addCardTo('backlog')" title="Tambah kartu"><i data-icon="plus-lg" data-size="13"></i></button>
+      </div>
+    </div>
+    <div class="card-body space-y-2 !p-2 kanban-col" data-col="backlog">
+      <div class="rounded border border-line bg-surface p-3 shadow-card">
+        <div class="mb-2 flex items-start gap-2">
+          <span class="badge badge-soft-danger">Tinggi</span>
+          <i data-icon="grip-vertical" class="ml-auto cursor-move text-muted-2" data-size="14"></i>
+        </div>
+        <div class="text-sm font-semibold">Perbaiki bug validasi NPWP pada form pendaftaran</div>
+        <p class="mb-2 mt-1 fs-8 text-muted-2">Pengguna gagal menyimpan karena pola regex terlalu ketat.</p>
+        <div class="flex items-center justify-between">
+          <span class="avatar avatar-sm bg-primary">RS</span>
+          <span class="fs-8 text-muted-2"><i data-icon="calendar3" data-size="11"></i> 22 Sep</span>
+        </div>
+      </div>
+      <div class="rounded border border-line bg-surface p-3 shadow-card">
+        <div class="mb-2 flex items-start gap-2">
+          <span class="badge badge-soft-warning">Sedang</span>
+          <i data-icon="grip-vertical" class="ml-auto cursor-move text-muted-2" data-size="14"></i>
+        </div>
+        <div class="text-sm font-semibold">Tambah ekspor Excel pada laporan penjualan</div>
+        <div class="mt-2 flex items-center justify-between">
+          <span class="avatar avatar-sm bg-info">BP</span>
+          <span class="fs-8 text-muted-2"><i data-icon="paperclip" data-size="11"></i> 2 lampiran</span>
+        </div>
+      </div>
+      <div class="rounded border border-line bg-surface p-3 shadow-card">
+        <div class="mb-2 flex items-start gap-2">
+          <span class="badge badge-soft-info">Rendah</span>
+          <i data-icon="grip-vertical" class="ml-auto cursor-move text-muted-2" data-size="14"></i>
+        </div>
+        <div class="text-sm font-semibold">Rapikan ikon pada mode gelap</div>
+        <div class="mt-2 flex items-center justify-between">
+          <span class="avatar avatar-sm bg-warning">NM</span>
+          <span class="fs-8 text-muted-2"><i data-icon="chat-dots" data-size="11"></i> 4 komentar</span>
+        </div>
+      </div>
+      <div class="rounded border border-line bg-surface p-3 shadow-card">
+        <div class="mb-2 flex items-start gap-2">
+          <span class="badge badge-soft-warning">Sedang</span>
+          <i data-icon="grip-vertical" class="ml-auto cursor-move text-muted-2" data-size="14"></i>
+        </div>
+        <div class="text-sm font-semibold">Tulis dokumentasi pemasangan offline</div>
+        <div class="mt-2 flex items-center justify-between">
+          <span class="avatar avatar-sm bg-secondary">HW</span>
+          <span class="fs-8 text-muted-2"><i data-icon="calendar3" data-size="11"></i> 30 Sep</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sedang dikerjakan -->
+  <div class="card card-warning">
+    <div class="card-header !py-2">
+      <h3 class="card-title text-base"><span class="badge badge-soft-warning">3</span> Sedang dikerjakan</h3>
+      <div class="card-tools">
+        <button class="nav-icon-btn !h-7 !w-7" onclick="addCardTo('progress')" title="Tambah kartu"><i data-icon="plus-lg" data-size="13"></i></button>
+      </div>
+    </div>
+    <div class="card-body space-y-2 !p-2 kanban-col" data-col="progress">
+      <div class="rounded border border-line bg-surface p-3 shadow-card">
+        <div class="mb-2 flex items-start gap-2">
+          <span class="badge badge-soft-primary">Fitur</span>
+          <i data-icon="grip-vertical" class="ml-auto cursor-move text-muted-2" data-size="14"></i>
+        </div>
+        <div class="text-sm font-semibold">Redesain halaman checkout (mobile first)</div>
+        <div class="mt-2">
+          <div class="mb-1 flex justify-between fs-8 text-muted-2"><span>Progres</span><span>70%</span></div>
+          <div class="progress progress-sm"><div class="progress-bar bg-primary" data-progress="70"></div></div>
+        </div>
+        <div class="mt-2 flex items-center justify-between">
+          <span class="avatar avatar-sm bg-primary">RS</span>
+          <span class="fs-8 text-muted-2">Deadline 25 Sep</span>
+        </div>
+      </div>
+      <div class="rounded border border-line bg-surface p-3 shadow-card">
+        <div class="mb-2 flex items-start gap-2">
+          <span class="badge badge-soft-danger">Tinggi</span>
+          <i data-icon="grip-vertical" class="ml-auto cursor-move text-muted-2" data-size="14"></i>
+        </div>
+        <div class="text-sm font-semibold">Integrasi payment gateway Midtrans</div>
+        <div class="mt-2 flex items-center justify-between">
+          <span class="avatar avatar-sm bg-danger">HW</span>
+          <span class="fs-8 text-muted-2"><i data-icon="lightning-charge" data-size="11"></i> Prioritas</span>
+        </div>
+      </div>
+      <div class="rounded border border-line bg-surface p-3 shadow-card">
+        <div class="mb-2 flex items-start gap-2">
+          <span class="badge badge-soft-info">Rendah</span>
+          <i data-icon="grip-vertical" class="ml-auto cursor-move text-muted-2" data-size="14"></i>
+        </div>
+        <div class="text-sm font-semibold">Optimasi gambar produk (WebP + lazy load)</div>
+        <div class="mt-2 flex items-center justify-between">
+          <span class="avatar avatar-sm bg-info">BP</span>
+          <span class="fs-8 text-muted-2"><i data-icon="paperclip" data-size="11"></i> 1 lampiran</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Menunggu review -->
+  <div class="card card-info">
+    <div class="card-header !py-2">
+      <h3 class="card-title text-base"><span class="badge badge-soft-info">2</span> Menunggu review</h3>
+      <div class="card-tools">
+        <button class="nav-icon-btn !h-7 !w-7" onclick="addCardTo('review')" title="Tambah kartu"><i data-icon="plus-lg" data-size="13"></i></button>
+      </div>
+    </div>
+    <div class="card-body space-y-2 !p-2 kanban-col" data-col="review">
+      <div class="rounded border border-line bg-surface p-3 shadow-card">
+        <div class="mb-2 flex items-start gap-2">
+          <span class="badge badge-soft-success">Siap</span>
+          <i data-icon="grip-vertical" class="ml-auto cursor-move text-muted-2" data-size="14"></i>
+        </div>
+        <div class="text-sm font-semibold">Halaman invoice siap cetak</div>
+        <p class="mb-2 mt-1 fs-8 text-muted-2">Menunggu persetujuan desain dari tim keuangan.</p>
+        <div class="flex items-center justify-between">
+          <span class="avatar avatar-sm bg-success">AS</span>
+          <span class="fs-8 text-muted-2"><i data-icon="chat-dots" data-size="11"></i> 2 komentar</span>
+        </div>
+      </div>
+      <div class="rounded border border-line bg-surface p-3 shadow-card">
+        <div class="mb-2 flex items-start gap-2">
+          <span class="badge badge-soft-success">Siap</span>
+          <i data-icon="grip-vertical" class="ml-auto cursor-move text-muted-2" data-size="14"></i>
+        </div>
+        <div class="text-sm font-semibold">Modul galeri ikon &amp; pencarian ikon</div>
+        <div class="mt-2 flex items-center justify-between">
+          <span class="avatar avatar-sm bg-info">NM</span>
+          <span class="fs-8 text-muted-2">3 jam lalu</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Selesai -->
+  <div class="card card-success">
+    <div class="card-header !py-2">
+      <h3 class="card-title text-base"><span class="badge badge-soft-success">2</span> Selesai</h3>
+      <div class="card-tools">
+        <button class="nav-icon-btn !h-7 !w-7" onclick="addCardTo('done')" title="Tambah kartu"><i data-icon="plus-lg" data-size="13"></i></button>
+      </div>
+    </div>
+    <div class="card-body space-y-2 !p-2 kanban-col" data-col="done">
+      <div class="rounded border border-line bg-surface p-3 shadow-card opacity-80">
+        <div class="mb-2 flex items-start gap-2">
+          <span class="badge badge-soft-success"><i data-icon="check-lg" data-size="11"></i> Selesai</span>
+          <i data-icon="grip-vertical" class="ml-auto cursor-move text-muted-2" data-size="14"></i>
+        </div>
+        <div class="text-sm font-semibold line-through">Setup pipeline build Tailwind v4</div>
+        <div class="mt-2 flex items-center justify-between">
+          <span class="avatar avatar-sm bg-dark">AS</span>
+          <span class="fs-8 text-muted-2">16 Sep</span>
+        </div>
+      </div>
+      <div class="rounded border border-line bg-surface p-3 shadow-card opacity-80">
+        <div class="mb-2 flex items-start gap-2">
+          <span class="badge badge-soft-success"><i data-icon="check-lg" data-size="11"></i> Selesai</span>
+          <i data-icon="grip-vertical" class="ml-auto cursor-move text-muted-2" data-size="14"></i>
+        </div>
+        <div class="text-sm font-semibold line-through">Migrasi tata letak ke grid responsif</div>
+        <div class="mt-2 flex items-center justify-between">
+          <span class="avatar avatar-sm bg-secondary">BP</span>
+          <span class="fs-8 text-muted-2">14 Sep</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card no-print">
+  <div class="card-header"><h3 class="card-title text-base">Catatan implementasi</h3></div>
+  <div class="card-body">
+    <p class="text-sm text-muted-2 mb-2">
+      Inisialisasi ada di bagian bawah halaman ini. Untuk proyek nyata, kirim urutan kolom + posisi kartu
+      ke backend pada event <code>onEnd</code>:
+    </p>
+<pre class="scrollbar-thin overflow-x-auto rounded bg-surface-2 p-3 text-[0.8rem]"><code>Sortable.create(kolom, {
+  group: "kanban", animation: 150,
+  filter: "button, a, input, select",   // biarkan kontrol di dalam kartu tetap bisa diklik
+  ghostClass: "opacity-50",
+  onEnd: (evt) => fetch("/api/kanban", {
+    method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ from: evt.from.dataset.col, to: evt.to.dataset.col, oldIndex: evt.oldIndex, newIndex: evt.newIndex })
+  })
+});</code></pre>
+  </div>
+</div>
+
+<script>
+  var sortables = [];
+
+  function initKanban() {
+    if (!window.Sortable) return;
+    document.querySelectorAll(".kanban-col").forEach(function (col) {
+      sortables.push(Sortable.create(col, {
+        group: "kanban",
+        animation: 160,
+        ghostClass: "opacity-40",
+        filter: "button, a, input, select, textarea, .form-check-input",
+        onEnd: function (evt) {
+          window.toast("Kartu dipindahkan ke kolom \"" + evt.to.closest(".card").querySelector(".card-title").textContent.trim() + "\".", "info", "Kanban");
+          saveKanban();
+        }
+      }));
+    });
+    restoreKanban();
+  }
+
+  function saveKanban() {
+    try {
+      var data = {};
+      document.querySelectorAll(".kanban-col").forEach(function (col) {
+        data[col.dataset.col] = col.innerHTML;
+      });
+      localStorage.setItem("app.kanban", JSON.stringify(data));
+    } catch (e) { /* storage tidak tersedia */ }
+  }
+
+  function restoreKanban() {
+    try {
+      var raw = localStorage.getItem("app.kanban");
+      if (!raw) return;
+      var data = JSON.parse(raw);
+      document.querySelectorAll(".kanban-col").forEach(function (col) {
+        if (data[col.dataset.col]) col.innerHTML = data[col.dataset.col];
+      });
+      window.renderIcons(document);
+    } catch (e) { /* abaikan */ }
+  }
+
+  function resetKanban() {
+    localStorage.removeItem("app.kanban");
+    window.location.reload();
+  }
+
+  function addCardTo(colKey) {
+    var col = document.querySelector('.kanban-col[data-col="' + colKey + '"]');
+    if (!col) return;
+    var title = prompt("Judul kartu baru:");
+    if (!title) return;
+    col.insertAdjacentHTML("afterbegin",
+      '<div class="rounded border border-line bg-surface p-3 shadow-card">' +
+        '<div class="mb-2 flex items-start gap-2"><span class="badge badge-soft-primary">Baru</span>' +
+        '<i data-icon="grip-vertical" class="ml-auto cursor-move text-muted-2" data-size="14"></i></div>' +
+        '<div class="text-sm font-semibold">' + title.replace(/</g, "&lt;") + "</div>" +
+        '<div class="mt-2 flex items-center justify-between"><span class="avatar avatar-sm bg-primary">AS</span>' +
+        '<span class="fs-8 text-muted-2">Baru saja</span></div></div>');
+    window.renderIcons(col);
+    saveKanban();
+    window.toast("Kartu baru ditambahkan.", "success", "Kanban");
+  }
+
+  function addDemoCard() {
+    addCardTo("backlog");
+  }
+
+  function filterKanban(q) {
+    q = (q || "").toLowerCase();
+    document.querySelectorAll(".kanban-col > div").forEach(function (card) {
+      card.style.display = !q || card.textContent.toLowerCase().includes(q) ? "" : "none";
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", function () {
+    // tunggu Alpine & ikon siap
+    setTimeout(initKanban, 60);
+  });
+</script>

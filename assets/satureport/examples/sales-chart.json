@@ -1,0 +1,504 @@
+{
+  "title": "Laporan Penjualan + Grafik",
+  "description": "Tabel penjualan bulanan dengan GRAFIK: grafik garis tren realisasi dan grafik donat komposisi produk — semua di-render sebagai SVG murni.",
+  "layout": {
+    "version": 1,
+    "width": 700,
+    "headerSection": {
+      "height": 104,
+      "visible": true,
+      "style": {
+        "backgroundColor": "#312e81"
+      },
+      "items": [
+        {
+          "id": "it_mu53kibr_0",
+          "type": "text",
+          "name": "",
+          "text": "📈",
+          "binding": "",
+          "x": 20,
+          "y": 14,
+          "width": 44,
+          "height": 44,
+          "src": "",
+          "style": {
+            "fontSize": 30
+          }
+        },
+        {
+          "id": "it_mu53kibr_1",
+          "type": "text",
+          "name": "",
+          "text": "LAPORAN PENJUALAN TAHUNAN",
+          "binding": "",
+          "x": 76,
+          "y": 14,
+          "width": 400,
+          "height": 24,
+          "src": "",
+          "style": {
+            "color": "#ffffff",
+            "fontSize": 16,
+            "fontWeight": "bold"
+          }
+        },
+        {
+          "id": "it_mu53kibr_2",
+          "type": "text",
+          "name": "",
+          "text": "Periode",
+          "binding": "period",
+          "x": 76,
+          "y": 42,
+          "width": 340,
+          "height": 15,
+          "src": "",
+          "style": {
+            "color": "#c7d2fe",
+            "fontSize": 10
+          }
+        },
+        {
+          "id": "it_mu53kibr_3",
+          "type": "text",
+          "name": "",
+          "text": "Cabang",
+          "binding": "branch",
+          "x": 76,
+          "y": 58,
+          "width": 340,
+          "height": 14,
+          "src": "",
+          "style": {
+            "color": "#c7d2fe",
+            "fontSize": 10
+          }
+        },
+        {
+          "id": "it_mu53kibr_4",
+          "type": "text",
+          "name": "",
+          "text": "TOTAL REALISASI",
+          "binding": "",
+          "x": 460,
+          "y": 12,
+          "width": 224,
+          "height": 13,
+          "src": "",
+          "style": {
+            "color": "#a5b4fc",
+            "fontSize": 9,
+            "textAlign": "right"
+          }
+        },
+        {
+          "id": "it_mu53kibr_5",
+          "type": "text",
+          "name": "",
+          "text": "Total",
+          "binding": "totals.year",
+          "x": 460,
+          "y": 26,
+          "width": 224,
+          "height": 26,
+          "src": "",
+          "style": {
+            "color": "#ffffff",
+            "fontSize": 18,
+            "fontWeight": "bold",
+            "textAlign": "right"
+          }
+        },
+        {
+          "id": "it_mu53kibr_6",
+          "type": "text",
+          "name": "",
+          "text": "Dicetak",
+          "binding": "__now",
+          "x": 460,
+          "y": 58,
+          "width": 224,
+          "height": 13,
+          "src": "",
+          "style": {
+            "color": "#a5b4fc",
+            "fontSize": 9,
+            "textAlign": "right"
+          }
+        },
+        {
+          "id": "it_mu53kibr_7",
+          "type": "text",
+          "name": "",
+          "text": "",
+          "binding": "",
+          "x": 0,
+          "y": 78,
+          "width": 700,
+          "height": 26,
+          "src": "",
+          "style": {
+            "backgroundColor": "#271d63"
+          }
+        },
+        {
+          "id": "it_mu53kibr_8",
+          "type": "text",
+          "name": "",
+          "text": "BULAN",
+          "binding": "",
+          "x": 20,
+          "y": 84,
+          "width": 120,
+          "height": 14,
+          "src": "",
+          "style": {
+            "color": "#c7d2fe",
+            "fontSize": 9
+          }
+        },
+        {
+          "id": "it_mu53kibr_9",
+          "type": "text",
+          "name": "",
+          "text": "TARGET (RP)",
+          "binding": "",
+          "x": 300,
+          "y": 84,
+          "width": 130,
+          "height": 14,
+          "src": "",
+          "style": {
+            "color": "#c7d2fe",
+            "fontSize": 9,
+            "textAlign": "right"
+          }
+        },
+        {
+          "id": "it_mu53kibr_a",
+          "type": "text",
+          "name": "",
+          "text": "REALISASI (RP)",
+          "binding": "",
+          "x": 436,
+          "y": 84,
+          "width": 130,
+          "height": 14,
+          "src": "",
+          "style": {
+            "color": "#c7d2fe",
+            "fontSize": 9,
+            "textAlign": "right"
+          }
+        },
+        {
+          "id": "it_mu53kibr_b",
+          "type": "text",
+          "name": "",
+          "text": "CAPAIAN",
+          "binding": "",
+          "x": 572,
+          "y": 84,
+          "width": 112,
+          "height": 14,
+          "src": "",
+          "style": {
+            "color": "#c7d2fe",
+            "fontSize": 9,
+            "textAlign": "right"
+          }
+        }
+      ]
+    },
+    "contentSection": {
+      "height": 26,
+      "visible": true,
+      "style": {},
+      "items": [
+        {
+          "id": "it_mu53kibr_c",
+          "type": "text",
+          "name": "",
+          "text": "Bulan",
+          "binding": "bulan",
+          "x": 20,
+          "y": 5,
+          "width": 120,
+          "height": 16,
+          "src": "",
+          "style": {
+            "fontSize": 10
+          }
+        },
+        {
+          "id": "it_mu53kibr_d",
+          "type": "text",
+          "name": "",
+          "text": "Target",
+          "binding": "target",
+          "x": 300,
+          "y": 5,
+          "width": 130,
+          "height": 16,
+          "src": "",
+          "style": {
+            "fontSize": 10,
+            "color": "#64748b",
+            "textAlign": "right"
+          }
+        },
+        {
+          "id": "it_mu53kibr_e",
+          "type": "text",
+          "name": "",
+          "text": "Realisasi",
+          "binding": "realisasi",
+          "x": 436,
+          "y": 5,
+          "width": 130,
+          "height": 16,
+          "src": "",
+          "style": {
+            "fontSize": 10,
+            "fontWeight": "bold",
+            "textAlign": "right"
+          }
+        },
+        {
+          "id": "it_mu53kibr_f",
+          "type": "text",
+          "name": "",
+          "text": "Pct",
+          "binding": "pct",
+          "x": 572,
+          "y": 5,
+          "width": 112,
+          "height": 16,
+          "src": "",
+          "style": {
+            "fontSize": 10,
+            "color": "#4f46e5",
+            "textAlign": "right"
+          }
+        },
+        {
+          "id": "it_mu53kibr_g",
+          "type": "line",
+          "name": "",
+          "text": "",
+          "binding": "",
+          "x": 20,
+          "y": 24,
+          "width": 664,
+          "height": 2,
+          "src": "",
+          "style": {
+            "borderColor": "#eef2ff",
+            "borderWidth": 1
+          }
+        }
+      ],
+      "binding": "sales",
+      "groups": []
+    },
+    "footerSection": {
+      "height": 240,
+      "visible": true,
+      "style": {},
+      "items": [
+        {
+          "id": "it_mu53kibr_h",
+          "type": "text",
+          "name": "",
+          "text": "VISUALISASI DATA",
+          "binding": "",
+          "x": 16,
+          "y": 10,
+          "width": 200,
+          "height": 13,
+          "src": "",
+          "style": {
+            "fontSize": 9,
+            "fontWeight": "bold",
+            "color": "#6366f1"
+          }
+        },
+        {
+          "id": "it_mu53kibr_i",
+          "type": "chart",
+          "name": "",
+          "text": "Tren Realisasi per Bulan",
+          "binding": "sales",
+          "x": 8,
+          "y": 26,
+          "width": 340,
+          "height": 204,
+          "src": "",
+          "style": {
+            "color": "#6366f1"
+          },
+          "chartType": "line",
+          "labelField": "bulan",
+          "valueField": "realisasiNum",
+          "showValues": true,
+          "showLegend": true
+        },
+        {
+          "id": "it_mu53kibr_j",
+          "type": "chart",
+          "name": "",
+          "text": "Komposisi Produk",
+          "binding": "byProduct",
+          "x": 356,
+          "y": 26,
+          "width": 336,
+          "height": 204,
+          "src": "",
+          "style": {
+            "color": "#6366f1",
+            "backgroundColor": "#ffffff"
+          },
+          "chartType": "donut",
+          "labelField": "product",
+          "valueField": "amountNum",
+          "showValues": true,
+          "showLegend": true
+        },
+        {
+          "id": "it_mu53kibr_k",
+          "type": "line",
+          "name": "",
+          "text": "",
+          "binding": "",
+          "x": 350,
+          "y": 30,
+          "width": 1,
+          "height": 2,
+          "src": "",
+          "style": {
+            "borderColor": "#e0e7ff",
+            "borderWidth": 1
+          }
+        }
+      ]
+    },
+    "page": {
+      "paper": "A4",
+      "orientation": "portrait",
+      "margins": {
+        "top": 47,
+        "right": 47,
+        "bottom": 47,
+        "left": 47
+      },
+      "pagination": false
+    },
+    "pageHeaderSection": {
+      "height": 34,
+      "visible": false,
+      "style": {},
+      "items": []
+    },
+    "pageFooterSection": {
+      "height": 30,
+      "visible": false,
+      "style": {},
+      "items": []
+    }
+  },
+  "data": {
+    "period": "Tahun Anggaran 2026 • Januari — September",
+    "branch": "Konsolidasi: Seluruh Cabang Indonesia",
+    "totals": {
+      "year": "Rp 1,285 M"
+    },
+    "sales": [
+      {
+        "bulan": "Jan",
+        "target": "120 jt",
+        "realisasi": "118 jt",
+        "realisasiNum": 118000000,
+        "pct": "98,3%"
+      },
+      {
+        "bulan": "Feb",
+        "target": "125 jt",
+        "realisasi": "131 jt",
+        "realisasiNum": 131000000,
+        "pct": "104,8%"
+      },
+      {
+        "bulan": "Mar",
+        "target": "125 jt",
+        "realisasi": "122 jt",
+        "realisasiNum": 122000000,
+        "pct": "97,6%"
+      },
+      {
+        "bulan": "Apr",
+        "target": "130 jt",
+        "realisasi": "138 jt",
+        "realisasiNum": 138000000,
+        "pct": "106,2%"
+      },
+      {
+        "bulan": "Mei",
+        "target": "130 jt",
+        "realisasi": "127 jt",
+        "realisasiNum": 127000000,
+        "pct": "97,7%"
+      },
+      {
+        "bulan": "Jun",
+        "target": "135 jt",
+        "realisasi": "145 jt",
+        "realisasiNum": 145000000,
+        "pct": "107,4%"
+      },
+      {
+        "bulan": "Jul",
+        "target": "140 jt",
+        "realisasi": "143 jt",
+        "realisasiNum": 143000000,
+        "pct": "102,1%"
+      },
+      {
+        "bulan": "Agu",
+        "target": "140 jt",
+        "realisasi": "152 jt",
+        "realisasiNum": 152000000,
+        "pct": "108,6%"
+      },
+      {
+        "bulan": "Sep",
+        "target": "145 jt",
+        "realisasi": "149 jt",
+        "realisasiNum": 149000000,
+        "pct": "102,8%"
+      }
+    ],
+    "byProduct": [
+      {
+        "product": "Laptop & PC",
+        "amountNum": 512000000
+      },
+      {
+        "product": "Monitor & Display",
+        "amountNum": 289000000
+      },
+      {
+        "product": "Aksesori",
+        "amountNum": 196000000
+      },
+      {
+        "product": "Networking",
+        "amountNum": 167000000
+      },
+      {
+        "product": "Lainnya",
+        "amountNum": 121000000
+      }
+    ]
+  }
+}

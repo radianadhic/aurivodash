@@ -1,0 +1,7 @@
+.arena/
+node_modules/
+__pycache__/
+*.pyc
+.DS_Store
+.nox/
+.pytest_cache/

@@ -1,0 +1,368 @@
+{
+  "name": "Direktori Pengguna (Paket API)",
+  "layout": {
+    "version": 2,
+    "width": 700,
+    "page": {
+      "paper": "A4",
+      "orientation": "portrait",
+      "margins": {
+        "top": 47,
+        "right": 47,
+        "bottom": 47,
+        "left": 47
+      },
+      "pagination": true
+    },
+    "pageHeaderSection": {
+      "height": 26,
+      "visible": true,
+      "style": {},
+      "items": [
+        {
+          "type": "text",
+          "text": "SUMBER: https://jsonplaceholder.typicode.com/users",
+          "binding": "",
+          "x": 0,
+          "y": 6,
+          "width": 400,
+          "height": 13,
+          "style": {
+            "fontSize": 8,
+            "color": "#94a3b8"
+          }
+        },
+        {
+          "type": "text",
+          "text": "Dicetak: {Now}",
+          "binding": "",
+          "x": 470,
+          "y": 6,
+          "width": 230,
+          "height": 13,
+          "style": {
+            "fontSize": 8,
+            "color": "#94a3b8",
+            "textAlign": "right"
+          }
+        }
+      ]
+    },
+    "headerSection": {
+      "height": 78,
+      "visible": true,
+      "style": {
+        "backgroundColor": "#064e3b"
+      },
+      "items": [
+        {
+          "type": "text",
+          "text": "🌐",
+          "binding": "",
+          "x": 18,
+          "y": 14,
+          "width": 40,
+          "height": 40,
+          "style": {
+            "fontSize": 28
+          }
+        },
+        {
+          "type": "text",
+          "text": "DIREKTORI PENGGUNA",
+          "binding": "",
+          "x": 70,
+          "y": 16,
+          "width": 380,
+          "height": 24,
+          "style": {
+            "color": "#ffffff",
+            "fontSize": 17,
+            "fontWeight": "bold"
+          }
+        },
+        {
+          "type": "text",
+          "text": "Data dimuat dari API JSON (GET)",
+          "binding": "",
+          "x": 70,
+          "y": 42,
+          "width": 380,
+          "height": 15,
+          "style": {
+            "color": "#a7f3d0",
+            "fontSize": 10
+          }
+        },
+        {
+          "type": "text",
+          "text": "TOTAL",
+          "binding": "",
+          "x": 560,
+          "y": 14,
+          "width": 124,
+          "height": 12,
+          "style": {
+            "color": "#a7f3d0",
+            "fontSize": 9,
+            "textAlign": "right"
+          }
+        },
+        {
+          "type": "text",
+          "text": "{Count()} pengguna",
+          "binding": "",
+          "x": 500,
+          "y": 26,
+          "width": 184,
+          "height": 22,
+          "style": {
+            "color": "#ffffff",
+            "fontSize": 15,
+            "fontWeight": "bold",
+            "textAlign": "right"
+          }
+        }
+      ]
+    },
+    "contentSection": {
+      "height": 34,
+      "binding": "content",
+      "visible": true,
+      "style": {},
+      "groups": [],
+      "items": [
+        {
+          "type": "text",
+          "text": "Nama",
+          "binding": "name",
+          "x": 8,
+          "y": 8,
+          "width": 130,
+          "height": 18,
+          "style": {
+            "fontSize": 10,
+            "fontWeight": "bold"
+          }
+        },
+        {
+          "type": "text",
+          "text": "Username",
+          "binding": "username",
+          "x": 142,
+          "y": 8,
+          "width": 74,
+          "height": 18,
+          "style": {
+            "fontSize": 10,
+            "color": "#475569"
+          }
+        },
+        {
+          "type": "text",
+          "text": "Email",
+          "binding": "email",
+          "x": 220,
+          "y": 8,
+          "width": 164,
+          "height": 18,
+          "style": {
+            "fontSize": 10,
+            "color": "#1d4ed8"
+          }
+        },
+        {
+          "type": "text",
+          "text": "Telepon",
+          "binding": "phone",
+          "x": 388,
+          "y": 8,
+          "width": 116,
+          "height": 18,
+          "style": {
+            "fontSize": 9,
+            "color": "#475569"
+          }
+        },
+        {
+          "type": "text",
+          "text": "Kota",
+          "binding": "address.city",
+          "x": 508,
+          "y": 8,
+          "width": 84,
+          "height": 18,
+          "style": {
+            "fontSize": 10
+          }
+        },
+        {
+          "type": "text",
+          "text": "Perusahaan",
+          "binding": "company.name",
+          "x": 596,
+          "y": 8,
+          "width": 96,
+          "height": 18,
+          "style": {
+            "fontSize": 9,
+            "color": "#475569"
+          }
+        },
+        {
+          "type": "line",
+          "text": "",
+          "binding": "",
+          "x": 0,
+          "y": 30,
+          "width": 700,
+          "height": 1,
+          "style": {
+            "borderColor": "#e2e8f0",
+            "borderWidth": 1
+          }
+        }
+      ]
+    },
+    "footerSection": {
+      "height": 46,
+      "visible": true,
+      "style": {
+        "backgroundColor": "#f0fdf4"
+      },
+      "items": [
+        {
+          "type": "text",
+          "text": "Total data: {Count()} baris",
+          "binding": "",
+          "x": 12,
+          "y": 8,
+          "width": 300,
+          "height": 15,
+          "style": {
+            "fontSize": 10,
+            "fontWeight": "bold",
+            "color": "#065f46"
+          }
+        },
+        {
+          "type": "text",
+          "text": "Bila API tidak bisa dijangkau (offline/CORS), report memakai data cadangan bawaan.",
+          "binding": "",
+          "x": 12,
+          "y": 26,
+          "width": 500,
+          "height": 13,
+          "style": {
+            "fontSize": 8,
+            "color": "#64748b"
+          }
+        }
+      ]
+    },
+    "pageFooterSection": {
+      "height": 30,
+      "visible": true,
+      "style": {},
+      "items": [
+        {
+          "type": "text",
+          "text": "Halaman {PageNo} dari {PageCount}",
+          "binding": "",
+          "x": 200,
+          "y": 8,
+          "width": 300,
+          "height": 14,
+          "style": {
+            "fontSize": 9,
+            "color": "#94a3b8",
+            "textAlign": "center"
+          }
+        }
+      ]
+    }
+  },
+  "API": "https://jsonplaceholder.typicode.com/users",
+  "data": {
+    "content": [
+      {
+        "id": 1,
+        "name": "Leanne Graham",
+        "username": "Bret",
+        "email": "Sincere@april.biz",
+        "phone": "1-770-736-8031 x56442",
+        "address": {
+          "city": "Gwenborough"
+        },
+        "company": {
+          "name": "Romaguera-Crona"
+        }
+      },
+      {
+        "id": 2,
+        "name": "Ervin Howell",
+        "username": "Antonette",
+        "email": "Shanna@melissa.tv",
+        "phone": "010-692-6593 x09125",
+        "address": {
+          "city": "Wisokyburgh"
+        },
+        "company": {
+          "name": "Deckow-Crist"
+        }
+      },
+      {
+        "id": 3,
+        "name": "Clementine Bauch",
+        "username": "Samantha",
+        "email": "Nathan@yesenia.net",
+        "phone": "1-463-123-4447",
+        "address": {
+          "city": "McKenziehaven"
+        },
+        "company": {
+          "name": "Romaguera-Jacobson"
+        }
+      },
+      {
+        "id": 4,
+        "name": "Patricia Lebsack",
+        "username": "Karianne",
+        "email": "Julianne.OConner@kory.org",
+        "phone": "493-170-9623 x156",
+        "address": {
+          "city": "South Elvis"
+        },
+        "company": {
+          "name": "Robel-Corkery"
+        }
+      },
+      {
+        "id": 5,
+        "name": "Chelsey Dietrich",
+        "username": "Kamren",
+        "email": "Lucio_Hettinger@annie.ca",
+        "phone": "(254)954-1289",
+        "address": {
+          "city": "Roscoeview"
+        },
+        "company": {
+          "name": "Keebler LLC"
+        }
+      },
+      {
+        "id": 6,
+        "name": "Mrs. Dennis Schulist",
+        "username": "Leopoldo_Corkery",
+        "email": "Karley_Dach@jasper.info",
+        "phone": "1-477-935-8478 x6430",
+        "address": {
+          "city": "South Christy"
+        },
+        "company": {
+          "name": "Considine-Lockman"
+        }
+      }
+    ]
+  }
+}

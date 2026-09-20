@@ -1,0 +1,177 @@
+<!-- ===================== NAVBAR ===================== -->
+<header class="app-navbar no-print">
+  <!-- 1. Toggle sidebar: di mobile membuka off-canvas, di desktop mengecilkan sidebar -->
+  <button type="button" class="nav-icon-btn" title="Buka/tutup sidebar (Ctrl+B)"
+          @click="window.matchMedia('(max-width: 1023.98px)').matches ? $store.ui.toggleMobile() : $store.ui.toggleCollapsed()"
+          aria-label="Buka atau tutup menu sidebar">
+    <i data-icon="list" data-size="20"></i>
+  </button>
+
+  <!-- 2. Pencarian global — mengisi ruang di sisi kiri (tersembunyi di layar sangat kecil) -->
+  <div class="navbar-search relative hidden flex-1 sm:block">
+    <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted">
+      <i data-icon="search" data-size="14"></i>
+    </span>
+    <input type="search" data-global-search placeholder="Cari apa pun…  (Ctrl + K)"
+           class="w-full rounded-full border border-line bg-surface-2 py-1.5 pl-9 pr-3 text-sm text-fg placeholder:text-muted focus:border-primary focus:bg-surface focus:outline-none focus:ring-2 focus:ring-primary/20"
+           aria-label="Pencarian global">
+  </div>
+
+  <!-- 3. Kumpulan aksi di sisi kanan:
+       [aksi khusus halaman] | pesan · notifikasi | bahasa · layar penuh · tema · panel | pengguna -->
+  <div class="ml-auto flex items-center gap-0.5">
+    <!-- Aksi khusus halaman ini (diisi dari blok #navbar di sumber halaman) -->
+    {{NAVBAR_EXTRA}}
+
+    <!-- Kotak masuk -->
+    <div class="relative" x-data="dropdown">
+      <button type="button" class="nav-icon-btn relative" @click="toggle()" :aria-expanded="open" aria-label="Pesan masuk" title="Pesan masuk">
+        <i data-icon="envelope" data-size="18"></i>
+        <span class="navbar-badge bg-warning text-dark">3</span>
+      </button>
+      <div class="dropdown-menu absolute right-0 top-full z-50 mt-2 w-80" x-show="open" x-cloak x-transition.opacity.duration.150ms @click.outside="close()" @keydown.escape.window="close()">
+        <div class="dropdown-header flex items-center justify-between">
+          <span>3 pesan baru</span>
+          <button class="text-primary fs-8" @click="close()">Tandai dibaca</button>
+        </div>
+        <a href="#" class="dropdown-item items-start">
+          <span class="avatar avatar-sm bg-info">RS</span>
+          <span class="min-w-0">
+            <span class="block truncate text-sm font-semibold">Rani Setiawati</span>
+            <span class="block truncate fs-8 text-muted-2">Laporan kuartal sudah saya kirim…</span>
+          </span>
+        </a>
+        <a href="#" class="dropdown-item items-start">
+          <span class="avatar avatar-sm bg-success">BP</span>
+          <span class="min-w-0">
+            <span class="block truncate text-sm font-semibold">Budi Prakoso</span>
+            <span class="block truncate fs-8 text-muted-2">Tolong review PR #128 ya</span>
+          </span>
+        </a>
+        <a href="#" class="dropdown-item items-start">
+          <span class="avatar avatar-sm bg-danger">NM</span>
+          <span class="min-w-0">
+            <span class="block truncate text-sm font-semibold">Nadia Maharani</span>
+            <span class="block truncate fs-8 text-muted-2">Server staging down sejak 09:12</span>
+          </span>
+        </a>
+        <div class="dropdown-divider"></div>
+        <a href="#" class="dropdown-item justify-center !text-primary">Lihat semua pesan</a>
+      </div>
+    </div>
+
+    <!-- Notifikasi (dinamis: window.Notify / $store.notif) -->
+    <div class="relative" x-data="dropdown">
+      <button type="button" class="nav-icon-btn relative" @click="toggle()" :aria-expanded="open" aria-label="Notifikasi" title="Notifikasi">
+        <i data-icon="bell" data-size="18"></i>
+        <span class="navbar-badge bg-danger" x-show="$store.notif.belum('admin') > 0"
+              x-text="$store.notif.belum('admin')"></span>
+      </button>
+      <div class="dropdown-menu absolute right-0 top-full z-50 mt-2 w-80" x-show="open" x-cloak
+           x-transition.opacity.duration.150ms @click.outside="close()" @keydown.escape.window="close()">
+        <div class="dropdown-header flex items-center justify-between">
+          <span x-text="T($store.notif.belum('admin') + ' notifikasi baru')">0 notifikasi baru</span>
+          <button class="text-primary fs-8" @click="$store.notif.bacaSemua('admin')">Tandai dibaca</button>
+        </div>
+        <ul class="max-h-72 overflow-y-auto scrollbar-thin notif-tinjau">
+          <template x-for="n in $store.notif.lingkup('admin').slice(0, 6)" :key="n.id">
+            <li>
+              <button type="button" class="notif-baris" :data-baca="n.baca ? '1' : '0'" :data-tone="n.tone"
+                      @click="$store.notif.baca(n.id, 'admin')">
+                <span class="notif-ikon"><i :data-icon="n.ikon" data-size="15"></i></span>
+                <span class="notif-teks">
+                  <b x-text="n.judul"></b>
+                  <span x-text="n.pesan"></span>
+                  <i x-text="$store.notif.waktu(n.waktu) + ' · ' + $store.i18n.t(n.kategori)"></i>
+                </span>
+                <span class="notif-titik" x-show="!n.baca"></span>
+              </button>
+            </li>
+          </template>
+          <li class="px-4 py-3 text-sm text-muted-2" x-show="!$store.notif.lingkup('admin').length">
+            Tidak ada notifikasi.
+          </li>
+        </ul>
+        <div class="dropdown-divider"></div>
+        <div class="flex items-center justify-between gap-2 px-4 py-2">
+          <a href="notifications.html" class="dropdown-item !px-0 !py-0 !text-primary fs-8">Buka pusat notifikasi</a>
+          <button type="button" class="btn btn-light btn-sm" @click="$store.notif.uji('admin')">
+            <i data-icon="send" data-size="12"></i> Kirim uji
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pemisah: notifikasi ↔ aksi tampilan -->
+    <span class="nav-sep hidden md:block" aria-hidden="true"></span>
+
+    <!-- Pilih bahasa (Indonesia / English) -->
+    <div class="relative" x-data="dropdown">
+      <button type="button" class="nav-icon-btn" @click="toggle()" :aria-expanded="open"
+              title="Bahasa / Language" aria-label="Pilih bahasa">
+        <i data-icon="translate" data-size="17"></i>
+        <span class="lang-tag" x-text="$store.i18n.locale.toUpperCase()"></span>
+      </button>
+      <div class="dropdown-menu absolute right-0 top-full z-50 mt-2 w-52" x-show="open" x-cloak x-transition.opacity.duration.150ms @click.outside="close()" @keydown.escape.window="close()">
+        <div class="dropdown-header">Bahasa / Language</div>
+        <button class="dropdown-item justify-between" @click="$store.i18n.set('id'); close()">
+          <span><i data-icon="flag" data-size="14"></i> Bahasa Indonesia</span>
+          <i data-icon="check2" data-size="14" class="text-primary" x-show="$store.i18n.locale === 'id'"></i>
+        </button>
+        <button class="dropdown-item justify-between" @click="$store.i18n.set('en'); close()">
+          <span><i data-icon="translate" data-size="14"></i> English</span>
+          <i data-icon="check2" data-size="14" class="text-primary" x-show="$store.i18n.locale === 'en'"></i>
+        </button>
+        <div class="dropdown-divider"></div>
+        <p class="fs-8 text-muted-2 px-4 py-2 m-0">Pilihan bahasa tersimpan di peramban Anda.</p>
+      </div>
+    </div>
+
+    <!-- Layar penuh -->
+    <button type="button" class="nav-icon-btn hidden sm:inline-flex" title="Layar penuh"
+            @click="window.toggleFullscreen()"
+            aria-label="Layar penuh">
+      <i data-icon="arrows-fullscreen" data-size="17"></i>
+    </button>
+    <!-- Tema terang/gelap -->
+    <button type="button" class="nav-icon-btn" title="Ganti tema (.)" @click="$store.ui.toggleTheme()" aria-label="Ganti tema terang/gelap">
+      <span x-show="$store.ui.theme === 'light'"><i data-icon="moon-stars" data-size="17"></i></span>
+      <span x-show="$store.ui.theme === 'dark'" x-cloak><i data-icon="sun" data-size="17"></i></span>
+    </button>
+    <!-- Panel kontrol tampilan -->
+    <button type="button" class="nav-icon-btn" title="Pengaturan tampilan" @click="$store.ui.toggleControl()" aria-label="Pengaturan tampilan">
+      <i data-icon="sliders" data-size="17"></i>
+    </button>
+
+    <!-- Pemisah: aksi tampilan ↔ menu pengguna -->
+    <span class="nav-sep hidden md:block" aria-hidden="true"></span>
+
+    <!-- Menu pengguna -->
+    <div class="relative" x-data="dropdown">
+      <button type="button" class="flex items-center gap-2 rounded-full py-1 pl-1 pr-2 hover:bg-surface-2" @click="toggle()" :aria-expanded="open">
+        <span class="avatar avatar-sm">AS</span>
+        <span class="hidden text-left lg:block">
+          <span class="block text-[0.82rem] font-semibold leading-tight">Aulia S.</span>
+          <span class="block fs-8 text-muted-2">Admin</span>
+        </span>
+        <i data-icon="chevron-down" data-size="11" class="hidden lg:block"></i>
+      </button>
+      <div class="dropdown-menu absolute right-0 top-full z-50 mt-2 w-60" x-show="open" x-cloak x-transition.opacity.duration.150ms @click.outside="close()" @keydown.escape.window="close()">
+        <div class="flex items-center gap-3 px-4 py-3">
+          <span class="avatar avatar-lg">AS</span>
+          <span>
+            <span class="block font-semibold">Aulia Saputra</span>
+            <span class="block fs-8 text-muted-2">aulia@perusahaan.id</span>
+          </span>
+        </div>
+        <div class="dropdown-divider"></div>
+        <a href="profile.html" class="dropdown-item"><i data-icon="person"></i> Profil saya</a>
+        <a href="forms.html" class="dropdown-item"><i data-icon="gear"></i> Pengaturan akun</a>
+        <a href="invoice.html" class="dropdown-item"><i data-icon="receipt"></i> Tagihan &amp; invoice</a>
+        <button class="dropdown-item" @click="$store.dialog.ask({ title:'Keluar dari sesi?', message:'Anda akan keluar dari dashboard demo ini.', confirmText:'Keluar', tone:'danger', onConfirm: () => { window.location.href='../login.html'; } })">
+          <i data-icon="box-arrow-right"></i> Keluar
+        </button>
+      </div>
+    </div>
+  </div>
+</header>

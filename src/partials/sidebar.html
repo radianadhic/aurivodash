@@ -1,0 +1,362 @@
+<!-- ===================== SIDEBAR (AdminLTE style) ===================== -->
+<aside class="app-sidebar" role="complementary" aria-label="Menu utama">
+  <!-- Brand -->
+  <a href="index.html" class="sidebar-brand">
+    <span class="flex items-center gap-2">
+      <span class="sidebar-chip grid h-8 w-8 place-items-center rounded">
+        <i data-icon="speedometer2" data-size="18"></i>
+      </span>
+      <span>Aurivo<b>Dash</b></span>
+    </span>
+  </a>
+
+  <!-- Pencarian menu -->
+  <div class="px-3 pt-3">
+    <label class="relative block">
+      <span class="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-sidebar-muted">
+        <i data-icon="search" data-size="13"></i>
+      </span>
+      <input type="search" x-data="{ q:'' }" x-model="q"
+             @input="document.querySelectorAll('.sidebar-body li[data-url]').forEach(function(li){ li.style.display = li.dataset.url.toLowerCase().includes($event.target.value.toLowerCase()) || !$event.target.value ? '' : 'none'; })"
+             class="sidebar-input rounded py-1.5 pl-8 pr-2 text-sm"
+             placeholder="Cari menu…" aria-label="Cari menu">
+    </label>
+  </div>
+
+  <nav class="sidebar-body scrollbar-thin mt-1">
+    <div class="nav-heading">Menu Utama</div>
+    <ul class="space-y-0.5 pb-4">
+      <li data-url="Dashboard">
+        <a href="index.html" class="side-link">
+          <span class="ico"><i data-icon="speedometer2"></i></span>
+          <span class="txt">Dashboard</span>
+          <span class="badge badge-primary">3</span>
+        </a>
+      </li>
+      <li data-url="Analitik Laporan">
+        <a href="analytics.html" class="side-link">
+          <span class="ico"><i data-icon="graph-up-arrow"></i></span>
+          <span class="txt">Analitik</span>
+          <span class="badge badge-success">Baru</span>
+        </a>
+      </li>
+      <li data-url="Tables Data Table Tabel Sederhana Kepala Sticky">
+        <button type="button" class="side-link w-full text-left" data-menu-toggle
+                :aria-expanded="$store.ui.menuOpen('tables')"
+                @click="$store.ui.toggleMenu('tables')">
+          <span class="ico"><i data-icon="table"></i></span>
+          <span class="txt">Tables</span>
+          <span class="badge badge-soft-info">5</span>
+          <i data-icon="chevron-right" class="caret" data-size="12"></i>
+        </button>
+        <div class="submenu-wrap" data-menu="tables" :class="!$store.ui.menuOpen('tables') && 'closed'">
+          <ul class="side-submenu">
+            <li data-url="Data Table Tabel Pintar">
+              <a href="tables.html" class="side-link">
+                <span class="ico"><i data-icon="card-checklist" data-size="14"></i></span>
+                <span class="txt">Data Table</span>
+              </a>
+            </li>
+            <li data-url="Tabel Sederhana Simple">
+              <a href="tables.html#tabel-sederhana" class="side-link">
+                <span class="ico"><i data-icon="layout-text-sidebar" data-size="14"></i></span>
+                <span class="txt">Tabel Sederhana</span>
+              </a>
+            </li>
+            <li data-url="Kepala Tabel Sticky Menempel">
+              <a href="tables.html#tabel-sticky" class="side-link">
+                <span class="ico"><i data-icon="arrow-down-up" data-size="14"></i></span>
+                <span class="txt">Kepala Tabel Sticky</span>
+              </a>
+            </li>
+            <li data-url="AG Grid Community Data Grid Interaktif">
+              <a href="ag-grid.html" class="side-link">
+                <span class="ico"><i data-icon="grid-3x3-gap" data-size="14"></i></span>
+                <span class="txt">AG Grid Community</span>
+                <span class="badge badge-soft-success">MIT</span>
+              </a>
+            </li>
+            <!-- Mini Grid: submenu bertingkat (4 contoh dari github.com/radianadhic/minigrid) -->
+            <li data-url="Mini Grid MiniGrid Contoh">
+              <button type="button" class="side-link w-full text-left" data-menu-toggle
+                      :aria-expanded="$store.ui.menuOpen('minigrid')"
+                      @click="$store.ui.toggleMenu('minigrid')">
+                <span class="ico"><i data-icon="grid-1x2" data-size="14"></i></span>
+                <span class="txt">Mini Grid</span>
+                <span class="badge badge-soft-primary">6</span>
+                <i data-icon="chevron-right" class="caret" data-size="12"></i>
+              </button>
+              <div class="submenu-wrap" data-menu="minigrid" :class="!$store.ui.menuOpen('minigrid') && 'closed'">
+                <ul class="side-submenu">
+                  <li data-url="Mini Grid 1 Skala Besar Virtual Scroll">
+                    <a href="mini-grid-1.html" class="side-link">
+                      <span class="ico"><i data-icon="speedometer2" data-size="13"></i></span>
+                      <span class="txt">Mini Grid 1</span>
+                    </a>
+                  </li>
+                  <li data-url="Mini Grid 2 CRUD Edit Inline Form Modal">
+                    <a href="mini-grid-2.html" class="side-link">
+                      <span class="ico"><i data-icon="pencil-square" data-size="13"></i></span>
+                      <span class="txt">Mini Grid 2</span>
+                    </a>
+                  </li>
+                  <li data-url="Mini Grid 3 Alur Persetujuan Approve Reject">
+                    <a href="mini-grid-3.html" class="side-link">
+                      <span class="ico"><i data-icon="check2-circle" data-size="13"></i></span>
+                      <span class="txt">Mini Grid 3</span>
+                    </a>
+                  </li>
+                  <li data-url="Mini Grid 4 Aksi Per Baris Row Actions">
+                    <a href="mini-grid-4.html" class="side-link">
+                      <span class="ico"><i data-icon="briefcase" data-size="13"></i></span>
+                      <span class="txt">Mini Grid 4</span>
+                    </a>
+                  </li>
+                  <li data-url="Mini Grid 5 Data dari API Refresh Status Muat">
+                    <a href="mini-grid-5.html" class="side-link">
+                      <span class="ico"><i data-icon="cloud-download" data-size="13"></i></span>
+                      <span class="txt">Mini Grid 5</span>
+                    </a>
+                  </li>
+                  <li data-url="Mini Grid 6 Mode Server-side Paging Server">
+                    <a href="mini-grid-6.html" class="side-link">
+                      <span class="ico"><i data-icon="hdd-network" data-size="13"></i></span>
+                      <span class="txt">Mini Grid 6</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </li>
+      <!-- Kartu: pembayaran kartu, QRIS, dan aplikasi nasabah -->
+      <li data-url="Kartu QRIS Credit Debit Aplikasi Nasabah Mobile">
+        <button type="button" class="side-link w-full text-left" data-menu-toggle
+                :aria-expanded="$store.ui.menuOpen('kartu')"
+                @click="$store.ui.toggleMenu('kartu')">
+          <span class="ico"><i data-icon="credit-card-2-front"></i></span>
+          <span class="txt">Kartu</span>
+          <span class="badge badge-soft-primary">3</span>
+          <i data-icon="chevron-right" class="caret" data-size="12"></i>
+        </button>
+        <div class="submenu-wrap" data-menu="kartu" :class="!$store.ui.menuOpen('kartu') && 'closed'">
+          <ul class="side-submenu">
+            <li data-url="Kartu dengan QRIS Kartu Bank 3D Balik QR">
+              <a href="kartu-qris.html" class="side-link">
+                <span class="ico"><i data-icon="credit-card" data-size="14"></i></span>
+                <span class="txt">Kartu dengan QRIS</span>
+                <span class="badge badge-soft-success">Baru</span>
+              </a>
+            </li>
+            <li data-url="QRIS QR Code Pembayaran Merchant">
+              <a href="qris.html" class="side-link">
+                <span class="ico"><i data-icon="qr-code" data-size="14"></i></span>
+                <span class="txt">QRIS</span>
+              </a>
+            </li>
+            <li data-url="Aplikasi Nasabah Mobile HP Customer">
+              <a href="../mobile/index.html" class="side-link">
+                <span class="ico"><i data-icon="phone" data-size="14"></i></span>
+                <span class="txt">Aplikasi Nasabah</span>
+                <span class="badge badge-soft-warning">Mobile</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </li>
+
+      <li data-url="Notifikasi Pemberitahuan Push">
+        <a href="notifications.html" class="side-link">
+          <span class="ico"><i data-icon="bell"></i></span>
+          <span class="txt">Notifikasi</span>
+          <span class="badge badge-soft-danger" x-show="$store.notif.belum('admin') > 0"
+                x-text="$store.notif.belum('admin')"></span>
+        </a>
+      </li>
+      <li data-url="Scheduler Penjadwal Job Terjadwal">
+        <a href="scheduler.html" class="side-link">
+          <span class="ico"><i data-icon="calendar-check"></i></span>
+          <span class="txt">Scheduler</span>
+          <span class="badge badge-soft-primary">4</span>
+        </a>
+      </li>
+
+      <li data-url="Formulir">
+        <a href="forms.html" class="side-link">
+          <span class="ico"><i data-icon="pencil-square"></i></span>
+          <span class="txt">Formulir</span>
+        </a>
+      </li>
+
+      <!-- Tools: aplikasi laporan SatuReport (github.com/radianadhic/satureport) -->
+      <li data-url="Tools Perkakas Laporan Report SatuReport">
+        <button type="button" class="side-link w-full text-left" data-menu-toggle
+                :aria-expanded="$store.ui.menuOpen('tools')"
+                @click="$store.ui.toggleMenu('tools')">
+          <span class="ico"><i data-icon="tools"></i></span>
+          <span class="txt">Tools</span>
+          <span class="badge badge-soft-warning">3</span>
+          <i data-icon="chevron-right" class="caret" data-size="12"></i>
+        </button>
+        <div class="submenu-wrap" data-menu="tools" :class="!$store.ui.menuOpen('tools') && 'closed'">
+          <ul class="side-submenu">
+            <li data-url="Report Design Designer Desainer Laporan Buat Rancang">
+              <a href="report-design.html" class="side-link">
+                <span class="ico"><i data-icon="brush" data-size="14"></i></span>
+                <span class="txt">Report Design</span>
+              </a>
+            </li>
+            <li data-url="Report Viewer Penampil Laporan Lihat Cetak">
+              <a href="report-viewer.html" class="side-link">
+                <span class="ico"><i data-icon="eye" data-size="14"></i></span>
+                <span class="txt">Report Viewer</span>
+              </a>
+            </li>
+            <li data-url="Report Example Contoh Galeri Sampel Template">
+              <a href="report-example.html" class="side-link">
+                <span class="ico"><i data-icon="clipboard-data" data-size="14"></i></span>
+                <span class="txt">Report Example</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </li>
+
+      <li class="nav-heading">Komponen</li>
+      <li data-url="Grafik Chart">
+        <a href="charts.html" class="side-link">
+          <span class="ico"><i data-icon="bar-chart-line"></i></span>
+          <span class="txt">Grafik</span>
+        </a>
+      </li>
+      <li data-url="Widget Kartu">
+        <a href="widgets.html" class="side-link">
+          <span class="ico"><i data-icon="grid-1x2"></i></span>
+          <span class="txt">Widget &amp; Kartu</span>
+        </a>
+      </li>
+      <li data-url="Kanban Papan Proyek">
+        <a href="kanban.html" class="side-link">
+          <span class="ico"><i data-icon="kanban"></i></span>
+          <span class="txt">Papan Kanban</span>
+        </a>
+      </li>
+      <li data-url="Ikon Font">
+        <a href="icons.html" class="side-link">
+          <span class="ico"><i data-icon="star"></i></span>
+          <span class="txt">Galeri Ikon</span>
+        </a>
+      </li>
+
+      <li class="nav-heading">Halaman</li>
+      <li data-url="Profil Pengguna">
+        <a href="profile.html" class="side-link">
+          <span class="ico"><i data-icon="person-circle"></i></span>
+          <span class="txt">Profil</span>
+        </a>
+      </li>
+      <li data-url="Invoice Faktur">
+        <a href="invoice.html" class="side-link">
+          <span class="ico"><i data-icon="receipt"></i></span>
+          <span class="txt">Invoice</span>
+        </a>
+      </li>
+
+      <!-- Treeview: multi level + badge -->
+      <li data-url="Halaman Lain Autentikasi Error">
+        <button type="button" class="side-link w-full text-left" data-menu-toggle
+                :aria-expanded="$store.ui.menuOpen('pages')"
+                @click="$store.ui.toggleMenu('pages')">
+          <span class="ico"><i data-icon="menu-button-wide"></i></span>
+          <span class="txt">Halaman Lain</span>
+          <span class="badge badge-warning">4</span>
+          <i data-icon="chevron-right" class="caret" data-size="12"></i>
+        </button>
+        <div class="submenu-wrap" data-menu="pages" :class="!$store.ui.menuOpen('pages') && 'closed'">
+          <ul class="side-submenu">
+            <li data-url="Masuk Login">
+              <a href="../login.html" class="side-link">
+                <span class="ico"><i data-icon="box-arrow-in-left" data-size="14"></i></span>
+                <span class="txt">Masuk (login)</span>
+              </a>
+            </li>
+            <li data-url="Daftar Register">
+              <a href="../register.html" class="side-link">
+                <span class="ico"><i data-icon="person-plus" data-size="14"></i></span>
+                <span class="txt">Daftar akun</span>
+              </a>
+            </li>
+            <li data-url="Error 404">
+              <a href="../404.html" class="side-link">
+                <span class="ico"><i data-icon="exclamation-triangle-fill" data-size="14"></i></span>
+                <span class="txt">Halaman 404</span>
+              </a>
+            </li>
+            <li data-url="Kembali Landing">
+              <a href="../index.html" class="side-link">
+                <span class="ico"><i data-icon="box-arrow-up-right" data-size="14"></i></span>
+                <span class="txt">Halaman demo</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </li>
+
+      <!-- Treeview kedua, menunjukkan sub-menu aktif otomatis -->
+      <li data-url="Pengaturan Sistem Preferensi">
+        <button type="button" class="side-link w-full text-left" data-menu-toggle
+                :aria-expanded="$store.ui.menuOpen('settings')"
+                @click="$store.ui.toggleMenu('settings')">
+          <span class="ico"><i data-icon="gear"></i></span>
+          <span class="txt">Pengaturan</span>
+          <i data-icon="chevron-right" class="caret" data-size="12"></i>
+        </button>
+        <div class="submenu-wrap" data-menu="settings" :class="!$store.ui.menuOpen('settings') && 'closed'">
+          <ul class="side-submenu">
+            <li data-url="Profil Perusahaan">
+              <a href="#" class="side-link" @click.prevent="$store.ui.toggleControl()">
+                <span class="ico"><i data-icon="sliders2" data-size="14"></i></span>
+                <span class="txt">Tampilan &amp; tema</span>
+              </a>
+            </li>
+            <li data-url="Peran Akses Pengguna">
+              <a href="profile.html" class="side-link">
+                <span class="ico"><i data-icon="shield-check" data-size="14"></i></span>
+                <span class="txt">Peran &amp; akses</span>
+              </a>
+            </li>
+            <li data-url="Log Aktivitas Audit">
+              <a href="analytics.html" class="side-link">
+                <span class="ico"><i data-icon="journal-text" data-size="14"></i></span>
+                <span class="txt">Log aktivitas</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- Footer sidebar -->
+  <div class="sidebar-footer border-t p-3">
+    <!-- Tombol keluar -->
+    <button type="button" class="side-link side-logout w-full text-left" title="Keluar dari sesi ini"
+            @click="$store.dialog.ask({
+              title: 'Keluar dari sesi ini?',
+              message: 'Anda akan keluar dari dashboard demo ini dan kembali ke halaman masuk.',
+              confirmText: 'Keluar',
+              tone: 'danger',
+              onConfirm: () => { window.location.href = 'login.html'; }
+            })">
+      <span class="ico"><i data-icon="box-arrow-right"></i></span>
+      <span class="txt">Keluar</span>
+    </button>
+
+    <div class="sidebar-meta mt-2 flex items-center justify-between text-[0.72rem]">
+      <span>Versi 1.0.0</span>
+      <span class="flex items-center gap-1"><i data-icon="wifi-off" data-size="12"></i> Offline ready</span>
+    </div>
+  </div>
+</aside>
+<div class="sidebar-backdrop" @click="$store.ui.closeMobile()" aria-hidden="true"></div>

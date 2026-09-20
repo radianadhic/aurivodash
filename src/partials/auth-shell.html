@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light" data-skin="blue">
+<head>
+<!-- @include head.html -->
+</head>
+<body x-data class="auth-page {{BODY_CLASS}}">
+
+  <!-- Tombol tema di sudut kanan atas -->
+  <div class="fixed right-4 top-4 z-20">
+    <button type="button" class="btn btn-light shadow" @click="$store.ui.toggleTheme()">
+      <span x-show="$store.ui.theme === 'light'"><i data-icon="moon-stars"></i> Mode gelap</span>
+      <span x-show="$store.ui.theme === 'dark'" x-cloak><i data-icon="sun"></i> Mode terang</span>
+    </button>
+  </div>
+
+{{CONTENT}}
+
+  <!-- @include overlays.html -->
+</body>
+</html>

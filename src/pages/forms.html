@@ -1,0 +1,302 @@
+---
+path: pages/forms.html
+title: Formulir
+pageTitle: Formulir & Input
+crumb: Home|index.html, Formulir
+description: Kumpulan komponen formulir: input, select, textarea, switch, checkbox, radio, validasi, dan input group.
+---
+<!--#navbar-->
+<button type="button" class="nav-icon-btn" title="Simpan formulir"
+        onclick="window.toast('Formulir disimpan (demo).', 'success', 'Simpan')" aria-label="Simpan formulir">
+  <i data-icon="check2-circle" data-size="17"></i>
+</button>
+<!--/#navbar-->
+
+<!--#actions-->
+<button class="btn btn-light" onclick="window.toast('Formulir direset.','info','Reset')"><i data-icon="arrow-counterclockwise"></i> Reset</button>
+<button class="btn btn-primary" form="formPelanggan" type="submit"><i data-icon="check2"></i> Simpan data</button>
+<!--/#actions-->
+
+<div class="grid gap-4 xl:grid-cols-3">
+  <!-- ============== FORM UTAMA ============== -->
+  <div class="card xl:col-span-2">
+    <div class="card-header">
+      <h3 class="card-title"><i data-icon="pencil-square" class="text-primary"></i> Formulir pelanggan</h3>
+      <div class="card-tools"><span class="badge badge-soft-warning">Wajib: 4 kolom</span></div>
+    </div>
+    <form id="formPelanggan" class="card-body needs-validation" novalidate x-data="formDemo()" @submit.prevent="submit()">
+      <div class="form-row">
+        <div>
+          <label class="form-label" for="nama">Nama lengkap <span class="text-danger">*</span></label>
+          <div class="input-group">
+            <span class="input-group-text"><i data-icon="person" data-size="14"></i></span>
+            <input id="nama" name="nama" type="text" class="form-control" placeholder="Mis. Rani Setiawati" required>
+          </div>
+          <div class="invalid-feedback">Nama lengkap wajib diisi.</div>
+        </div>
+        <div>
+          <label class="form-label" for="email">Alamat email <span class="text-danger">*</span></label>
+          <div class="input-group">
+            <span class="input-group-text">@</span>
+            <input id="email" name="email" type="email" class="form-control" placeholder="nama@perusahaan.id" required>
+          </div>
+          <div class="invalid-feedback">Masukkan alamat email yang valid.</div>
+        </div>
+        <div>
+          <label class="form-label" for="telepon">Nomor telepon</label>
+          <div class="input-group">
+            <span class="input-group-text">+62</span>
+            <input id="telepon" name="telepon" type="tel" class="form-control" placeholder="812 3456 7890" inputmode="numeric" pattern="[0-9 ]{8,}">
+          </div>
+          <p class="form-text">Format internasional tanpa tanda hubung.</p>
+        </div>
+        <div>
+          <label class="form-label" for="kota">Kota</label>
+          <select id="kota" name="kota" class="form-select">
+            <option value="">— Pilih kota —</option>
+            <option>Jakarta</option>
+            <option selected>Depok</option>
+            <option>Bandung</option>
+            <option>Surabaya</option>
+            <option>Yogyakarta</option>
+            <option>Medan</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row mt-3">
+        <div>
+          <label class="form-label" for="perusahaan">Perusahaan</label>
+          <input id="perusahaan" type="text" class="form-control" placeholder="PT Contoh Sejahtera">
+        </div>
+        <div>
+          <label class="form-label" for="kategori">Kategori pelanggan</label>
+          <select id="kategori" class="form-select">
+            <option>Ritel</option>
+            <option>Mitra B2B</option>
+            <option>Reseller</option>
+            <option>Umum</option>
+          </select>
+        </div>
+        <div>
+          <label class="form-label" for="npwp">NPWP</label>
+          <input id="npwp" type="text" class="form-control" placeholder="00.000.000.0-000.000">
+        </div>
+        <div>
+          <label class="form-label" for="bergabung">Tanggal bergabung</label>
+          <input id="bergabung" type="date" class="form-control" value="2026-09-18">
+        </div>
+      </div>
+
+      <div class="mt-3">
+        <label class="form-label" for="alamat">Alamat penagihan</label>
+        <textarea id="alamat" class="form-textarea" rows="3" placeholder="Jalan, nomor, RT/RW, kecamatan, kode pos…"></textarea>
+      </div>
+
+      <div class="mt-3 grid gap-4 md:grid-cols-2">
+        <div>
+          <span class="form-label">Jenis kelamin</span>
+          <label class="form-check"><input type="radio" name="gender" class="form-check-input" checked> <span class="text-sm">Laki-laki</span></label>
+          <label class="form-check"><input type="radio" name="gender" class="form-check-input"> <span class="text-sm">Perempuan</span></label>
+          <label class="form-check"><input type="radio" name="gender" class="form-check-input"> <span class="text-sm">Tidak ingin menyebutkan</span></label>
+        </div>
+        <div>
+          <span class="form-label">Preferensi kontak</span>
+          <label class="form-check"><input type="checkbox" class="form-check-input" checked> <span class="text-sm">Email promosi &amp; newsletter</span></label>
+          <label class="form-check"><input type="checkbox" class="form-check-input"> <span class="text-sm">WhatsApp</span></label>
+          <label class="form-check"><input type="checkbox" class="form-check-input"> <span class="text-sm">Telepon</span></label>
+        </div>
+      </div>
+
+      <div class="mt-3 grid gap-4 md:grid-cols-2">
+        <div>
+          <span class="form-label">Status langganan</span>
+          <label class="form-check form-switch justify-between">
+            <span class="text-sm">Aktifkan akun langsung</span>
+            <input type="checkbox" class="form-check-input" checked>
+          </label>
+          <label class="form-check form-switch justify-between">
+            <span class="text-sm">Izinkan akses API</span>
+            <input type="checkbox" class="form-check-input">
+          </label>
+        </div>
+        <div>
+          <label class="form-label" for="limit">Limit kredit: <b id="limitLabel">Rp 5.000.000</b></label>
+          <input id="limit" type="range" class="form-range" min="1000000" max="50000000" step="1000000" value="5000000"
+                 x-data="{ v: 5000000 }" x-model.number="v"
+                 @input="document.getElementById('limitLabel').textContent = 'Rp ' + Number($event.target.value).toLocaleString('id-ID')">
+          <p class="form-text">Menentukan batas transaksi kredit pelanggan.</p>
+        </div>
+      </div>
+
+      <div class="mt-3">
+        <label class="form-label" for="unggah">Unggah dokumen pendukung</label>
+        <label class="custom-file" for="unggah">
+          <span class="grid h-10 w-10 place-items-center rounded bg-primary/10 text-primary"><i data-icon="cloud-upload" data-size="18"></i></span>
+          <span class="min-w-0">
+            <span class="block text-sm font-semibold">Klik untuk memilih berkas</span>
+            <span class="block fs-8 text-muted-2">KTP / NPWP / SIUP — PDF, JPG, PNG maks. 5 MB</span>
+          </span>
+          <input id="unggah" type="file" class="sr-only" @change="fileName = $event.target.files[0]?.name || ''">
+        </label>
+        <p class="form-text mt-1" x-show="fileName" x-cloak x-text="$store.i18n.t('Berkas dipilih: ' + fileName)"></p>
+      </div>
+
+      <div class="mt-4 flex flex-wrap items-center gap-3 border-t border-line pt-4">
+        <label class="form-check mb-0">
+          <input type="checkbox" class="form-check-input" required>
+          <span class="text-sm">Saya menyetujui <a href="#" class="text-primary">syarat &amp; ketentuan</a></span>
+        </label>
+        <div class="ml-auto flex gap-2">
+          <button type="reset" class="btn btn-light">Batal</button>
+          <button type="submit" class="btn btn-primary"><i data-icon="check2"></i> Simpan pelanggan</button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- ============== ELEMEN LAIN ============== -->
+  <div class="space-y-0">
+    <div class="card">
+      <div class="card-header"><h3 class="card-title">Ukuran &amp; status input</h3></div>
+      <div class="card-body space-y-3">
+        <input type="text" class="form-control" placeholder="Ukuran normal (.form-control)">
+        <input type="text" class="form-control !py-1 text-sm" placeholder="Ukuran kecil">
+        <input type="text" class="form-control !py-3 text-lg" placeholder="Ukuran besar">
+        <input type="text" class="form-control is-invalid" value="Contoh tidak valid">
+        <div class="invalid-feedback">Pesan bantuan validasi tampil di sini.</div>
+        <input type="text" class="form-control" value="Input dinonaktifkan" disabled>
+        <input type="text" class="form-control" value="Hanya baca" readonly>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><h3 class="card-title">Input group lanjutan</h3></div>
+      <div class="card-body space-y-3">
+        <div class="input-group">
+          <span class="input-group-text">Rp</span>
+          <input type="number" class="form-control" placeholder="0" aria-label="Nominal">
+          <span class="input-group-text">,00</span>
+        </div>
+        <div class="input-group">
+          <input type="search" class="form-control" placeholder="Cari pelanggan…" aria-label="Cari">
+          <button class="btn btn-primary" type="button"><i data-icon="search"></i> Cari</button>
+        </div>
+        <div class="input-group">
+          <span class="input-group-text"><i data-icon="envelope" data-size="14"></i></span>
+          <input type="email" class="form-control" placeholder="Email untuk undangan">
+          <button class="btn btn-outline-primary" type="button">Kirim</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><h3 class="card-title">Pratinjau &amp; aksi cepat</h3></div>
+      <div class="card-body">
+        <div class="alert alert-warning items-start mb-3">
+          <i data-icon="exclamation-triangle-fill" class="mt-0.5"></i>
+          <span class="text-sm">Perubahan belum disimpan. Klik <b>Simpan pelanggan</b> untuk menerapkan.</span>
+        </div>
+        <div class="grid grid-cols-3 gap-2">
+          <button class="btn btn-app" onclick="window.toast('Aksi: tambah (demo)','info')"><i data-icon="plus-lg"></i> Tambah</button>
+          <button class="btn btn-app" onclick="window.toast('Aksi: cetak (demo)','info')"><i data-icon="printer"></i> Cetak</button>
+          <button class="btn btn-app" onclick="window.toast('Aksi: arsip (demo)','info')"><i data-icon="archive"></i> Arsip</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============== FORM LOGIN CEPAT (2 kolom) ============== -->
+<div class="grid gap-4 lg:grid-cols-2">
+  <div class="card">
+    <div class="card-header"><h3 class="card-title">Formulir horizontal</h3></div>
+    <div class="card-body">
+      <div class="mb-3 grid items-center gap-2 sm:grid-cols-[10rem_1fr]">
+        <label class="form-label mb-0" for="h-email">Email</label>
+        <input id="h-email" type="email" class="form-control" placeholder="nama@perusahaan.id">
+      </div>
+      <div class="mb-3 grid items-center gap-2 sm:grid-cols-[10rem_1fr]">
+        <label class="form-label mb-0" for="h-pass">Kata sandi</label>
+        <input id="h-pass" type="password" class="form-control" placeholder="••••••••" x-data="{ show:false }" :type="show ? 'text' : 'password'">
+      </div>
+      <div class="mb-3 grid items-center gap-2 sm:grid-cols-[10rem_1fr]">
+        <label class="form-label mb-0" for="h-level">Level akses</label>
+        <select id="h-level" class="form-select">
+          <option>Administrator</option><option>Manajer</option><option>Staf</option>
+        </select>
+      </div>
+      <div class="grid gap-2 sm:grid-cols-[10rem_1fr]">
+        <span></span>
+        <div class="flex gap-2">
+          <button class="btn btn-primary" type="button" onclick="window.toast('Kredensial diperbarui (demo).','success')">Perbarui</button>
+          <button class="btn btn-light" type="button">Batal</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h3 class="card-title">Validasi langsung</h3></div>
+    <div class="card-body">
+      <p class="text-sm text-muted-2">Coba ketik lalu kosongkan kolom — pesan validasi muncul otomatis memakai atribut HTML5.</p>
+      <form x-data="validateDemo()" @submit.prevent="check($event)" novalidate :class="validated && 'was-validated'">
+        <div class="mb-3">
+          <label class="form-label" for="v-nama">Nama pengguna</label>
+          <input id="v-nama" class="form-control" required minlength="3" placeholder="min. 3 karakter">
+          <div class="invalid-feedback">Nama pengguna minimal 3 karakter.</div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label" for="v-email">Email kantor</label>
+          <input id="v-email" type="email" class="form-control" required placeholder="nama@perusahaan.id">
+          <div class="invalid-feedback">Format email belum benar.</div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label" for="v-kode">Kode undangan</label>
+          <input id="v-kode" class="form-control" required pattern="[A-Z]{3}-[0-9]{4}" placeholder="ABC-1234">
+          <div class="invalid-feedback">Format kode: 3 huruf besar, tanda hubung, 4 angka (ABC-1234).</div>
+        </div>
+        <button class="btn btn-success" type="submit"><i data-icon="shield-check"></i> Verifikasi</button>
+        <button class="btn btn-link" type="reset" @click="validated = false">Bersihkan</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* Contoh logika Alpine untuk formulir: validasi + toast hasil */
+  document.addEventListener("alpine:init", function () {
+    Alpine.data("formDemo", function () {
+      return {
+        fileName: "",
+        validated: false,
+        submit: function () {
+          var form = this.$el;
+          if (!form.checkValidity()) {
+            this.validated = true;
+            form.classList.add("was-validated");
+            var invalid = form.querySelector(":invalid");
+            if (invalid) invalid.focus();
+            window.toast("Beberapa kolom wajib belum lengkap.", "danger", "Validasi gagal");
+            return;
+          }
+          window.toast("Data pelanggan berhasil disimpan (demo).", "success", "Tersimpan");
+        }
+      };
+    });
+    Alpine.data("validateDemo", function () {
+      return {
+        validated: false,
+        check: function (ev) {
+          var form = ev.target;
+          this.validated = true;
+          if (!form.checkValidity()) {
+            window.toast("Periksa kembali kolom yang ditandai merah.", "warning", "Belum valid");
+            return;
+          }
+          window.toast("Semua kolom valid. Data siap dikirim.", "success", "Berhasil");
+        }
+      };
+    });
+  });
+</script>

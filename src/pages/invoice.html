@@ -1,0 +1,193 @@
+---
+path: pages/invoice.html
+title: Invoice
+pageTitle: Invoice #INV-2041
+crumb: Home|index.html, Invoice, #INV-2041
+description: Contoh halaman invoice siap cetak dengan rincian item, ringkasan pembayaran, dan tombol aksi.
+---
+<!--#navbar-->
+<button type="button" class="nav-icon-btn" title="Cetak invoice"
+        onclick="window.print()" aria-label="Cetak invoice">
+  <i data-icon="printer" data-size="17"></i>
+</button>
+<button type="button" class="nav-icon-btn" title="Salin tautan pembayaran"
+        onclick="window.copyText('https://bayar.contoh.id/INV-2041', 'Tautan pembayaran disalin.')" aria-label="Salin tautan pembayaran">
+  <i data-icon="link-45deg" data-size="17"></i>
+</button>
+<!--/#navbar-->
+
+<!--#actions-->
+<button class="btn btn-light" data-print><i data-icon="printer"></i> Cetak / PDF</button>
+<button class="btn btn-light" onclick="window.toast('Invoice ditandai lunas (demo).','success','Pembayaran')"><i data-icon="cash-coin"></i> Tandai lunas</button>
+<div class="relative" x-data="dropdown">
+  <button class="btn btn-primary" @click="toggle()"><i data-icon="send"></i> Kirim <i data-icon="chevron-down" data-size="10"></i></button>
+  <div class="dropdown-menu absolute right-0 top-full z-50 mt-1 w-56" x-show="open" x-cloak @click.outside="close()">
+    <button class="dropdown-item" @click="close(); window.toast('Invoice dikirim via email (demo).','success')"><i data-icon="envelope"></i> Kirim lewat email</button>
+    <button class="dropdown-item" @click="close(); window.toast('Tautan dibagikan (demo).','info')"><i data-icon="link-45deg"></i> Salin tautan pembayaran</button>
+    <button class="dropdown-item" @click="close(); window.toast('Pengingat dikirim (demo).','warning')"><i data-icon="bell"></i> Ingatkan pelanggan</button>
+    <div class="dropdown-divider"></div>
+    <button class="dropdown-item !text-danger" data-confirm="Batalkan invoice ini?" data-confirm-ok="Batalkan" data-confirm-tone="danger"><i data-icon="x-circle"></i> Batalkan invoice</button>
+  </div>
+</div>
+<!--/#actions-->
+
+<div class="grid gap-4 xl:grid-cols-3">
+  <!-- ================= INVOICE ================= -->
+  <div class="card xl:col-span-2">
+    <div class="card-body">
+      <!-- Kop -->
+      <div class="flex flex-wrap items-start justify-between gap-4 border-b border-line pb-4">
+        <div>
+          <div class="flex items-center gap-2 text-2xl font-light">
+            <span class="grid h-9 w-9 place-items-center rounded bg-primary text-white"><i data-icon="speedometer2" data-size="18"></i></span>
+            <span>Admin<b>LTE</b></span>
+          </div>
+          <p class="mb-0 mt-2 fs-8 text-muted-2">
+            PT Contoh Sejahtera Nusantara<br>
+            Jl. Margonda Raya No. 118, Depok, Jawa Barat 16424<br>
+            NPWP 01.234.567.8-901.000<br>
+            +62 812 3456 7890 · finance@perusahaan.id
+          </p>
+        </div>
+        <div class="text-left sm:text-right">
+          <div class="badge badge-soft-success"><i data-icon="check-lg" data-size="11"></i> Lunas</div>
+          <h2 class="mb-1 mt-2 text-2xl font-semibold">INVOICE</h2>
+          <table class="table table-sm table-borderless ms-auto" style="width:auto">
+            <tbody>
+              <tr><td class="text-muted-2">Nomor</td><td class="text-right font-semibold">#INV-2041</td></tr>
+              <tr><td class="text-muted-2">Tanggal</td><td class="text-right">18 Sep 2026</td></tr>
+              <tr><td class="text-muted-2">Jatuh tempo</td><td class="text-right">2 Okt 2026</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Pihak -->
+      <div class="grid gap-4 border-b border-line py-4 sm:grid-cols-2">
+        <div>
+          <h4 class="mb-1 text-sm font-semibold uppercase tracking-wide text-muted-2">Ditagihkan kepada</h4>
+          <p class="mb-0 text-sm">
+            <b>Rani Setiawati</b><br>
+            Toko Ritel Mandiri<br>
+            Jl. Asia Afrika No. 45, Bandung 40111<br>
+            rani@toko.id · +62 813 2233 4455
+          </p>
+        </div>
+        <div class="sm:text-right">
+          <h4 class="mb-1 text-sm font-semibold uppercase tracking-wide text-muted-2">Metode pembayaran</h4>
+          <p class="mb-0 text-sm">
+            Transfer bank — Bank Mandiri<br>
+            A/C 1370-0099-8877-1<br>
+            a.n. PT Contoh Sejahtera Nusantara
+          </p>
+          <p class="fs-8 text-muted-2 mt-1 mb-0">Referensi: TRX-889120 · VA 8808 1370 0099 8877</p>
+        </div>
+      </div>
+
+      <!-- Rincian item -->
+      <div class="table-wrap mt-4">
+        <table class="table table-hover">
+          <thead>
+            <tr class="table-primary-head">
+              <th style="width:42px">#</th>
+              <th>Deskripsi</th>
+              <th class="text-right" style="width:90px">Qty</th>
+              <th class="text-right" style="width:140px">Harga</th>
+              <th class="text-right" style="width:150px">Jumlah</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>1</td><td><b>Kopi Arabika Gayo 1kg</b><br><span class="fs-8 text-muted-2">Single origin, medium roast</span></td><td class="text-right tabular">12</td><td class="text-right tabular">Rp 185.000</td><td class="text-right tabular">Rp 2.220.000</td></tr>
+            <tr><td>2</td><td><b>Kopi Robusta Lampung 1kg</b><br><span class="fs-8 text-muted-2">Dark roast, kemasan valve</span></td><td class="text-right tabular">8</td><td class="text-right tabular">Rp 145.000</td><td class="text-right tabular">Rp 1.160.000</td></tr>
+            <tr><td>3</td><td><b>Teh Melati Premium 500g</b></td><td class="text-right tabular">6</td><td class="text-right tabular">Rp 65.000</td><td class="text-right tabular">Rp 390.000</td></tr>
+            <tr><td>4</td><td><b>Gula Aren Cair 250ml</b></td><td class="text-right tabular">4</td><td class="text-right tabular">Rp 48.000</td><td class="text-right tabular">Rp 192.000</td></tr>
+            <tr><td>5</td><td><b>Jasa pengiriman &amp; penanganan</b></td><td class="text-right tabular">1</td><td class="text-right tabular">Rp 180.000</td><td class="text-right tabular">Rp 180.000</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Ringkasan -->
+      <div class="mt-4 grid gap-4 sm:grid-cols-2">
+        <div>
+          <h4 class="mb-2 text-sm font-semibold uppercase tracking-wide text-muted-2">Catatan</h4>
+          <p class="fs-8 text-muted-2 mb-2">
+            Pembayaran harap dilakukan sebelum tanggal jatuh tempo. Sertakan nomor invoice pada berita transfer.
+            Keterlambatan dikenakan biaya administrasi 1% per pekan.
+          </p>
+          <div class="alert alert-success items-start mb-0">
+            <i data-icon="check-circle-fill" class="mt-0.5"></i>
+            <span class="text-sm">Pembayaran diterima 18 Sep 2026 pukul 09.41 melalui transfer bank.</span>
+          </div>
+        </div>
+        <table class="table table-sm ms-auto" style="max-width:22rem">
+          <tbody>
+            <tr><td>Subtotal</td><td class="text-right tabular">Rp 3.962.000</td></tr>
+            <tr><td>Diskon pelanggan (5%)</td><td class="text-right tabular text-danger">− Rp 198.100</td></tr>
+            <tr><td>PPN 11%</td><td class="text-right tabular">Rp 440.179</td></tr>
+            <tr><td>Biaya layanan</td><td class="text-right tabular">Rp 45.921</td></tr>
+            <tr class="border-t-2 border-line"><th>Total tagihan</th><th class="text-right tabular text-lg">Rp 4.250.000</th></tr>
+            <tr><td>Dibayar</td><td class="text-right tabular text-success">Rp 4.250.000</td></tr>
+            <tr><th>Sisa</th><th class="text-right tabular">Rp 0</th></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="mt-6 border-t border-line pt-4 text-center">
+        <p class="mb-0 text-sm font-semibold">Terima kasih atas kepercayaan Anda.</p>
+        <p class="fs-8 text-muted-2">Invoice ini dibuat secara otomatis dan sah tanpa tanda tangan basah.</p>
+        <div class="mt-2 flex flex-wrap justify-center gap-2 no-print">
+          <button class="btn btn-primary btn-sm" data-print><i data-icon="printer"></i> Cetak invoice</button>
+          <button class="btn btn-light btn-sm" onclick="window.toast('Berkas PDF dibuat (demo).','success')"><i data-icon="download"></i> Unduh PDF</button>
+          <button class="btn btn-light btn-sm" data-copy="INV-2041"><i data-icon="clipboard"></i> Salin nomor invoice</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= SIDEBAR INVOICE ================= -->
+  <div class="space-y-4 no-print">
+    <div class="card">
+      <div class="card-header"><h3 class="card-title">Ringkasan pembayaran</h3></div>
+      <div class="card-body">
+        <div class="chart" data-chart="donut" data-height="200" data-formatter="idr"
+             data-labels="Produk,Ongkir,PPN,Diskon" data-values="3962000,180000,440179,198100"
+             data-colors="primary,info,warning,danger" data-center-value="4250000" data-center-label="Total tagihan"></div>
+        <div class="mt-3 space-y-2 text-sm">
+          <div class="flex justify-between"><span class="text-muted-2">Status</span><span class="badge badge-soft-success">Lunas</span></div>
+          <div class="flex justify-between"><span class="text-muted-2">Metode</span><b>Transfer bank</b></div>
+          <div class="flex justify-between"><span class="text-muted-2">Dibayar pada</span><b>18 Sep 2026</b></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><h3 class="card-title">Status pengiriman</h3></div>
+      <div class="card-body">
+        <ul class="timeline mb-0">
+          <li><span class="timeline-marker bg-success"><i data-icon="check-lg" data-size="12"></i></span>
+            <div class="timeline-panel">Pesanan diterima<div class="timeline-time">16 Sep 2026, 10:12</div></div></li>
+          <li><span class="timeline-marker bg-success"><i data-icon="check-lg" data-size="12"></i></span>
+            <div class="timeline-panel">Dikemas di gudang Jakarta<div class="timeline-time">16 Sep 2026, 16:40</div></div></li>
+          <li><span class="timeline-marker bg-success"><i data-icon="check-lg" data-size="12"></i></span>
+            <div class="timeline-panel">Dikirim via JNE REG (resi JNE-889120)<div class="timeline-time">17 Sep 2026, 08:05</div></div></li>
+          <li><span class="timeline-marker bg-primary"><i data-icon="truck" data-size="12"></i></span>
+            <div class="timeline-panel">Sedang menuju alamat tujuan<div class="timeline-time">Estimasi 19 Sep 2026</div></div></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><h3 class="card-title">Invoice terkait</h3></div>
+      <div class="card-body !py-2">
+        <ul class="list-feed">
+          <li><i data-icon="receipt" class="text-primary"></i><span class="flex-1 text-sm">#INV-2040</span><span class="badge badge-soft-warning">Menunggu</span></li>
+          <li><i data-icon="receipt" class="text-primary"></i><span class="flex-1 text-sm">#INV-2039</span><span class="badge badge-soft-success">Lunas</span></li>
+          <li><i data-icon="receipt" class="text-primary"></i><span class="flex-1 text-sm">#INV-2038</span><span class="badge badge-soft-danger">Gagal</span></li>
+        </ul>
+      </div>
+      <div class="card-footer">
+        <a href="tables.html" class="btn btn-light btn-sm btn-block">Lihat semua invoice</a>
+      </div>
+    </div>
+  </div>
+</div>

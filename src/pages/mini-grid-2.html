@@ -1,0 +1,102 @@
+---
+path: pages/mini-grid-2.html
+title: Mini Grid 2 — CRUD & Edit Inline
+pageTitle: Mini Grid 2
+subtitle: Tambah · Detail · Edit · Hapus lewat form modal + edit inline + simpan ke localStorage
+crumb: Home|index.html, Tables, Mini Grid, Mini Grid 2
+description: Contoh MiniGrid 2: CRUD lengkap ala jqGrid dengan form modal, validasi, edit inline, dan penyimpanan localStorage.
+scripts: minigrid/grid.js, minigrid/export.js, minigrid-demo.js
+bodyClass: page-mini-grid
+---
+<!--#navbar-->
+<button type="button" class="nav-icon-btn" title="Muat ulang data (refresh)"
+        onclick="window.MiniGridDemo.muatUlang(2)" aria-label="Muat ulang data Mini Grid 2">
+  <i data-icon="arrow-repeat" data-size="17"></i>
+</button>
+<button type="button" class="nav-icon-btn" title="Tambah baris (form modal)"
+        onclick="window.MiniGridDemo.tambahBaris(2)" aria-label="Tambah baris Mini Grid 2">
+  <i data-icon="plus-lg" data-size="17"></i>
+</button>
+<button type="button" class="nav-icon-btn" title="Ekspor CSV (MiniGrid)"
+        onclick="window.MiniGridDemo.eksporCsv(2)" aria-label="Ekspor CSV Mini Grid 2">
+  <i data-icon="file-earmark-spreadsheet" data-size="17"></i>
+</button>
+<!--/#navbar-->
+
+<!--#actions-->
+<button class="btn btn-light" onclick="window.MiniGridDemo.muatUlang(2)"><i data-icon="arrow-repeat"></i> Muat ulang</button>
+<button class="btn btn-light" onclick="window.print()"><i data-icon="printer"></i> Cetak</button>
+<button class="btn btn-light" onclick="window.MiniGridDemo.resetContoh2()"><i data-icon="arrow-repeat"></i> Reset contoh</button>
+<button class="btn btn-primary" onclick="window.MiniGridDemo.tambahBaris(2)"><i data-icon="plus-lg"></i> Tambah baris</button>
+<!--/#actions-->
+
+<div class="alert alert-info items-start">
+  <i data-icon="pencil-square" class="mt-0.5"></i>
+  <div>
+    <b>Mini Grid 2 — CRUD lengkap + edit inline.</b> Tombol <b>+ Tambah</b>, <b>Edit</b>,
+    <b>Detail</b>, dan <b>Hapus</b> di toolbar grid membuka formulir modal dengan validasi
+    (<code>required</code>, tipe angka, select, checkbox). Klik ganda sebuah sel untuk
+    mengedit langsung di tempat (Enter simpan, Esc batal). Semua perubahan disimpan di
+    <code>localStorage</code> — tutup lalu buka lagi halaman ini, datanya tetap ada.
+  </div>
+</div>
+
+<div id="minigrid-page-2">
+  <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+    <div>
+      <h3 class="card-title m-0"><i data-icon="people" class="text-primary"></i> Data Karyawan (CRUD)</h3>
+      <p class="fs-8 text-muted-2 m-0">Tambah/Edit/Detail/Hapus lewat form modal · klik ganda sel untuk edit inline · tersimpan otomatis</p>
+    </div>
+    <span class="flex items-center gap-2">
+      <span class="badge badge-soft-primary"><span data-mg-count>0</span> baris</span>
+      <span class="badge badge-soft-success">localStorage</span>
+    </span>
+  </div>
+  <div id="minigrid-2" class="minigrid-host"></div>
+  <p class="fs-8 text-muted-2 mt-2 m-0" id="mg-log">MiniGrid siap.</p>
+</div>
+
+<div class="grid gap-4 mt-4 lg:grid-cols-2">
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title"><i data-icon="clipboard-check" class="text-success"></i> Fitur contoh ini</h3>
+    </div>
+    <div class="card-body">
+      <ul class="list-unstyled m-0 space-y-2 text-sm">
+        <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span>Formulir modal Tambah / Edit / Detail (<code>crud: true</code>)</span></li>
+        <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span>Validasi <code>required</code> dan tipe angka pada kolom</span></li>
+        <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span>Edit inline: klik ganda sel, Enter simpan, Esc batal</span></li>
+        <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span>Select otomatis untuk kolom ber-<code>options</code> (mis. Status)</span></li>
+        <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span>Checkbox untuk kolom <code>bool</code> (mis. Aktif)</span></li>
+        <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span>Hapus massal dari baris terpilih</span></li>
+        <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span>Callback <code>onSave</code> → menulis ke <code>localStorage</code></span></li>
+        <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span>Tombol <b>Reset contoh</b> mengembalikan data awal</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title"><i data-icon="code-slash" class="text-primary"></i> Kode inti</h3>
+    </div>
+    <div class="card-body">
+<pre class="code-block"><code>MiniGrid({
+  el: "#minigrid-2",
+  columns: kolom,          // kolom: required, options, bool, type: 'num' | 'date'
+  data: muatDariLocalStorage() || rows(12),
+  height: 300, pageSize: 10, frozen: 0,
+  crud: true,              // + Tambah · Edit · Detail · Hapus (form modal)
+  edit: true,              // plus edit inline (klik ganda)
+  onAdd: function (r) { /* lengkapi nilai bawaan */ return r; },
+  onSave: function (row, isNew) { simpanKeLocalStorage(); },
+  onEdit: function (row, col, val, old) { simpanKeLocalStorage(); },
+  onRemove: function (rows) { /* return false untuk membatalkan */ return true; }
+});</code></pre>
+      <div class="callout callout-info mt-3 mb-0">
+        <b>Penyimpanan.</b> Contoh ini memakai kunci <code>template-minigrid-2</code> di
+        <code>localStorage</code>. Bila peramban memblokir penyimpanan (mis. mode privat),
+        grid tetap berjalan — hanya datanya tidak bertahan setelah halaman ditutup.
+      </div>
+    </div>
+  </div>
+</div>

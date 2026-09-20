@@ -1,0 +1,102 @@
+---
+path: pages/mini-grid-6.html
+title: Mini Grid 6 — Mode Server-side
+pageTitle: Mini Grid 6
+subtitle: Paging, sortir, dan filter dikerjakan "server" · 10.000 baris
+crumb: Home|index.html, Tables, Mini Grid, Mini Grid 6
+description: Contoh MiniGrid 6: mode server-side lewat opsi server(params) — sortir, filter, dan paginasi diproses di sisi server, grid hanya merender satu halaman dari 10.000 baris.
+scripts: minigrid/grid.js, minigrid/export.js, minigrid-demo.js
+bodyClass: page-mini-grid
+---
+<!--#navbar-->
+<button type="button" class="nav-icon-btn" title="Muat ulang halaman dari server"
+        onclick="window.MiniGridDemo.muatUlang(6)" aria-label="Muat ulang halaman Mini Grid 6">
+  <i data-icon="arrow-repeat" data-size="17"></i>
+</button>
+<button type="button" class="nav-icon-btn" title="Ekspor CSV (MiniGrid)"
+        onclick="window.MiniGridDemo.eksporCsv(6)" aria-label="Ekspor CSV Mini Grid 6">
+  <i data-icon="file-earmark-spreadsheet" data-size="17"></i>
+</button>
+<!--/#navbar-->
+
+<!--#actions-->
+<button class="btn btn-primary" onclick="window.MiniGridDemo.muatUlang(6)"><i data-icon="arrow-repeat"></i> Muat ulang halaman</button>
+<button class="btn btn-light" onclick="window.MiniGridDemo.bersihkanPilihan(6)"><i data-icon="x-circle"></i> Bersihkan pilihan</button>
+<button class="btn btn-light" onclick="window.MiniGridDemo.eksporCsv(6)"><i data-icon="download"></i> Ekspor CSV</button>
+<!--/#actions-->
+
+<div class="alert alert-info items-start">
+  <i data-icon="hdd-network" class="mt-0.5"></i>
+  <div>
+    <b>Mini Grid 6 — mode server-side.</b> Tidak ada 10.000 baris di dalam grid: setiap kali
+    pengguna berpindah halaman, menyortir, atau memfilter, grid memanggil
+    <code>server(params) → Promise { rows, total }</code> dan hanya merender
+    <b>satu halaman</b>. Paging, sortir, dan filter dihitung di "server" (di sini disimulasikan
+    di peramban dengan latensi 300 ms; kontraknya sama persis dengan endpoint sungguhan
+    <code>GET /api/halaman?page=1&amp;size=10&amp;sort=…&amp;filters=…</code>).
+  </div>
+</div>
+
+<div id="minigrid-page-6">
+  <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+    <div>
+      <h3 class="card-title m-0"><i data-icon="hdd-network" class="text-primary"></i> Data Karyawan (server-side)</h3>
+      <p class="fs-8 text-muted-2 m-0">Sortir, filter, dan pindah halaman memicu permintaan baru ke "server" — bukan penyaringan di peramban.</p>
+    </div>
+    <span class="flex items-center gap-2">
+      <span class="badge badge-soft-primary"><span data-mg-count>0</span> baris / halaman</span>
+      <span class="badge badge-soft-info" data-mg-sumber="6">belum dimuat</span>
+    </span>
+  </div>
+  <div id="minigrid-6" class="minigrid-host"></div>
+  <p class="fs-8 text-muted-2 mt-2 m-0" id="mg-log">MiniGrid siap.</p>
+</div>
+
+<div class="grid gap-4 mt-4 lg:grid-cols-2">
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title"><i data-icon="sliders" class="text-info"></i> Fitur contoh ini</h3>
+    </div>
+    <div class="card-body">
+      <ul class="list-unstyled m-0 space-y-2 text-sm">
+        <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span>Opsi <code>server(params)</code>: satu halaman per permintaan</span></li>
+        <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span>Paging &amp; jumlah baris per halaman dikerjakan "server" (<code>{ rows, total }</code>)</span></li>
+        <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span>Sortir multi-kolom dan filter beroperator ikut dikirim sebagai parameter</span></li>
+        <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span>Baris data tidak pernah menumpuk di peramban — total 10.000 baris</span></li>
+        <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span>Status sumber menampilkan rentang yang sedang tampil + latensi + jam</span></li>
+        <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span>Kait API sungguhan: <code>MiniGridDemo.sumberServer = "/api/halaman"</code></span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title"><i data-icon="code-slash" class="text-primary"></i> Kode inti</h3>
+    </div>
+    <div class="card-body">
+<pre class="code-block"><code>MiniGrid({
+  el: "#minigrid-6",
+  columns: kolom,
+  data: [],                 // hanya satu halaman yang ditahan
+  pageSize: 10,
+  server: async function (p) {
+    // p = { page, size, q, join, sort, filters, rules }
+    const qs = new URLSearchParams({
+      page: p.page, size: p.size, q: p.q,
+      sort: JSON.stringify(p.sort),
+      filters: JSON.stringify(p.filters)
+    });
+    const r = await fetch("/api/halaman?" + qs);
+    return await r.json();  // { rows: [...], total: 10000 }
+  },
+  onRefresh: (grid) => grid.render()
+});</code></pre>
+      <div class="callout callout-info mt-3 mb-0">
+        <b>Kenapa penting?</b> Untuk data besar, mode server-side membuat peramban hanya
+        menyimpan satu halaman. Kontrak <code>{ rows, total }</code> sama dengan
+        <code>server.mjs</code> di repo MiniGrid, jadi pindah dari simulasi ke API asli
+        tidak mengubah kode halaman.
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light" data-skin="blue">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Aurivo Dash — template dashboard perbankan bergaya AdminLTE v3 dengan Tailwind CSS v4, Alpine.js, dan vanilla JS. 100% offline, dwibahasa ID/EN. Siap dipakai offline.">
+<title>Aurivo Dash — Template Dashboard Perbankan (Offline)</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%23007bff'/%3E%3Cpath d='M8 3.2a4.8 4.8 0 1 0 0 9.6 4.8 4.8 0 0 0 0-9.6Zm0 1.4 2.4 3.6H8V4.6Z' fill='white'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/css/app.css">
+<script src="assets/js/theme-boot.js"></script>
+<script defer src="assets/js/icons.js"></script>
+<script defer src="assets/js/i18n.js"></script>
+<script defer src="assets/js/app.js"></script>
+<script defer src="assets/js/charts.js"></script>
+<script defer src="assets/js/aichat.js"></script>
+<script defer src="assets/js/alpine.min.js"></script>
+<style>
+  /* gaya khusus halaman perkenalan (inline agar berkas ini bisa berdiri sendiri) */
+  .hero {
+    background:
+      radial-gradient(1000px 480px at 12% -10%, color-mix(in oklab, var(--c-primary) 55%, transparent), transparent 60%),
+      linear-gradient(160deg, #0d1520 0%, #14202e 60%, #0d1520 100%);
+    color: #eef4fb;
+    padding: 3.5rem 1rem 3rem;
+  }
+  .hero h1 { color: #fff; }
+  .kbd {
+    display: inline-block;
+    padding: 0.1rem 0.4rem;
+    border: 1px solid var(--c-border);
+    border-bottom-width: 2px;
+    border-radius: 0.25rem;
+    background: var(--c-card-bg);
+    font-size: 0.8rem;
+    font-family: var(--font-mono);
+  }
+  .page-tile { transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease; }
+  .page-tile:hover { transform: translateY(-3px); border-color: var(--c-primary); box-shadow: 0 6px 18px rgba(0,0,0,.12); }
+</style>
+</head>
+<body x-data>
+
+<!-- ================= NAVBAR ================= -->
+<header class="app-navbar no-print" style="position:sticky">
+  <div class="mx-auto flex w-full max-w-[1200px] items-center gap-2 px-2">
+    <span class="flex items-center gap-2 text-lg font-light">
+      <span class="grid h-8 w-8 place-items-center rounded bg-primary text-primary-fg"><i data-icon="speedometer2" data-size="17"></i></span>
+      <span>Aurivo<b>Dash</b> <span class="text-[0.72rem] text-muted-2">Banking UI Kit</span></span>
+    </span>
+    <nav class="ml-auto hidden items-center md:flex">
+      <a class="navbar-link" href="#halaman">Halaman</a>
+      <a class="navbar-link" href="#fitur">Fitur</a>
+      <a class="navbar-link" href="#pasang">Cara pakai</a>
+      <a class="navbar-link" href="pages/icons.html">Ikon</a>
+    </nav>
+    <div class="ml-auto flex items-center gap-1 md:ml-0">
+      <button class="nav-icon-btn" @click="$store.ui.toggleTheme()" aria-label="Ganti tema">
+        <span x-show="$store.ui.theme === 'light'"><i data-icon="moon-stars" data-size="17"></i></span>
+        <span x-show="$store.ui.theme === 'dark'" x-cloak><i data-icon="sun" data-size="17"></i></span>
+      </button>
+      <a href="pages/index.html" class="btn btn-primary btn-sm"><i data-icon="speedometer2" data-size="14"></i> Buka dashboard</a>
+    </div>
+  </div>
+</header>
+
+<!-- ================= HERO ================= -->
+<section class="hero">
+  <div class="mx-auto grid max-w-[1200px] items-center gap-8 lg:grid-cols-[1.15fr_1fr]">
+    <div>
+      <div class="mb-3 flex flex-wrap gap-2">
+        <span class="badge badge-soft-success"><i data-icon="wifi-off" data-size="11"></i> 100% offline</span>
+        <span class="badge badge-soft-info">Tailwind CSS v4</span>
+        <span class="badge badge-soft-warning">Alpine.js 3</span>
+        <span class="badge badge-soft-primary">Vanilla JS</span>
+      </div>
+      <h1 class="mb-3 text-3xl font-semibold leading-tight sm:text-[2.6rem]">
+        Aurivo Dash — dashboard perbankan bergaya <b class="text-primary-fg">AdminLTE v3</b>, dibangun ulang dengan Tailwind CSS v4
+      </h1>
+      <p class="mb-4 max-w-[42rem] text-[1.05rem] opacity-90">
+        Tema lengkap: sidebar bertingkat, navbar dengan notifikasi, kartu statistik, tabel pintar tanpa plugin,
+        formulir, kanban drag &amp; drop, grafik SVG buatan sendiri, dark mode, dan 7 pilihan skin.
+        Semua berkas — CSS, JS, ikon, font — tersimpan lokal, jadi template berjalan penuh
+        tanpa koneksi internet maupun CDN.
+      </p>
+      <div class="flex flex-wrap gap-2">
+        <a href="pages/index.html" class="btn btn-primary btn-lg"><i data-icon="speedometer2"></i> Lihat dashboard</a>
+        <a href="pages/charts.html" class="btn btn-outline-secondary btn-lg" style="color:#eef4fb;border-color:rgba(255,255,255,.35)">
+          <i data-icon="bar-chart-line"></i> Contoh grafik
+        </a>
+      </div>
+      <dl class="mt-6 grid max-w-[34rem] grid-cols-3 gap-4 text-center">
+        <div><dt class="text-2xl font-bold text-white">25</dt><dd class="mb-0 text-sm opacity-80">Halaman siap pakai</dd></div>
+        <div><dt class="text-2xl font-bold text-white">320</dt><dd class="mb-0 text-sm opacity-80">Ikon lokal</dd></div>
+        <div><dt class="text-2xl font-bold text-white">0</dt><dd class="mb-0 text-sm opacity-80">Permintaan ke CDN</dd></div>
+      </dl>
+    </div>
+
+    <!-- mini pratinjau dashboard -->
+    <div class="card !mb-0 overflow-hidden" style="box-shadow:0 20px 45px rgba(0,0,0,.35)">
+      <div class="flex items-center gap-1.5 border-b border-line bg-surface-2 px-3 py-2">
+        <span class="dot bg-danger"></span><span class="dot bg-warning"></span><span class="dot bg-success"></span>
+        <span class="ml-2 fs-8 text-muted-2">pages/index.html</span>
+      </div>
+      <div class="flex">
+        <div class="hidden w-32 flex-none space-y-1 p-2 sm:block" style="background:var(--c-sidebar-bg)">
+          <div class="mb-2 h-5 rounded bg-white/10"></div>
+          <div class="h-4 rounded bg-primary"></div>
+          <div class="h-4 rounded bg-white/10"></div>
+          <div class="h-4 rounded bg-white/10"></div>
+          <div class="h-4 rounded bg-white/10"></div>
+        </div>
+        <div class="flex-1 p-3">
+          <div class="mb-3 grid grid-cols-3 gap-2">
+            <div class="small-box !mb-0 !p-2" style="--sb: var(--c-info)"><div class="sb-label fs-8">Pesanan</div><div class="text-base font-bold">1.284</div></div>
+            <div class="small-box !mb-0 !p-2" style="--sb: var(--c-success)"><div class="sb-label fs-8">Pendapatan</div><div class="text-base font-bold">48,6 jt</div></div>
+            <div class="small-box warn-fg !mb-0 !p-2" style="--sb: var(--c-warning)"><div class="sb-label fs-8">Pengguna</div><div class="text-base font-bold">8.907</div></div>
+          </div>
+          <div class="card !mb-2">
+            <div class="card-header !min-h-0 !py-2"><span class="fs-8 font-semibold">Tren penjualan</span></div>
+            <div class="card-body !p-2">
+              <div class="chart" data-chart="area" data-height="120" data-formatter="compact"
+                   data-labels="Jan,Feb,Mar,Apr,Mei,Jun,Jul,Agu" data-values="42,48,45,58,62,58,68,74" data-color="primary"></div>
+            </div>
+          </div>
+          <div class="card !mb-0">
+            <div class="card-body !p-2">
+              <div class="chart" data-chart="hbar" data-height="90" data-formatter="compact" data-color="info"
+                   data-labels="Toko online,Marketplace,Reseller" data-values="1820,1540,980"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<main class="mx-auto max-w-[1200px] px-4 py-8">
+
+  <!-- ================= HALAMAN ================= -->
+  <section id="halaman" class="mb-10">
+    <h2 class="mb-3 text-2xl font-semibold">Halaman yang tersedia</h2>
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <a href="pages/index.html" class="card page-tile !mb-0"><div class="card-body">
+        <div class="mb-2 flex items-center gap-2"><i data-icon="speedometer2" class="text-primary" data-size="20"></i><b>Dashboard</b></div>
+        <p class="mb-0 fs-8 text-muted-2">Small box, info box, grafik, timeline, obrolan tim, todo list, tabel transaksi.</p>
+      </div></a>
+      <a href="pages/analytics.html" class="card page-tile !mb-0"><div class="card-body">
+        <div class="mb-2 flex items-center gap-2"><i data-icon="graph-up-arrow" class="text-info" data-size="20"></i><b>Analitik</b></div>
+        <p class="mb-0 fs-8 text-muted-2">KPI, area chart, funnel konversi, perangkat, dan sumber pendapatan.</p>
+      </div></a>
+      <a href="pages/tables.html" class="card page-tile !mb-0"><div class="card-body">
+        <div class="mb-2 flex items-center gap-2"><i data-icon="table" class="text-success" data-size="20"></i><b>Tabel Data</b></div>
+        <p class="mb-0 fs-8 text-muted-2">Cari, sortir, paginasi, pilih massal, sticky head — tanpa plugin.</p>
+      </div></a>
+      <a href="pages/forms.html" class="card page-tile !mb-0"><div class="card-body">
+        <div class="mb-2 flex items-center gap-2"><i data-icon="pencil-square" class="text-warning" data-size="20"></i><b>Formulir</b></div>
+        <p class="mb-0 fs-8 text-muted-2">Input, select, switch, rentang, unggah berkas, validasi HTML5.</p>
+      </div></a>
+      <a href="pages/charts.html" class="card page-tile !mb-0"><div class="card-body">
+        <div class="mb-2 flex items-center gap-2"><i data-icon="bar-chart-line" class="text-danger" data-size="20"></i><b>Grafik</b></div>
+        <p class="mb-0 fs-8 text-muted-2">Line, area, bar, stacked, horizontal, donut, radial, sparkline.</p>
+      </div></a>
+      <a href="pages/widgets.html" class="card page-tile !mb-0"><div class="card-body">
+        <div class="mb-2 flex items-center gap-2"><i data-icon="grid-1x2" class="text-primary" data-size="20"></i><b>Widget &amp; Komponen</b></div>
+        <p class="mb-0 fs-8 text-muted-2">Kartu bertools, alert, progress, modal, tabs, accordion, toast.</p>
+      </div></a>
+      <a href="pages/kanban.html" class="card page-tile !mb-0"><div class="card-body">
+        <div class="mb-2 flex items-center gap-2"><i data-icon="kanban" class="text-info" data-size="20"></i><b>Papan Kanban</b></div>
+        <p class="mb-0 fs-8 text-muted-2">Drag &amp; drop antar kolom, tersimpan di localStorage.</p>
+      </div></a>
+      <a href="pages/icons.html" class="card page-tile !mb-0"><div class="card-body">
+        <div class="mb-2 flex items-center gap-2"><i data-icon="star" class="text-warning" data-size="20"></i><b>Galeri Ikon</b></div>
+        <p class="mb-0 fs-8 text-muted-2">320 ikon dengan pencarian &amp; klik-untuk-salin markup.</p>
+      </div></a>
+      <a href="pages/profile.html" class="card page-tile !mb-0"><div class="card-body">
+        <div class="mb-2 flex items-center gap-2"><i data-icon="person-circle" class="text-success" data-size="20"></i><b>Profil Pengguna</b></div>
+        <p class="mb-0 fs-8 text-muted-2">Kartu profil, statistik, tab aktivitas, biodata, pengaturan akun.</p>
+      </div></a>
+      <a href="pages/invoice.html" class="card page-tile !mb-0"><div class="card-body">
+        <div class="mb-2 flex items-center gap-2"><i data-icon="receipt" class="text-primary" data-size="20"></i><b>Invoice</b></div>
+        <p class="mb-0 fs-8 text-muted-2">Format siap cetak dengan ringkasan pajak dan status pengiriman.</p>
+      </div></a>
+      <a href="login.html" class="card page-tile !mb-0"><div class="card-body">
+        <div class="mb-2 flex items-center gap-2"><i data-icon="box-arrow-in-left" class="text-danger" data-size="20"></i><b>Masuk / Login</b></div>
+        <p class="mb-0 fs-8 text-muted-2">Validasi, lihat sandi, tombol demo (admin@perusahaan.id / admin123).</p>
+      </div></a>
+      <a href="register.html" class="card page-tile !mb-0"><div class="card-body">
+        <div class="mb-2 flex items-center gap-2"><i data-icon="person-plus" class="text-info" data-size="20"></i><b>Daftar Akun</b></div>
+        <p class="mb-0 fs-8 text-muted-2">Meter kekuatan kata sandi dan pendaftaran sosial (demo).</p>
+      </div></a>
+      <a href="404.html" class="card page-tile !mb-0"><div class="card-body">
+        <div class="mb-2 flex items-center gap-2"><i data-icon="exclamation-triangle-fill" class="text-warning" data-size="20"></i><b>Halaman 404</b></div>
+        <p class="mb-0 fs-8 text-muted-2">Error page dengan pencarian cepat dan tautan penting.</p>
+      </div></a>
+      <a href="pages/report-design.html" class="card page-tile !mb-0"><div class="card-body">
+        <div class="mb-2 flex items-center gap-2"><i data-icon="brush" class="text-warning" data-size="20"></i><b>Report Design</b></div>
+        <p class="mb-0 fs-8 text-muted-2">Desainer laporan visual (SatuReport): header, konten berulang, footer, ekspor PDF/XLSX.</p>
+      </div></a>
+      <a href="pages/report-viewer.html" class="card page-tile !mb-0"><div class="card-body">
+        <div class="mb-2 flex items-center gap-2"><i data-icon="eye" class="text-success" data-size="20"></i><b>Report Viewer</b></div>
+        <p class="mb-0 fs-8 text-muted-2">Menampilkan laporan siap cetak dari layout, 12 contoh bawaan, atau file paket di server.</p>
+      </div></a>
+      <a href="pages/report-example.html" class="card page-tile !mb-0"><div class="card-body">
+        <div class="mb-2 flex items-center gap-2"><i data-icon="clipboard-data" class="text-info" data-size="20"></i><b>Report Example</b></div>
+        <p class="mb-0 fs-8 text-muted-2">Galeri 12 contoh laporan — invoice, slip gaji, surat jalan, pivot, grafik penjualan.</p>
+      </div></a>
+      <div class="card !mb-0 border-dashed"><div class="card-body">
+        <div class="mb-2 flex items-center gap-2"><i data-icon="code-slash" class="text-muted-2" data-size="20"></i><b>Selanjutnya milik Anda</b></div>
+        <p class="mb-0 fs-8 text-muted-2">Tambahkan berkas baru di <code>src/pages/</code>, jalankan <code>npm run pages</code>.</p>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- ================= FITUR ================= -->
+  <section id="fitur" class="mb-10">
+    <h2 class="mb-3 text-2xl font-semibold">Yang membuatnya berbeda</h2>
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div class="card !mb-0"><div class="card-body">
+        <span class="mb-2 grid h-10 w-10 place-items-center rounded-full bg-primary/10 text-primary"><i data-icon="wifi-off" data-size="18"></i></span>
+        <b>Benar-benar offline</b>
+        <p class="mb-0 mt-1 text-sm text-muted-2">Tailwind dikompilasi ke satu berkas CSS; ikon, font, Alpine, dan SortableJS disalin ke <code>assets/</code>. Bisa dibuka lewat <code>file://</code>.</p>
+      </div></div>
+      <div class="card !mb-0"><div class="card-body">
+        <span class="mb-2 grid h-10 w-10 place-items-center rounded-full bg-info/10 text-info"><i data-icon="palette2" data-size="18"></i></span>
+        <b>Dark mode &amp; 7 skin</b>
+        <p class="mb-0 mt-1 text-sm text-muted-2">Warna aksen dan warna sidebar diatur lewat CSS variable, bisa diganti langsung dari panel kanan dan disimpan di localStorage.</p>
+      </div></div>
+      <div class="card !mb-0"><div class="card-body">
+        <span class="mb-2 grid h-10 w-10 place-items-center rounded-full bg-success/10 text-success"><i data-icon="bar-chart-line" data-size="18"></i></span>
+        <b>Grafik tanpa library</b>
+        <p class="mb-0 mt-1 text-sm text-muted-2">± 30 KB modul SVG buatan sendiri: line, area, bar, stacked, horizontal, donut, radial, sparkline — lengkap dengan tooltip dan animasi.</p>
+      </div></div>
+      <div class="card !mb-0"><div class="card-body">
+        <span class="mb-2 grid h-10 w-10 place-items-center rounded-full bg-warning/15 text-warning"><i data-icon="table" data-size="18"></i></span>
+        <b>Tabel pintar siap pakai</b>
+        <p class="mb-0 mt-1 text-sm text-muted-2">Pencarian, sortir per kolom, paginasi, dan pilih baris massal — cukup tambahkan atribut <code>data-datatable</code> pada <code>&lt;table&gt;</code>.</p>
+      </div></div>
+      <div class="card !mb-0"><div class="card-body">
+        <span class="mb-2 grid h-10 w-10 place-items-center rounded-full bg-danger/10 text-danger"><i data-icon="kanban" data-size="18"></i></span>
+        <b>Kanban drag &amp; drop</b>
+        <p class="mb-0 mt-1 text-sm text-muted-2">Memakai SortableJS lokal dengan contoh payload <code>onEnd</code> yang siap dikirim ke API Anda.</p>
+      </div></div>
+      <div class="card !mb-0"><div class="card-body">
+        <span class="mb-2 grid h-10 w-10 place-items-center rounded-full bg-info/10 text-info"><i data-icon="robot" data-size="18"></i></span>
+        <b>Asisten AI yang selalu muncul</b>
+        <p class="mb-0 mt-1 text-sm text-muted-2">Widget obrolan melayang di kanan bawah SEMUA halaman (termasuk aplikasi nasabah). Jawaban simulasi berjalan offline; sambungkan model sungguhan lewat <code>window.AIChat.setProvider(fn)</code>.</p>
+      </div></div>
+      <div class="card !mb-0"><div class="card-body">
+        <span class="mb-2 grid h-10 w-10 place-items-center rounded-full bg-primary/10 text-primary"><i data-icon="code-slash" data-size="18"></i></span>
+        <b>Struktur mudah dipelihara</b>
+        <p class="mb-0 mt-1 text-sm text-muted-2">Halaman disusun dari partial (<code>sidebar.html</code>, <code>navbar.html</code>, dst.) dengan skrip build Node sederhana, hasilnya HTML statis.</p>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- ================= CARA PAKAI ================= -->
+  <section id="pasang" class="mb-10">
+    <h2 class="mb-3 text-2xl font-semibold">Cara memakai</h2>
+    <div class="grid gap-4 lg:grid-cols-2">
+      <div class="card !mb-0">
+        <div class="card-header"><h3 class="card-title">A. Langsung pakai (tanpa Node)</h3></div>
+        <div class="card-body text-sm">
+          <ol class="mb-0 pl-4 text-muted-2">
+            <li>Ekstrak folder template.</li>
+            <li>Buka <code>pages/index.html</code> (klik dua kali) di peramban.</li>
+            <li>Selesai — CSS, ikon, dan font sudah ter-compile.</li>
+          </ol>
+          <div class="alert alert-warning items-start mt-3 mb-0">
+            <i data-icon="exclamation-triangle-fill" class="mt-0.5"></i>
+            <span class="fs-8">Dibuka lewat <code>file://</code> semua fitur tampilan jalan. Untuk <code>localStorage</code> dan
+            <code>IntersectionObserver</code> paling stabil, jalankan server statis kecil: <code>npm run serve</code>.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card !mb-0">
+        <div class="card-header"><h3 class="card-title">B. Mengubah kode</h3></div>
+        <div class="card-body text-sm">
+<pre class="scrollbar-thin mb-3 overflow-x-auto rounded bg-surface-2 p-3 text-[0.78rem]"><code>npm install          # sekali saja
+npm run dev          # Tailwind watch → assets/css/app.css
+npm run pages        # bangun ulang HTML dari src/pages
+npm run icons        # regenerate ikon ke assets/js/icons.js
+npm run build        # CSS produksi (minified)
+npm run serve        # server statis di :8080</code></pre>
+          <ul class="mb-0 pl-4 text-muted-2">
+            <li><code>src/input.css</code> — token tema, skin, dan komponen (design system)</li>
+            <li><code>src/pages/*.html</code> — isi halaman + front-matter</li>
+            <li><code>src/partials/</code> — sidebar, navbar, footer, panel kontrol, overlay</li>
+            <li><code>assets/js/app.js</code> — DataTable, kartu, toast, format angka Indonesia</li>
+            <li><code>assets/js/charts.js</code> — mesin grafik SVG</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card mt-4">
+      <div class="card-header"><h3 class="card-title">Pintasan keyboard &amp; catatan lisensi</h3></div>
+      <div class="card-body grid gap-4 lg:grid-cols-2">
+        <ul class="list-feed mb-0">
+          <li><span class="kbd">Ctrl</span> + <span class="kbd">K</span> <span class="ml-2 text-sm text-muted-2">fokus ke pencarian global</span></li>
+          <li><span class="kbd">Ctrl</span> + <span class="kbd">B</span> <span class="ml-2 text-sm text-muted-2">kecilkan / besarkan sidebar</span></li>
+          <li><span class="kbd">.</span> <span class="ml-2 text-sm text-muted-2">ganti mode terang / gelap</span></li>
+          <li><span class="kbd">Esc</span> <span class="ml-2 text-sm text-muted-2">tutup menu, modal, atau panel</span></li>
+        </ul>
+        <div class="alert alert-info items-start mb-0">
+          <i data-icon="shield-check" class="mt-0.5"></i>
+          <div class="fs-8">
+            Tailwind CSS (MIT), Alpine.js (MIT), SortableJS (MIT), Bootstrap Icons (MIT), Source Sans 3 (OFL).
+            Template ini <b>bukan</b> salinan kode AdminLTE — tampilan dan komponennya ditulis ulang
+            memakai utility Tailwind, jadi Anda bebas memodifikasinya.
+            <p class="mt-2 mb-0">
+              Aurivo Dash dirilis dengan lisensi MIT (berkas LICENSE di akar repositori): bebas dipakai, diubah, dan dijual untuk proyek apa pun — cukup sertakan salinan lisensi dan keterangan hak cipta.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="alert alert-success items-start">
+    <i data-icon="rocket" class="mt-0.5"></i>
+    <div>
+      <b>Siap dipakai.</b> Mulai dari <a href="pages/index.html" class="font-semibold underline">dashboard</a>,
+      atau lihat <a href="pages/widgets.html" class="font-semibold underline">semua komponen</a> untuk menyalin widget ke proyek Anda.
+    </div>
+  </div>
+</main>
+
+<footer class="app-footer">
+  <div class="mx-auto flex max-w-[1200px] flex-col items-start justify-between gap-2 px-2 sm:flex-row sm:items-center">
+    <p class="m-0"><b>Aurivo Dash</b> &copy; <span id="year">2026</span> — dashboard perbankan yang tetap jalan saat internet mati. Tailwind CSS v4 + Alpine.js + vanilla JS.</p>
+    <ul class="m-0 flex list-none flex-wrap gap-4 p-0">
+      <li><a href="pages/index.html" class="link-muted">Dashboard</a></li>
+      <li><a href="pages/icons.html" class="link-muted">Ikon</a></li>
+      <li><a href="login.html" class="link-muted">Login</a></li>
+    </ul>
+  </div>
+</footer>
+
+<script>
+  document.getElementById("year").textContent = new Date().getFullYear();
+</script>
+</body>
+</html>

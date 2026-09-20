@@ -1,0 +1,573 @@
+/* ------------------------------------------------------------------
+   mobile.css — kerangka aplikasi nasabah (mobile-first).
+   Dipakai halaman mobile/index.html (layout "mobile").
+   Warna memakai token tema (--c-*) sehingga ikut preset perbankan & mode gelap.
+   ------------------------------------------------------------------ */
+
+@layer components {
+  /* ------------------------------- kerangka ------------------------------- */
+  .mobile-page {
+    min-height: 100vh;
+    background:
+      radial-gradient(1200px 600px at 50% -10%, color-mix(in oklab, var(--c-primary) 18%, transparent), transparent 60%),
+      color-mix(in oklab, var(--c-body-bg) 70%, #0b1520);
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+  }
+  .mobile-app {
+    position: relative;
+    width: 100%;
+    max-width: 26.5rem;
+    /* Kerangka aplikasi: tinggi terkunci ke layar supaya bar bawah tetap
+       menempel dan hanya area isi (#mobile-isi) yang menggulir — sama
+       perilakunya dengan aplikasi nasabah sungguhan. */
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    background: var(--c-body-bg);
+    color: var(--c-fg);
+    overflow: hidden;
+  }
+  @media (min-width: 640px) {
+    .mobile-page { padding: 1.5rem; align-items: center; }
+    .mobile-app {
+      height: min(52rem, calc(100vh - 3rem));
+      max-height: calc(100vh - 3rem);
+      border-radius: 1.75rem;
+      box-shadow: 0 40px 80px -40px rgba(2, 8, 23, 0.75), inset 0 0 0 1px var(--c-border);
+    }
+  }
+
+  /* ------------------------------- bar atas ------------------------------- */
+  .mobile-bar {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.7rem 0.9rem 0.6rem;
+    background: linear-gradient(180deg, color-mix(in oklab, var(--c-primary) 92%, #000), color-mix(in oklab, var(--c-primary) 78%, #0b1520));
+    color: #fff;
+    border-bottom-left-radius: 1rem;
+    border-bottom-right-radius: 1rem;
+    box-shadow: 0 12px 24px -18px rgba(2, 8, 23, 0.8);
+  }
+  .mobile-bar-btn {
+    width: 2.1rem;
+    height: 2.1rem;
+    flex: none;
+    display: grid;
+    place-items: center;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.16);
+    color: #fff;
+    position: relative;
+    transition: background 0.15s ease;
+  }
+  .mobile-bar-btn:hover { background: rgba(255, 255, 255, 0.28); }
+  .mobile-bar-judul { min-width: 0; flex: 1; }
+  .mobile-bar-judul b { display: block; font-size: 0.95rem; line-height: 1.15; }
+  .mobile-bar-judul span { display: block; font-size: 0.72rem; opacity: 0.82; }
+  .mobile-titik-notif {
+    position: absolute;
+    top: 0.3rem;
+    right: 0.3rem;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 999px;
+    background: var(--c-warning);
+    box-shadow: 0 0 0 2px color-mix(in oklab, var(--c-primary) 80%, #000);
+  }
+
+  /* ------------------------------- isi ----------------------------------- */
+  .mobile-isi {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0.9rem 0.9rem 5.6rem;
+    scrollbar-width: thin;
+  }
+  .mobile-isi::-webkit-scrollbar { width: 6px; }
+  .mobile-isi::-webkit-scrollbar-thumb { background: var(--c-border); border-radius: 999px; }
+  .mobile-seksi + .mobile-seksi { margin-top: 1rem; }
+  .mobile-judul {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+  .mobile-judul h2 { margin: 0; font-size: 0.86rem; font-weight: 700; }
+  .mobile-judul a { font-size: 0.75rem; }
+
+  /* ------------------------------- kartu saldo --------------------------- */
+  .mobile-saldo {
+    position: relative;
+    overflow: hidden;
+    border-radius: 1.1rem;
+    padding: 1rem 1.05rem 1.1rem;
+    color: #fff;
+    background: linear-gradient(135deg, #0a2540 0%, #14508c 52%, #1f86dd 100%);
+    box-shadow: 0 22px 40px -26px rgba(2, 8, 23, 0.85);
+  }
+  .mobile-saldo::after {
+    content: "";
+    position: absolute;
+    right: -30%;
+    top: -60%;
+    width: 70%;
+    height: 200%;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0));
+    transform: rotate(16deg);
+    pointer-events: none;
+  }
+  .mobile-saldo-label { font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.82; }
+  .mobile-saldo-nilai { font-size: 1.65rem; font-weight: 700; letter-spacing: 0.01em; font-variant-numeric: tabular-nums; }
+  .mobile-saldo-meta { font-size: 0.72rem; opacity: 0.85; }
+  .mobile-mata {
+    width: 1.9rem;
+    height: 1.9rem;
+    display: grid;
+    place-items: center;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.18);
+    color: #fff;
+  }
+  .mobile-aksi-cepat {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.5rem;
+  }
+  .mobile-aksi {
+    display: grid;
+    justify-items: center;
+    gap: 0.35rem;
+    padding: 0.6rem 0.2rem;
+    border-radius: 0.85rem;
+    background: var(--c-card-bg);
+    box-shadow: inset 0 0 0 1px var(--c-border);
+    color: var(--c-fg);
+    font-size: 0.68rem;
+    line-height: 1.2;
+    text-align: center;
+    transition: transform 0.12s ease, box-shadow 0.15s ease;
+  }
+  .mobile-aksi:hover { transform: translateY(-2px); box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--c-primary) 45%, var(--c-border)); }
+  .mobile-aksi span:first-child {
+    width: 2.1rem;
+    height: 2.1rem;
+    display: grid;
+    place-items: center;
+    border-radius: 0.7rem;
+    background: color-mix(in oklab, var(--c-primary) 14%, transparent);
+    color: var(--c-primary);
+  }
+
+  /* ------------------------------- daftar -------------------------------- */
+  .mobile-kartu {
+    border-radius: 1rem;
+    background: var(--c-card-bg);
+    box-shadow: inset 0 0 0 1px var(--c-border);
+    overflow: hidden;
+  }
+  .mobile-baris {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.65rem 0.8rem;
+    color: var(--c-fg);
+  }
+  .mobile-baris + .mobile-baris { border-top: 1px solid var(--c-border); }
+  .mobile-baris-ikon {
+    width: 2.15rem;
+    height: 2.15rem;
+    flex: none;
+    display: grid;
+    place-items: center;
+    border-radius: 0.7rem;
+    background: color-mix(in oklab, var(--c-primary) 12%, transparent);
+    color: var(--c-primary);
+  }
+  .mobile-baris-ikon.masuk { background: color-mix(in oklab, var(--c-success) 15%, transparent); color: var(--c-success); }
+  .mobile-baris-ikon.keluar { background: color-mix(in oklab, var(--c-danger) 14%, transparent); color: var(--c-danger); }
+  .mobile-baris-teks { min-width: 0; flex: 1; }
+  .mobile-baris-teks b { display: block; font-size: 0.82rem; }
+  .mobile-baris-teks span { display: block; font-size: 0.7rem; color: var(--c-muted); }
+  .mobile-nominal { font-size: 0.83rem; font-weight: 700; font-variant-numeric: tabular-nums; text-align: right; }
+  .mobile-nominal.masuk { color: var(--c-success); }
+  .mobile-nominal.keluar { color: var(--c-danger); }
+
+  /* ------------------------------- chip & promo -------------------------- */
+  .mobile-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.24rem 0.6rem;
+    border-radius: 999px;
+    border: 1px solid var(--c-border);
+    background: var(--c-card-bg);
+    color: var(--c-fg);
+    font-size: 0.72rem;
+    white-space: nowrap;
+  }
+  .mobile-chip.aktif { background: var(--c-primary); border-color: var(--c-primary); color: var(--c-primary-fg); }
+  .mobile-promo {
+    display: flex;
+    gap: 0.6rem;
+    overflow-x: auto;
+    padding-bottom: 0.25rem;
+    scroll-snap-type: x mandatory;
+  }
+  .mobile-promo > * { scroll-snap-align: start; flex: 0 0 85%; }
+  .mobile-promo-kartu {
+    position: relative;
+    overflow: hidden;
+    border-radius: 1rem;
+    padding: 0.85rem 0.95rem;
+    color: #fff;
+    min-height: 6.2rem;
+    background: linear-gradient(120deg, #6d5320, #cfa94f);
+  }
+  .mobile-promo-kartu.dua { background: linear-gradient(120deg, #0a5a45, #17a074); }
+  .mobile-promo-kartu b { display: block; font-size: 0.9rem; }
+  .mobile-promo-kartu span { font-size: 0.72rem; opacity: 0.9; }
+
+  /* ------------------------------- navigasi bawah ------------------------ */
+  .mobile-nav {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 40;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.15rem;
+    padding: 0.45rem 0.4rem 0.55rem;
+    background: color-mix(in oklab, var(--c-card-bg) 92%, transparent);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-top: 1px solid var(--c-border);
+  }
+  @media (min-width: 640px) {
+    .mobile-nav { border-bottom-left-radius: 1.75rem; border-bottom-right-radius: 1.75rem; }
+  }
+  .mobile-nav-btn {
+    display: grid;
+    justify-items: center;
+    gap: 0.15rem;
+    padding: 0.35rem 0.1rem;
+    border-radius: 0.7rem;
+    color: var(--c-muted);
+    font-size: 0.63rem;
+    transition: color 0.15s ease, background 0.15s ease;
+  }
+  .mobile-nav-btn.aktif { color: var(--c-primary); background: color-mix(in oklab, var(--c-primary) 12%, transparent); }
+  .mobile-nav-btn .lencana {
+    position: absolute;
+    margin-left: 1.15rem;
+    margin-top: -0.25rem;
+    min-width: 1rem;
+    height: 1rem;
+    border-radius: 999px;
+    background: var(--c-danger);
+    color: #fff;
+    font-size: 0.6rem;
+    line-height: 1rem;
+    font-weight: 700;
+  }
+
+  /* ------------------------------- layar & lain-lain --------------------- */
+  .mobile-layar { display: none; }
+  .mobile-layar.aktif { display: block; animation: mobile-masuk 0.24s ease both; }
+  @keyframes mobile-masuk {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: none; }
+  }
+  .mobile-qr {
+    width: 12.5rem;
+    padding: 0.6rem;
+    margin-inline: auto;
+    border-radius: 0.9rem;
+    background: #fff;
+    box-shadow: 0 12px 24px -18px rgba(2, 8, 23, 0.6), inset 0 0 0 1px rgba(15, 23, 42, 0.08);
+  }
+  .mobile-qr svg { display: block; width: 100%; height: 100%; }
+  .mobile-sheet {
+    position: absolute;
+    inset: auto 0 0 0;
+    z-index: 45;
+    border-top-left-radius: 1.25rem;
+    border-top-right-radius: 1.25rem;
+    background: var(--c-card-bg);
+    box-shadow: 0 -22px 44px -26px rgba(2, 8, 23, 0.7);
+    transform: translateY(102%);
+    transition: transform 0.28s cubic-bezier(0.2, 0.8, 0.3, 1);
+    max-height: 88%;
+    overflow-y: auto;
+  }
+  .mobile-sheet.terbuka { transform: none; }
+  .mobile-sheet-pegangan {
+    width: 2.6rem;
+    height: 0.28rem;
+    border-radius: 999px;
+    background: var(--c-border);
+    margin: 0.55rem auto 0.35rem;
+  }
+  .mobile-input-nominal {
+    font-size: 1.5rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+    padding: 0.5rem;
+    border-radius: 0.75rem;
+    border: 1px dashed var(--c-border);
+    background: color-mix(in oklab, var(--c-primary) 6%, transparent);
+    width: 100%;
+    color: var(--c-fg);
+    outline: none;
+  }
+  .mobile-input-nominal:focus { border-color: var(--c-primary); border-style: solid; }
+  .mobile-numpad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.4rem;
+  }
+  .mobile-numpad button {
+    padding: 0.55rem 0;
+    border-radius: 0.7rem;
+    background: var(--c-card-bg);
+    box-shadow: inset 0 0 0 1px var(--c-border);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--c-fg);
+  }
+  .mobile-numpad button:hover { box-shadow: inset 0 0 0 1px var(--c-primary); color: var(--c-primary); }
+  .mobile-pin {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+  .mobile-pin i {
+    width: 0.72rem;
+    height: 0.72rem;
+    border-radius: 999px;
+    border: 2px solid var(--c-primary);
+  }
+  .mobile-pin i.terisi { background: var(--c-primary); }
+
+  /* mode gelap: gradien kartu dibuat sedikit lebih pekat */
+  html[data-theme="dark"] .mobile-saldo {
+    background: linear-gradient(135deg, #071a2e 0%, #0f3f70 52%, #1668b3 100%);
+  }
+}
+
+/* ==================================================================
+   RONDE 4 — biometric/PIN, tagihan & top up, jadwal, pusat notifikasi
+   (bagian dari aplikasi nasabah; tetap di dalam kerangka .mobile-app)
+   ================================================================== */
+@layer components {
+  /* --------------------------- layar biometric / PIN --------------------------- */
+  .bio-layar {
+    position: absolute;
+    inset: 0;
+    z-index: 70;                 /* di atas kunci layar (Lock ada di body, ini di dalam app) */
+    display: grid;
+    align-items: stretch;
+    background:
+      radial-gradient(120% 60% at 50% 0%, color-mix(in oklab, var(--c-primary) 42%, transparent), transparent 60%),
+      linear-gradient(180deg, #0a2c52 0%, #071a30 55%, #04101f 100%);
+    color: #fff;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.26s ease, visibility 0.26s ease;
+  }
+  .bio-layar[data-open="1"] { opacity: 1; visibility: visible; }
+  .bio-kotak {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+    padding: 1.1rem 1.25rem 1.4rem;
+    min-height: 100%;
+    overflow-y: auto;
+  }
+  .bio-kotak.bio-getar { animation: bio-getar 0.45s ease; }
+  @keyframes bio-getar {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-9px); }
+    50% { transform: translateX(8px); }
+    80% { transform: translateX(-4px); }
+  }
+  .bio-kepala { display: flex; align-items: center; justify-content: space-between; font-size: 0.85rem; opacity: 0.92; }
+  .bio-merek { display: inline-flex; align-items: center; gap: 0.35rem; font-weight: 300; letter-spacing: 0.01em; }
+  .bio-merek b { font-weight: 700; }
+  .bio-jam { font-variant-numeric: tabular-nums; font-weight: 600; }
+  .bio-akun { display: grid; justify-items: center; gap: 0.2rem; margin-top: 1.2rem; text-align: center; }
+  .bio-avatar { background: rgba(255, 255, 255, 0.16); color: #fff; }
+  .bio-rek { font-size: 0.72rem; opacity: 0.7; }
+  .bio-alasan { text-align: center; font-size: 0.8rem; opacity: 0.9; margin: 0.35rem 0 0.6rem; min-height: 2.2em; }
+  .bio-panel { display: grid; gap: 0.7rem; justify-items: center; }
+  .bio-jari {
+    position: relative;
+    width: 7.5rem;
+    height: 7.5rem;
+    display: grid;
+    place-items: center;
+    border-radius: 999px;
+    color: #fff;
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.25);
+    overflow: hidden;
+    transition: transform 0.15s ease, background 0.2s ease;
+  }
+  .bio-jari svg { width: 4.4rem; height: 4.4rem; opacity: 0.95; }
+  .bio-jari:active { transform: scale(0.97); }
+  .bio-jari.memindai { background: rgba(255, 255, 255, 0.16); }
+  .bio-jari.berhasil { background: color-mix(in oklab, var(--c-success) 42%, transparent); }
+  .bio-scan {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 0.28rem;
+    border-radius: 999px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.95), transparent);
+    opacity: 0;
+    top: 12%;
+  }
+  .bio-jari.memindai .bio-scan { opacity: 1; animation: bio-pindai 0.9s ease-in-out infinite; }
+  @keyframes bio-pindai {
+    0% { top: 12%; }
+    50% { top: 84%; }
+    100% { top: 12%; }
+  }
+  .bio-jari.memindai::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 999px;
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.35);
+    animation: bio-denyut 1.1s ease-out infinite;
+  }
+  @keyframes bio-denyut {
+    to { box-shadow: 0 0 0 1.6rem rgba(255, 255, 255, 0); }
+  }
+  .bio-petunjuk { font-size: 0.78rem; opacity: 0.85; margin: 0; text-align: center; }
+  .bio-pin-titik { display: flex; gap: 0.65rem; justify-content: center; margin: 0.6rem 0 0.2rem; }
+  .bio-pin-titik i {
+    width: 0.85rem; height: 0.85rem; border-radius: 999px;
+    border: 2px solid rgba(255, 255, 255, 0.55);
+    transition: background 0.15s ease, transform 0.15s ease;
+  }
+  .bio-pin-titik i.terisi { background: #fff; transform: scale(1.06); }
+  .bio-pin-titik.bio-ok i { background: var(--c-success); border-color: var(--c-success); }
+  .bio-salah { margin: 0; font-size: 0.75rem; color: #ffd7d7; }
+  .bio-numpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; width: 100%; max-width: 17rem; }
+  .bio-numpad button {
+    padding: 0.7rem 0;
+    border-radius: 0.85rem;
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    font-size: 1.1rem;
+    font-weight: 600;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16);
+    transition: background 0.15s ease, transform 0.1s ease;
+  }
+  .bio-numpad button:active { transform: scale(0.96); }
+  .bio-numpad button:hover { background: rgba(255, 255, 255, 0.2); }
+  .bio-numpad .bio-bantu { font-size: 0.72rem; font-weight: 500; opacity: 0.85; }
+  .bio-lupa { font-size: 0.75rem; color: rgba(255, 255, 255, 0.85); text-decoration: underline; background: none; }
+  .bio-demo { margin-top: auto; text-align: center; font-size: 0.68rem; opacity: 0.72; }
+  .bio-demo b { letter-spacing: 0.12em; }
+
+  /* --------------------------- tagihan & top up --------------------------- */
+  .mobile-segmen {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.25rem;
+    padding: 0.25rem;
+    border-radius: 0.85rem;
+    background: color-mix(in oklab, var(--c-primary) 8%, transparent);
+    margin-bottom: 0.75rem;
+  }
+  .mobile-segmen button {
+    padding: 0.45rem 0;
+    border-radius: 0.68rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--c-muted);
+  }
+  .mobile-segmen button.aktif { background: var(--c-card-bg); color: var(--c-primary); box-shadow: 0 6px 14px -10px rgba(2, 8, 23, 0.6); }
+  .tagihan-item {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.7rem 0.8rem;
+    text-align: left;
+    width: 100%;
+  }
+  .tagihan-item + .tagihan-item { border-top: 1px solid var(--c-border); }
+  .tagihan-item.lunas { opacity: 0.62; }
+  .tagihan-logo {
+    width: 2.4rem; height: 2.4rem; flex: none; display: grid; place-items: center;
+    border-radius: 0.75rem; font-size: 0.7rem; font-weight: 700; color: #fff;
+  }
+  .tagihan-isi { min-width: 0; flex: 1; }
+  .tagihan-isi b { display: block; font-size: 0.84rem; }
+  .tagihan-isi span { display: block; font-size: 0.7rem; color: var(--c-muted); }
+  .tagihan-nominal { text-align: right; font-size: 0.84rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .tagihan-nominal span { display: block; font-size: 0.68rem; font-weight: 500; color: var(--c-muted); }
+  .mobile-sheet-judul { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.6rem; }
+
+  /* --------------------------- jadwal (scheduler nasabah) --------------------------- */
+  .jadwal-item { padding: 0.75rem 0.85rem; }
+  .jadwal-item + .jadwal-item { border-top: 1px solid var(--c-border); }
+  .jadwal-kepala { display: flex; align-items: flex-start; gap: 0.7rem; }
+  .jadwal-isi { min-width: 0; flex: 1; }
+  .jadwal-isi b { display: block; font-size: 0.85rem; }
+  .jadwal-isi span { display: block; font-size: 0.7rem; color: var(--c-muted); }
+  .jadwal-meta { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.45rem; }
+  .jadwal-aksi { display: flex; gap: 0.4rem; margin-top: 0.55rem; }
+  .jadwal-item[data-aktif="0"] { opacity: 0.72; }
+  .sakelar {
+    position: relative;
+    width: 2.4rem; height: 1.35rem; flex: none;
+    border-radius: 999px;
+    background: color-mix(in oklab, var(--c-muted) 40%, transparent);
+    transition: background 0.2s ease;
+  }
+  .sakelar::after {
+    content: ""; position: absolute; top: 0.17rem; left: 0.17rem;
+    width: 1rem; height: 1rem; border-radius: 999px; background: #fff;
+    transition: transform 0.2s ease;
+  }
+  .sakelar[data-hidup="1"] { background: var(--c-success); }
+  .sakelar[data-hidup="1"]::after { transform: translateX(1.05rem); }
+  .jadwal-kalender { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.25rem; }
+  .jadwal-kalender .hari {
+    text-align: center; font-size: 0.6rem; color: var(--c-muted); padding-bottom: 0.15rem;
+  }
+  .jadwal-kalender .sel {
+    min-height: 2.6rem;
+    border-radius: 0.5rem;
+    background: color-mix(in oklab, var(--c-primary) 6%, transparent);
+    box-shadow: inset 0 0 0 1px var(--c-border);
+    padding: 0.2rem;
+    display: grid;
+    gap: 0.15rem;
+    align-content: start;
+  }
+  .jadwal-kalender .sel.kini { box-shadow: inset 0 0 0 2px var(--c-primary); }
+  .jadwal-kalender .titik {
+    height: 0.32rem; border-radius: 999px;
+    background: var(--c-primary); opacity: 0.85;
+  }
+  .jadwal-kalender .titik.gagal { background: var(--c-danger); }
+  .jadwal-kalender .titik.jeda { background: var(--c-muted); opacity: 0.5; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bio-jari.memindai .bio-scan, .bio-jari.memindai::after { animation: none; }
+    .bio-kotak.bio-getar { animation: none; }
+  }
+}

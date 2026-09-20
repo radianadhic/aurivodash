@@ -1,0 +1,388 @@
+{
+  "title": "Label Pengiriman (Multi-Paket)",
+  "description": "Label resi berukuran kecil — content berulang otomatis mencetak satu label per paket, lengkap dengan barcode resi.",
+  "layout": {
+    "version": 1,
+    "width": 400,
+    "headerSection": {
+      "height": 72,
+      "visible": true,
+      "style": {
+        "backgroundColor": "#111827"
+      },
+      "items": [
+        {
+          "id": "it_mu53ki9c_0",
+          "type": "text",
+          "name": "",
+          "text": "🚚 ANKA LOGISTIK",
+          "binding": "",
+          "x": 14,
+          "y": 10,
+          "width": 190,
+          "height": 20,
+          "src": "",
+          "style": {
+            "color": "#ffffff",
+            "fontSize": 13,
+            "fontWeight": "bold"
+          }
+        },
+        {
+          "id": "it_mu53ki9c_1",
+          "type": "text",
+          "name": "",
+          "text": "Resi",
+          "binding": "trackingNo",
+          "x": 200,
+          "y": 12,
+          "width": 186,
+          "height": 16,
+          "src": "",
+          "style": {
+            "color": "#d1d5db",
+            "fontSize": 10,
+            "textAlign": "right",
+            "fontFamily": "ui-monospace,monospace"
+          }
+        },
+        {
+          "id": "it_mu53ki9c_2",
+          "type": "barcode",
+          "name": "",
+          "text": "ANK-8821-JKT",
+          "binding": "trackingNo",
+          "x": 100,
+          "y": 34,
+          "width": 200,
+          "height": 32,
+          "src": "",
+          "style": {
+            "color": "#ffffff"
+          },
+          "showText": false
+        }
+      ]
+    },
+    "contentSection": {
+      "height": 172,
+      "visible": true,
+      "style": {},
+      "items": [
+        {
+          "id": "it_mu53ki9c_3",
+          "type": "text",
+          "name": "",
+          "text": "PAKET — No.",
+          "binding": "__row",
+          "x": 14,
+          "y": 8,
+          "width": 60,
+          "height": 13,
+          "src": "",
+          "style": {
+            "fontSize": 9,
+            "color": "#9ca3af"
+          }
+        },
+        {
+          "id": "it_mu53ki9c_4",
+          "type": "text",
+          "name": "",
+          "text": "dari",
+          "binding": "__count",
+          "x": 330,
+          "y": 8,
+          "width": 56,
+          "height": 13,
+          "src": "",
+          "style": {
+            "fontSize": 9,
+            "color": "#9ca3af",
+            "textAlign": "right"
+          }
+        },
+        {
+          "id": "it_mu53ki9c_5",
+          "type": "text",
+          "name": "",
+          "text": "KEPADA:",
+          "binding": "",
+          "x": 14,
+          "y": 26,
+          "width": 80,
+          "height": 12,
+          "src": "",
+          "style": {
+            "fontSize": 8,
+            "color": "#6b7280"
+          }
+        },
+        {
+          "id": "it_mu53ki9c_6",
+          "type": "text",
+          "name": "",
+          "text": "Penerima",
+          "binding": "recipient",
+          "x": 14,
+          "y": 40,
+          "width": 372,
+          "height": 20,
+          "src": "",
+          "style": {
+            "fontSize": 13,
+            "fontWeight": "bold",
+            "color": "#111827"
+          }
+        },
+        {
+          "id": "it_mu53ki9c_7",
+          "type": "text",
+          "name": "",
+          "text": "Alamat",
+          "binding": "address",
+          "x": 14,
+          "y": 60,
+          "width": 372,
+          "height": 30,
+          "src": "",
+          "style": {
+            "fontSize": 10,
+            "color": "#374151"
+          }
+        },
+        {
+          "id": "it_mu53ki9c_8",
+          "type": "text",
+          "name": "",
+          "text": "📞 Telepon",
+          "binding": "phone",
+          "x": 14,
+          "y": 94,
+          "width": 220,
+          "height": 15,
+          "src": "",
+          "style": {
+            "fontSize": 10,
+            "color": "#374151"
+          }
+        },
+        {
+          "id": "it_mu53ki9c_9",
+          "type": "text",
+          "name": "",
+          "text": "Berat",
+          "binding": "weight",
+          "x": 260,
+          "y": 94,
+          "width": 126,
+          "height": 15,
+          "src": "",
+          "style": {
+            "fontSize": 10,
+            "color": "#111827",
+            "fontWeight": "bold",
+            "textAlign": "right"
+          }
+        },
+        {
+          "id": "it_mu53ki9c_a",
+          "type": "line",
+          "name": "",
+          "text": "",
+          "binding": "",
+          "x": 14,
+          "y": 118,
+          "width": 372,
+          "height": 2,
+          "src": "",
+          "style": {
+            "borderColor": "#e5e7eb",
+            "borderWidth": 1
+          }
+        },
+        {
+          "id": "it_mu53ki9c_b",
+          "type": "text",
+          "name": "",
+          "text": "Pengirim:",
+          "binding": "",
+          "x": 14,
+          "y": 128,
+          "width": 70,
+          "height": 12,
+          "src": "",
+          "style": {
+            "fontSize": 8,
+            "color": "#6b7280"
+          }
+        },
+        {
+          "id": "it_mu53ki9c_c",
+          "type": "text",
+          "name": "",
+          "text": "PT Satu Sejahtera — Depok",
+          "binding": "sender",
+          "x": 14,
+          "y": 140,
+          "width": 260,
+          "height": 14,
+          "src": "",
+          "style": {
+            "fontSize": 9,
+            "color": "#6b7280"
+          }
+        },
+        {
+          "id": "it_mu53ki9c_d",
+          "type": "text",
+          "name": "",
+          "text": "Layanan",
+          "binding": "service",
+          "x": 280,
+          "y": 136,
+          "width": 106,
+          "height": 18,
+          "src": "",
+          "style": {
+            "fontSize": 10,
+            "fontWeight": "bold",
+            "color": "#111827",
+            "textAlign": "right"
+          }
+        },
+        {
+          "id": "it_mu53ki9c_e",
+          "type": "line",
+          "name": "",
+          "text": "",
+          "binding": "",
+          "x": 0,
+          "y": 168,
+          "width": 400,
+          "height": 2,
+          "src": "",
+          "style": {
+            "borderColor": "#9ca3af",
+            "borderWidth": 1
+          }
+        }
+      ],
+      "binding": "packages",
+      "groups": []
+    },
+    "footerSection": {
+      "height": 66,
+      "visible": true,
+      "style": {
+        "backgroundColor": "#fef2f2"
+      },
+      "items": [
+        {
+          "id": "it_mu53ki9c_f",
+          "type": "text",
+          "name": "",
+          "text": "⚠ FRAGILE — JANGAN DIBANTING",
+          "binding": "",
+          "x": 16,
+          "y": 10,
+          "width": 368,
+          "height": 18,
+          "src": "",
+          "style": {
+            "fontSize": 12,
+            "fontWeight": "bold",
+            "color": "#b91c1c",
+            "textAlign": "center"
+          }
+        },
+        {
+          "id": "it_mu53ki9c_g",
+          "type": "text",
+          "name": "",
+          "text": "Simpan di tempat kering • Sisi atas menghadap ke atas ↑",
+          "binding": "",
+          "x": 16,
+          "y": 32,
+          "width": 368,
+          "height": 13,
+          "src": "",
+          "style": {
+            "fontSize": 9,
+            "color": "#ef4444",
+            "textAlign": "center"
+          }
+        },
+        {
+          "id": "it_mu53ki9c_h",
+          "type": "text",
+          "name": "",
+          "text": "Dokumen label sah — dicetak oleh SatuReport Offline",
+          "binding": "",
+          "x": 16,
+          "y": 48,
+          "width": 368,
+          "height": 12,
+          "src": "",
+          "style": {
+            "fontSize": 8,
+            "color": "#fca5a5",
+            "textAlign": "center"
+          }
+        }
+      ]
+    },
+    "page": {
+      "paper": "A4",
+      "orientation": "portrait",
+      "margins": {
+        "top": 47,
+        "right": 47,
+        "bottom": 47,
+        "left": 47
+      },
+      "pagination": false
+    },
+    "pageHeaderSection": {
+      "height": 34,
+      "visible": false,
+      "style": {},
+      "items": []
+    },
+    "pageFooterSection": {
+      "height": 30,
+      "visible": false,
+      "style": {},
+      "items": []
+    }
+  },
+  "data": {
+    "trackingNo": "ANK-8821-JKT",
+    "packages": [
+      {
+        "recipient": "Budi Santoso",
+        "address": "Jl. Melati No. 4, Kemang, Jakarta Selatan 12730",
+        "phone": "0812-3456-7890",
+        "weight": "2,4 kg",
+        "sender": "PT Satu Sejahtera — Depok",
+        "service": "SAME DAY"
+      },
+      {
+        "recipient": "Siti Rahayu",
+        "address": "Perum Griya Asri Blok C2/9, Pancoran Mas, Depok 16436",
+        "phone": "0857-1122-3344",
+        "weight": "1,1 kg",
+        "sender": "PT Satu Sejahtera — Depok",
+        "service": "REGULER"
+      },
+      {
+        "recipient": "Agus Wijaya",
+        "address": "Jl. Asia Afrika No. 65, Bandung 40111",
+        "phone": "0821-9988-7766",
+        "weight": "3,8 kg",
+        "sender": "PT Satu Sejahtera — Depok",
+        "service": "KARGO"
+      }
+    ]
+  }
+}

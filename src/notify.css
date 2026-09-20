@@ -1,0 +1,107 @@
+/* ------------------------------------------------------------------
+   notify.css — banner notifikasi "push" palsu (window.Notify).
+   Banner muncul di dalam bingkai aplikasi (mobile) atau di kanan atas
+   (dashboard), meluncur dari atas, dan menutup sendiri.
+   ------------------------------------------------------------------ */
+
+@layer components {
+  .push-host {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 60;
+    display: grid;
+    gap: 0.4rem;
+    padding: 0.5rem 0.55rem 0;
+    pointer-events: none;
+  }
+  .push-host-desktop {
+    position: fixed;
+    top: 0.75rem;
+    right: 0.75rem;
+    left: auto;
+    width: min(23rem, calc(100vw - 1.5rem));
+    padding: 0;
+    z-index: 105;
+  }
+
+  .push-banner {
+    pointer-events: auto;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    padding: 0.65rem 0.7rem;
+    border-radius: 0.9rem;
+    background: color-mix(in oklab, var(--c-card-bg) 94%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 18px 40px -22px rgba(2, 8, 23, 0.85), inset 0 0 0 1px var(--c-border);
+    color: var(--c-fg);
+    cursor: pointer;
+    opacity: 0;
+    transform: translateY(-115%) scale(0.97);
+    transition: transform 0.34s cubic-bezier(0.2, 0.9, 0.25, 1), opacity 0.28s ease;
+  }
+  .push-banner.masuk { opacity: 1; transform: none; }
+  .push-ikon {
+    width: 2rem;
+    height: 2rem;
+    flex: none;
+    display: grid;
+    place-items: center;
+    border-radius: 0.6rem;
+    background: color-mix(in oklab, var(--c-primary) 15%, transparent);
+    color: var(--c-primary);
+  }
+  .push-banner[data-tone="success"] .push-ikon { background: color-mix(in oklab, var(--c-success) 16%, transparent); color: var(--c-success); }
+  .push-banner[data-tone="warning"] .push-ikon { background: color-mix(in oklab, var(--c-warning) 20%, transparent); color: var(--c-warning); }
+  .push-banner[data-tone="danger"] .push-ikon { background: color-mix(in oklab, var(--c-danger) 16%, transparent); color: var(--c-danger); }
+  .push-isi { min-width: 0; flex: 1; display: block; }
+  .push-judul { display: block; font-size: 0.82rem; font-weight: 700; line-height: 1.25; }
+  .push-pesan {
+    display: block;
+    font-size: 0.74rem;
+    color: var(--c-muted);
+    line-height: 1.35;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+  .push-waktu { display: block; margin-top: 0.15rem; font-size: 0.68rem; color: var(--c-muted); opacity: 0.85; }
+  .push-tutup {
+    flex: none;
+    width: 1.5rem;
+    height: 1.5rem;
+    display: grid;
+    place-items: center;
+    border-radius: 999px;
+    color: var(--c-muted);
+    background: transparent;
+  }
+  .push-tutup:hover { background: color-mix(in oklab, var(--c-muted) 15%, transparent); }
+
+  /* pratinjau kecil nomor/badge pada lonceng navbar */
+  .notif-tinjau { max-height: 22rem; overflow-y: auto; }
+  .notif-baris { display: flex; gap: 0.6rem; align-items: flex-start; padding: 0.6rem 1rem; text-align: left; width: 100%; }
+  .notif-baris:hover { background: var(--c-surface-2); }
+  .notif-baris[data-baca="0"] { background: color-mix(in oklab, var(--c-primary) 7%, transparent); }
+  .notif-ikon {
+    width: 2rem; height: 2rem; flex: none; display: grid; place-items: center; border-radius: 999px;
+    background: color-mix(in oklab, var(--c-primary) 14%, transparent); color: var(--c-primary);
+  }
+  .notif-baris[data-tone="success"] .notif-ikon { background: color-mix(in oklab, var(--c-success) 15%, transparent); color: var(--c-success); }
+  .notif-baris[data-tone="warning"] .notif-ikon { background: color-mix(in oklab, var(--c-warning) 20%, transparent); color: var(--c-warning); }
+  .notif-baris[data-tone="danger"] .notif-ikon { background: color-mix(in oklab, var(--c-danger) 15%, transparent); color: var(--c-danger); }
+  .notif-teks { min-width: 0; flex: 1; }
+  .notif-teks b { display: block; font-size: 0.82rem; line-height: 1.3; }
+  .notif-teks span { display: block; font-size: 0.74rem; color: var(--c-muted); }
+  .notif-teks i { display: block; font-size: 0.66rem; font-style: normal; color: var(--c-muted); opacity: 0.85; margin-top: 0.1rem; }
+  .notif-titik { width: 0.5rem; height: 0.5rem; border-radius: 999px; background: var(--c-primary); flex: none; margin-top: 0.6rem; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .push-banner { transition: opacity 0.2s ease; transform: none; }
+    .push-banner.masuk { opacity: 1; }
+  }
+}

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light" data-skin="blue">
+<head>
+<!-- @include head.html -->
+</head>
+<body x-data data-page="shell" class="{{BODY_CLASS}}">
+
+  <!-- @include sidebar.html -->
+
+  <div class="app-wrapper">
+    <!-- @include navbar.html -->
+
+    <div class="flex flex-1 flex-col">
+      <!-- Header halaman: breadcrumb + judul + subjudul + aksi -->
+      <div class="content-header no-print" data-sticky-header>
+        <div class="content-header-inner" :class="$store.ui.container === 'boxed' && 'mx-auto max-w-[1440px]'">
+          <div class="content-header-main">
+            <nav aria-label="Breadcrumb">
+              <ol class="breadcrumb">{{CRUMB}}</ol>
+            </nav>
+            <h1 class="page-title">{{PAGE_TITLE}}</h1>
+            <p class="page-subtitle">{{PAGE_SUBTITLE}}</p>
+          </div>
+          <div class="page-actions">{{PAGE_ACTIONS}}</div>
+        </div>
+      </div>
+
+      <main class="px-4 pb-5">
+        <div :class="$store.ui.container === 'boxed' && 'mx-auto max-w-[1440px]'">
+{{CONTENT}}
+        </div>
+      </main>
+    </div>
+
+    <!-- @include footer.html -->
+  </div>
+
+  <!-- @include control-sidebar.html -->
+  <!-- @include overlays.html -->
+
+  <script>
+    /* Tahun otomatis di footer */
+    document.querySelectorAll("[data-year]").forEach(function (n) { n.textContent = new Date().getFullYear(); });
+  </script>
+</body>
+</html>

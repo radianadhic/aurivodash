@@ -1,0 +1,150 @@
+---
+path: pages/report-example.html
+title: Report Example
+pageTitle: Report Example
+subtitle: Galeri 12 contoh laporan siap pakai — thumbnail dirender langsung oleh mesin SatuReport
+crumb: Home|index.html, Tools, Report Example
+description: Report Example — galeri contoh laporan SatuReport (invoice, slip gaji, surat jalan, pivot, grafik) yang bisa dibuka di Report Viewer atau disunting di Report Design.
+bodyClass: page-tools
+scripts: satureport-tools.js
+---
+<!--#navbar-->
+<button type="button" class="nav-icon-btn" title="Buka galeri contoh di tab baru"
+        onclick="window.SatuTools.buka('report-example')" aria-label="Buka galeri contoh di tab baru">
+  <i data-icon="box-arrow-up-right" data-size="17"></i>
+</button>
+<button type="button" class="nav-icon-btn" title="Muat ulang galeri"
+        onclick="window.SatuTools.muatUlang('sr-frame-example')" aria-label="Muat ulang galeri contoh">
+  <i data-icon="arrow-clockwise" data-size="17"></i>
+</button>
+<button type="button" class="nav-icon-btn" title="Penampil laporan (Report Viewer)"
+        onclick="window.SatuTools.buka('report-viewer')" aria-label="Buka Report Viewer">
+  <i data-icon="eye" data-size="17"></i>
+</button>
+<!--/#navbar-->
+
+<!--#actions-->
+<button class="btn btn-light" onclick="window.SatuTools.muatUlang('sr-frame-example')"><i data-icon="arrow-clockwise"></i> Muat ulang</button>
+<button class="btn btn-light" onclick="window.SatuTools.buka('report-viewer')"><i data-icon="eye"></i> Buka Report Viewer</button>
+<button class="btn btn-light" onclick="window.SatuTools.layarPenuh('kartu-example')"><i data-icon="arrows-fullscreen"></i> Layar penuh</button>
+<button class="btn btn-primary" onclick="window.SatuTools.buka('report-example')"><i data-icon="box-arrow-up-right"></i> Buka tab baru</button>
+<!--/#actions-->
+
+<div class="alert alert-info items-start">
+  <i data-icon="clipboard-data" class="mt-0.5"></i>
+  <div>
+    <b>Report Example — galeri contoh laporan.</b>
+    <span>Setiap kartu adalah contoh siap pakai: thumbnail-nya dirender langsung oleh mesin SatuReport, bukan gambar.</span>
+    <span>Dari sini laporan bisa langsung dibuka di Report Viewer atau disunting di Report Design — cukup tekan satu tombol.</span>
+    <span>Sumbernya repositori github.com/radianadhic/satureport yang di-vendor lokal di folder assets/satureport/.</span>
+  </div>
+</div>
+
+<script>
+  /* Bahasa aplikasi mengikuti bahasa template — dijalankan sebelum iframe dibuat. */
+  (function () {
+    try {
+      var l = localStorage.getItem("app.locale");
+      localStorage.setItem("satureport.lang", l === "en" ? "en" : "id");
+    } catch (e) { /* mode privat */ }
+  })();
+</script>
+
+<div class="card sr-frame-card" id="kartu-example">
+  <div class="card-header flex-wrap">
+    <h3 class="card-title"><i data-icon="clipboard-data" class="text-primary"></i> Galeri contoh laporan</h3>
+    <div class="card-tools flex-wrap">
+      <span class="badge badge-soft-info" title="Aplikasi berjalan di dalam bingkai">iframe · SatuReport</span>
+      <button type="button" class="btn btn-light btn-sm" onclick="window.SatuTools.muatUlang('sr-frame-example')" title="Muat ulang galeri">
+        <i data-icon="arrow-clockwise" data-size="13"></i>
+      </button>
+      <button type="button" class="btn btn-light btn-sm" onclick="window.SatuTools.buka('report-example')" title="Buka di tab baru">
+        <i data-icon="box-arrow-up-right" data-size="13"></i>
+      </button>
+      <button type="button" class="btn btn-light btn-sm" data-card-tool="fullscreen" title="Layar penuh">
+        <i data-icon="arrows-fullscreen" data-size="13"></i>
+      </button>
+    </div>
+  </div>
+  <div class="card-body !p-0">
+    <iframe id="sr-frame-example" class="sr-frame" data-sr
+            src="../assets/satureport/examples.html"
+            title="Galeri contoh laporan SatuReport" loading="eager"></iframe>
+  </div>
+  <div class="card-footer flex flex-wrap items-center justify-between gap-2">
+    <span class="fs-8 text-muted-2">
+      Tombol <b>▶ Viewer</b> membuka laporan, <b>✎ Desainer</b> membukanya untuk disunting, <b>⬇</b> mengunduh paket <code>.satureport.json</code>.
+    </span>
+    <span class="flex flex-wrap items-center gap-2">
+      <button class="btn btn-light btn-sm" onclick="window.SatuTools.buka('report-viewer')"><i data-icon="eye" data-size="13"></i> Report Viewer</button>
+      <button class="btn btn-light btn-sm" onclick="window.SatuTools.buka('report-design')"><i data-icon="brush" data-size="13"></i> Report Design</button>
+    </span>
+  </div>
+</div>
+
+<div class="card mt-4">
+  <div class="card-header">
+    <h3 class="card-title"><i data-icon="journal-text" class="text-info"></i> Isi galeri</h3>
+    <div class="card-tools"><span class="badge badge-soft-primary">12 contoh</span></div>
+  </div>
+  <div class="card-body !pt-2">
+    <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      <div>
+        <h4 class="m-0 text-sm font-semibold"><i data-icon="receipt" class="text-primary" data-size="14"></i> Invoice / Faktur Penjualan</h4>
+        <p class="fs-8 text-muted-2 m-0">Faktur multi-halaman: header dan footer berulang, kolom item, serta ringkasan total.</p>
+      </div>
+      <div>
+        <h4 class="m-0 text-sm font-semibold"><i data-icon="person-vcard" class="text-primary" data-size="14"></i> Slip Gaji Karyawan</h4>
+        <p class="fs-8 text-muted-2 m-0">Dua kolom pendapatan dan potongan dalam satu baris berulang per karyawan.</p>
+      </div>
+      <div>
+        <h4 class="m-0 text-sm font-semibold"><i data-icon="truck" class="text-primary" data-size="14"></i> Surat Jalan / Delivery Order</h4>
+        <p class="fs-8 text-muted-2 m-0">Dokumen pengiriman barang dengan barcode nomor resi dan daftar barangnya.</p>
+      </div>
+      <div>
+        <h4 class="m-0 text-sm font-semibold"><i data-icon="boxes" class="text-primary" data-size="14"></i> Laporan Stok per Kategori</h4>
+        <p class="fs-8 text-muted-2 m-0">Menampilkan Sub Group: setiap kategori punya subjudul dan daftar barangnya sendiri.</p>
+      </div>
+      <div>
+        <h4 class="m-0 text-sm font-semibold"><i data-icon="bookmark" class="text-primary" data-size="14"></i> Label Pengiriman Multi-Paket</h4>
+        <p class="fs-8 text-muted-2 m-0">Label resi ukuran kecil — content berulang mencetak beberapa label dalam satu halaman.</p>
+      </div>
+      <div>
+        <h4 class="m-0 text-sm font-semibold"><i data-icon="cash-coin" class="text-primary" data-size="14"></i> Kwitansi Pembayaran</h4>
+        <p class="fs-8 text-muted-2 m-0">Kwitansi klasik dengan kotak terbilang, kotak total gelap, dan area tanda tangan.</p>
+      </div>
+      <div>
+        <h4 class="m-0 text-sm font-semibold"><i data-icon="graph-up-arrow" class="text-primary" data-size="14"></i> Laporan Penjualan + Grafik</h4>
+        <p class="fs-8 text-muted-2 m-0">Tabel penjualan bulanan dengan grafik garis tren realisasi dibanding target.</p>
+      </div>
+      <div>
+        <h4 class="m-0 text-sm font-semibold"><i data-icon="grid" class="text-primary" data-size="14"></i> Pivot Table / Crosstab</h4>
+        <p class="fs-8 text-muted-2 m-0">Crosstab otomatis dari data mentah: baris kota, kolom bulan, plus subtotal.</p>
+      </div>
+      <div>
+        <h4 class="m-0 text-sm font-semibold"><i data-icon="cloud-arrow-down" class="text-primary" data-size="14"></i> Direktori Pengguna dari Data API</h4>
+        <p class="fs-8 text-muted-2 m-0">Layout untuk endpoint JSON API — tombol reload mengambil datanya ulang.</p>
+      </div>
+      <div>
+        <h4 class="m-0 text-sm font-semibold"><i data-icon="database" class="text-primary" data-size="14"></i> Laporan Query Kustom</h4>
+        <p class="fs-8 text-muted-2 m-0">Paket layout + data berisi query dan endpoint: viewer mengirim query ke endpoint.</p>
+      </div>
+      <div>
+        <h4 class="m-0 text-sm font-semibold"><i data-icon="funnel" class="text-primary" data-size="14"></i> Laporan Berparameter</h4>
+        <p class="fs-8 text-muted-2 m-0">Laporan disembunyikan sampai form parameter seperti Tahun dan Kota diisi.</p>
+      </div>
+      <div>
+        <h4 class="m-0 text-sm font-semibold"><i data-icon="hdd-network" class="text-primary" data-size="14"></i> Viewer Memuat File dari Server</h4>
+        <p class="fs-8 text-muted-2 m-0">Contoh pemakaian parameter url: satu berkas .satureport.json dimuat lewat fetch.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .sr-frame { width: 100%; height: 74vh; min-height: 460px; border: 0; display: block; background: #fff; }
+  .page-tools .card-maximized { z-index: 79; }               /* tetap di bawah widget AI (80) */
+  .page-tools .card-maximized .card-body { padding: 0; overflow: hidden; display: flex; }
+  .page-tools .card-maximized .sr-frame { flex: 1; height: auto; min-height: 0; }
+  @media print { .sr-frame { height: auto; min-height: 0; } }
+</style>

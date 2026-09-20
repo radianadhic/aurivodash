@@ -1,0 +1,104 @@
+---
+path: pages/icons.html
+title: Galeri Ikon
+pageTitle: Galeri Ikon
+crumb: Home|index.html, Komponen, Ikon
+description: 320 ikon Bootstrap Icons yang dibundel sebagai file JS lokal — tanpa font eksternal, jadi tetap tampil saat offline.
+---
+<!--#navbar-->
+<button type="button" class="nav-icon-btn" title="Fokus ke pencarian ikon"
+        onclick="var s=document.querySelector('[data-icon-search]'); if(s){s.focus(); s.scrollIntoView({block:'center'});}"
+        aria-label="Fokus ke pencarian ikon">
+  <i data-icon="search" data-size="17"></i>
+</button>
+<!--/#navbar-->
+
+<!--#actions-->
+<button class="btn btn-light" onclick="copyIconList()"><i data-icon="clipboard"></i> Salin daftar nama</button>
+<button class="btn btn-primary" data-print><i data-icon="printer"></i> Cetak galeri</button>
+<!--/#actions-->
+
+<div class="card" x-data="iconGallery" x-init="init()">
+  <div class="card-header flex-wrap">
+    <h3 class="card-title"><i data-icon="star" class="text-warning"></i> Ikon tersedia</h3>
+    <div class="card-tools flex-wrap">
+      <div class="relative">
+        <span class="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-2"><i data-icon="search" data-size="13"></i></span>
+        <input type="search" data-icon-search class="form-control !w-56 !py-1 pl-8 text-sm" placeholder="Cari ikon, mis. cart…" x-model="query" aria-label="Cari ikon">
+      </div>
+      <select class="form-select !py-1 text-sm" x-model.number="size" aria-label="Ukuran ikon">
+        <option value="18">Kecil</option>
+        <option value="26">Sedang</option>
+        <option value="36">Besar</option>
+        <option value="48">Sangat besar</option>
+      </select>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="alert alert-info items-start">
+      <i data-icon="wifi-off" class="mt-0.5"></i>
+      <div class="text-sm">
+        Semua ikon disimpan sebagai path SVG di <code>assets/js/icons.js</code> (di-generate oleh
+        <code>npm run icons</code> dari paket Bootstrap Icons, lisensi MIT). Pemakaian:
+        <code>&lt;i data-icon="cart-check" data-size="18"&gt;&lt;/i&gt;</code> — tanpa font ikon eksternal,
+        tanpa emoji, tanpa permintaan jaringan.
+      </div>
+    </div>
+
+    <p class="fs-8 text-muted-2" x-text="$store.i18n.t(filtered.length + ' ikon ditampilkan dari ' + names.length + ' tersedia')"></p>
+
+    <div class="grid gap-2" style="grid-template-columns: repeat(auto-fill, minmax(140px, 1fr))">
+      <template x-for="name in filtered" :key="name">
+        <button type="button" class="flex flex-col items-center gap-2 rounded border border-line bg-surface p-3 text-center transition hover:border-primary hover:text-primary"
+                @click="copy(name)">
+          <i :data-icon="name" :data-size="size"></i>
+          <span class="w-full truncate fs-8 text-muted-2" x-text="name" :title="name"></span>
+        </button>
+      </template>
+    </div>
+
+    <p class="mt-4 mb-0 fs-8 text-muted-2" x-show="!filtered.length" x-cloak>
+      Ikon dengan kata kunci tersebut tidak ada. Tambahkan nama ikonnya ke <code>tools/build-icons.mjs</code> lalu jalankan <code>npm run icons</code>.
+    </p>
+  </div>
+  <div class="card-footer text-muted-2 fs-8">
+    Klik salah satu ikon untuk menyalin markup <code>&lt;i data-icon="…"&gt;</code> ke clipboard.
+  </div>
+</div>
+
+<script>
+  /* Didaftarkan sebagai komponen Alpine supaya magic ($nextTick, $watch) tersedia */
+  document.addEventListener("alpine:init", function () {
+    Alpine.data("iconGallery", function () {
+      return {
+        names: [],
+        query: "",
+        size: 26,
+        init: function () {
+          this.names = Object.keys(window.ICONS || {}).sort();
+          var self = this;
+          // render ikon setelah Alpine selesai membuat elemen
+          this.$nextTick(function () { window.renderIcons(document); });
+          this.$watch("query", function () { self.$nextTick(function () { window.renderIcons(document); }); });
+          this.$watch("size", function () { self.$nextTick(function () { window.renderIcons(document); }); });
+        },
+        get filtered() {
+          var q = this.query.trim().toLowerCase();
+          if (!q) return this.names;
+          return this.names.filter(function (n) { return n.indexOf(q) !== -1; });
+        },
+        copy: function (name) {
+          var text = '<i data-icon="' + name + '" data-size="18"></i>';
+          copyText(text);
+          window.toast("Markup " + text + " disalin.", "info", "Ikon disalin");
+        }
+      };
+    });
+  });
+
+  function copyIconList() {
+    var list = Object.keys(window.ICONS || {}).sort().join(", ");
+    copyText(list);
+    window.toast(Object.keys(window.ICONS || {}).length + " nama ikon disalin ke clipboard.", "success", "Berhasil");
+  }
+</script>

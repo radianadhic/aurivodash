@@ -1,0 +1,364 @@
+---
+path: pages/kartu-qris.html
+title: Kartu dengan QRIS — Kartu Bank + QRIS
+pageTitle: Kartu dengan QRIS
+subtitle: Kartu debit/kredit interaktif (balik 3D) · QRIS dinamis per nominal · limit, blokir, dan riwayat
+crumb: Home|index.html, Kartu, Kartu dengan QRIS
+description: Halaman "Kartu dengan QRIS": kartu bank interaktif dengan kode QRIS di baliknya, pembuat QR dinamis ber-CRC16, pengaturan limit, blokir kartu, dan riwayat transaksi.
+scripts: qrcode-generator.min.js, qris.js
+bodyClass: page-kartu
+---
+<!--#navbar-->
+<button type="button" class="nav-icon-btn" data-kartu-balik title="Balik kartu (lihat QRIS di belakang)"
+        aria-label="Balik kartu">
+  <i data-icon="arrow-repeat" data-size="17"></i>
+</button>
+<button type="button" class="nav-icon-btn" data-kartu-tampil title="Tampilkan / sembunyikan nomor kartu"
+        aria-label="Tampilkan nomor kartu">
+  <i data-icon="eye" data-size="17"></i>
+</button>
+<button type="button" class="nav-icon-btn" id="kartu-qr-unduh" title="Unduh QRIS kartu (PNG)"
+        aria-label="Unduh QRIS kartu">
+  <i data-icon="download" data-size="17"></i>
+</button>
+<!--/#navbar-->
+
+<!--#actions-->
+<button class="btn btn-light" onclick="window.print()"><i data-icon="printer"></i> Cetak</button>
+<button class="btn btn-light" data-kartu-salin><i data-icon="clipboard"></i> Salin nomor kartu</button>
+<button class="btn btn-light" data-kartu-tampil><i data-icon="eye"></i> Tampilkan nomor</button>
+<button class="btn btn-danger" data-kartu-kunci><i data-icon="shield-lock"></i> Kunci kartu</button>
+<!--/#actions-->
+
+<div class="alert alert-info items-start">
+  <i data-icon="credit-card-2-front" class="mt-0.5"></i>
+  <div>
+    <b>Kartu dengan QRIS.</b> Klik <b>kartu</b> di bawah untuk membalik sisi depan/belakang —
+    sisi belakang memuat <b>kode QRIS</b> hasil pembangkit lokal. Nominal bisa diatur, lalu
+    tombol <b>Buat QR</b> menerbitkan QR dinamis (berlaku 5 menit) beserta payload EMVCo
+    lengkap dengan <code>CRC16</code> yang bisa dipindai aplikasi bank/e-wallet sungguhan.
+  </div>
+</div>
+
+<div class="grid gap-4 xl:grid-cols-3">
+  <!-- ============================ kolom utama ============================ -->
+  <div class="space-y-4 xl:col-span-2">
+    <!-- Kartu -->
+    <div class="card">
+      <div class="card-header flex-wrap gap-2">
+        <h3 class="card-title"><i data-icon="credit-card-2-front" class="text-primary"></i> Kartu saya</h3>
+        <div class="card-tools flex flex-wrap items-center gap-2">
+          <div id="kartu-pilih" class="flex flex-wrap gap-1.5">
+            <button type="button" class="kartu-chip-pilih aktif" aria-pressed="true">
+              <span class="kartu-titik" data-tema="navy"></span> Debit
+            </button>
+            <button type="button" class="kartu-chip-pilih" aria-pressed="false">
+              <span class="kartu-titik" data-tema="gold"></span> Kredit
+            </button>
+            <button type="button" class="kartu-chip-pilih" aria-pressed="false">
+              <span class="kartu-titik" data-tema="emerald"></span> Virtual
+            </button>
+          </div>
+          <span class="badge badge-success" id="kartu-status">QRIS aktif</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="kartu-panggung" id="kartu-panggung" data-balik="0">
+          <div class="kartu">
+            <!-- ------------------------- sisi depan ------------------------- -->
+            <div class="kartu-face kartu-depan" id="kartu-depan" data-tema="navy">
+              <div class="flex items-start justify-between gap-3">
+                <div>
+                  <div class="kartu-tanda-air">Bank Nusantara</div>
+                  <div class="text-sm font-semibold" id="kartu-jenis">Kartu Debit Utama</div>
+                </div>
+                <i data-icon="wifi" data-size="18" class="rotate-90 opacity-80" aria-hidden="true"></i>
+              </div>
+              <div class="kartu-chip" aria-hidden="true"></div>
+              <div>
+                <div class="kartu-nomor" id="kartu-nomor">•••• •••• •••• 4821</div>
+                <div class="mt-2 flex items-end justify-between gap-3">
+                  <div>
+                    <span class="kartu-label">Pemilik</span>
+                    <b class="text-[0.82rem] tracking-wide" id="kartu-pemilik">AULIA SAPUTRA</b>
+                  </div>
+                  <div>
+                    <span class="kartu-label">Berlaku</span>
+                    <b class="text-[0.82rem]" id="kartu-berlaku">08/29</b>
+                  </div>
+                  <div class="text-right">
+                    <span class="kartu-label">Merek</span>
+                    <b class="text-[0.82rem]" id="kartu-merek">GPN</b>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- ------------------------ sisi belakang ------------------------ -->
+            <div class="kartu-face kartu-belakang" id="kartu-belakang" data-tema="navy">
+              <div class="kartu-strip" aria-hidden="true"></div>
+              <div class="flex items-end justify-between gap-3">
+                <div class="min-w-0">
+                  <div class="flex items-center gap-2">
+                    <div class="kartu-qr" id="kartu-qr-belakang"></div>
+                    <div class="text-[0.7rem] leading-snug opacity-90">
+                      <b class="block text-[0.8rem]">QRIS</b>
+                      <span>Pindai kode ini untuk membayar dengan kartu</span>
+                    </div>
+                  </div>
+                  <div class="mt-2">
+                    <span class="kartu-label">NMID</span>
+                    <b class="font-mono text-[0.72rem]" id="kartu-nmid">ID1024351287941</b>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <span class="kartu-label">CVV</span>
+                  <b id="kartu-cvv">412</b>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-4 grid gap-2 sm:grid-cols-3">
+          <button type="button" class="btn btn-light btn-block" data-kartu-balik>
+            <i data-icon="arrow-repeat"></i> Balik kartu
+          </button>
+          <button type="button" class="btn btn-light btn-block" data-kartu-tampil>
+            <i data-icon="eye"></i> Tampilkan nomor
+          </button>
+          <button type="button" class="btn btn-outline-secondary btn-block" data-kartu-salin>
+            <i data-icon="clipboard"></i> Salin nomor
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid gap-4 lg:grid-cols-2">
+      <!-- QRIS dinamis dari kartu -->
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title"><i data-icon="qr-code" class="text-primary"></i> QRIS dari kartu ini</h3>
+          <div class="card-tools"><span class="badge badge-soft-success" id="kartu-crc">CRC16 —</span></div>
+        </div>
+        <div class="card-body space-y-4">
+          <div class="qr-kotak" data-qr-kotak>
+            <div class="qr-isi" id="kartu-qr"></div>
+            <div class="qr-logo" aria-hidden="true">
+              <span class="qr-tanda"><i></i><i></i><i></i><i></i></span>
+              <b>QRIS</b>
+            </div>
+            <span class="qr-kedaluwarsa-pesan">QR kedaluwarsa — tekan Buat QR</span>
+          </div>
+
+          <div class="form-row grid gap-3 sm:grid-cols-2">
+            <div>
+              <label class="form-label" for="kartu-nominal">Nominal tagihan</label>
+              <input type="number" class="form-control" id="kartu-nominal" value="50000" min="0" step="1000"
+                     inputmode="numeric" aria-label="Nominal QRIS">
+            </div>
+            <div>
+              <span class="form-label">Berlaku</span>
+              <div class="form-control flex items-center justify-between" aria-live="polite">
+                <span class="tabular-nums font-semibold" id="kartu-hitung">05:00</span>
+                <span class="badge badge-soft-primary">QR dinamis</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap gap-2">
+            <button type="button" class="btn btn-primary btn-sm" id="kartu-qr-buat">
+              <i data-icon="arrow-repeat"></i> Buat QR
+            </button>
+            <button type="button" class="btn btn-light btn-sm" id="kartu-qr-unduh">
+              <i data-icon="download"></i> Unduh PNG
+            </button>
+            <button type="button" class="btn btn-light btn-sm" id="kartu-qr-salin">
+              <i data-icon="clipboard"></i> Salin payload
+            </button>
+          </div>
+
+          <div>
+            <div class="flex items-center justify-between gap-2">
+              <span class="form-label m-0">Payload EMVCo</span>
+              <span class="fs-8 text-muted-2 tabular-nums" id="kartu-nominal-tampil">Rp 50.000</span>
+            </div>
+            <code class="qr-payload" id="kartu-payload">—</code>
+          </div>
+        </div>
+      </div>
+
+      <!-- Limit & pengaturan -->
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title"><i data-icon="sliders" class="text-info"></i> Limit &amp; pengaturan</h3>
+        </div>
+        <div class="card-body space-y-4">
+          <div>
+            <div class="flex items-center justify-between gap-2 text-sm">
+              <span class="font-medium">Limit harian</span>
+              <span class="tabular-nums" id="kartu-limit-harian-nilai">—</span>
+            </div>
+            <div class="progress progress-sm mt-1">
+              <div class="progress-bar" id="kartu-limit-harian" role="progressbar" style="width:0%"
+                   aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
+            </div>
+            <div class="flex justify-between fs-8 text-muted-2">
+              <span>Terpakai hari ini</span>
+              <span class="tabular-nums" id="kartu-limit-harian-persen">0%</span>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between gap-2 text-sm">
+            <span>Limit per transaksi</span>
+            <b class="tabular-nums" id="kartu-limit-transaksi-nilai">—</b>
+          </div>
+
+          <div>
+            <div class="flex items-center justify-between gap-2 text-sm">
+              <span class="font-medium">Transaksi luar negeri</span>
+              <span class="fs-8 text-muted-2 tabular-nums" id="kartu-limit-luar-nilai">—</span>
+            </div>
+            <div class="progress progress-sm mt-1">
+              <div class="progress-bar bg-info" id="kartu-limit-luar" role="progressbar" style="width:0%"></div>
+            </div>
+          </div>
+
+          <div class="border-t border-slate-200 pt-3 dark:border-slate-700">
+            <label class="form-switch flex cursor-pointer items-center gap-3">
+              <input type="checkbox" class="form-check-input" id="kartu-qris-toggle" checked
+                     aria-label="Aktifkan QRIS di kartu ini">
+              <span class="text-sm font-medium">Aktifkan pembayaran QRIS di kartu ini</span>
+            </label>
+            <p class="fs-8 text-muted-2 mt-2 mb-0">
+              Saat QRIS nonaktif, kode QR di balik kartu dan tombol unduh ikut dimatikan.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Riwayat transaksi kartu -->
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title"><i data-icon="clock-history" class="text-primary"></i> Transaksi kartu terakhir</h3>
+        <div class="card-tools"><span class="badge badge-soft-primary">14 baris</span></div>
+      </div>
+      <div class="card-body !py-2">
+        <div class="flex flex-wrap items-end gap-2">
+          <div>
+            <label class="form-label m-0 fs-8" for="cari-kartu">Cari</label>
+            <input type="search" id="cari-kartu" data-dt-search class="form-control !w-56 !py-1 text-sm"
+                   placeholder="Cari merchant, metode, status…" aria-label="Cari transaksi kartu">
+          </div>
+          <div>
+            <label class="form-label m-0 fs-8" for="baris-kartu">Baris</label>
+            <select id="baris-kartu" data-dt-length class="form-select !py-1 text-sm" aria-label="Baris per halaman">
+              <option>5</option>
+              <option selected>10</option>
+              <option>25</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="table-wrap table-wrap-static">
+        <table class="table table-hover table-sm table-sortable" data-datatable id="tabel-kartu">
+          <thead>
+            <tr>
+              <th data-sort>Merchant</th>
+              <th data-sort>Waktu</th>
+              <th data-sort>Metode</th>
+              <th data-sort class="text-right">Nominal</th>
+              <th class="text-center">Status</th>
+            </tr>
+          </thead>
+          <tbody id="kartu-riwayat">
+            <tr data-dt-empty><td colspan="5" class="py-3 text-center text-muted-2">Belum ada transaksi.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card-footer flex flex-wrap items-center justify-between gap-2">
+        <span class="fs-8 text-muted-2" data-dt-info></span>
+        <div class="flex flex-wrap gap-1" data-dt-pagination></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================ kolom samping ============================ -->
+  <div class="space-y-4">
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title"><i data-icon="wallet2" class="text-success"></i> Ringkasan kartu</h3>
+      </div>
+      <div class="card-body space-y-3">
+        <div class="flex items-center justify-between gap-2 text-sm">
+          <span class="text-muted-2">Jenis kartu</span><b id="kartu-jenis-ringkas">Kartu Debit Utama</b>
+        </div>
+        <div class="flex items-center justify-between gap-2 text-sm">
+          <span class="text-muted-2">Nomor</span><b class="font-mono" id="kartu-nomor-ringkas">•••• 4821</b>
+        </div>
+        <div class="flex items-center justify-between gap-2 text-sm">
+          <span class="text-muted-2">Pemilik</span><b id="kartu-pemilik-ringkas">AULIA SAPUTRA</b>
+        </div>
+        <div class="flex items-center justify-between gap-2 text-sm">
+          <span class="text-muted-2">Merchant QRIS</span><b id="kartu-merchant">AULIA SAPUTRA · JAKARTA</b>
+        </div>
+        <div class="flex items-center justify-between gap-2 text-sm">
+          <span class="text-muted-2">Acquirer</span><b>ID.CO.QRIS.WWW</b>
+        </div>
+        <div class="border-t border-slate-200 pt-3 dark:border-slate-700">
+          <p class="fs-8 text-muted-2 m-0">
+            QRIS pada kartu memakai NMID merchant pemegang kartu, jadi QR yang ditampilkan
+            bisa langsung dipindai aplikasi pembayaran.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title"><i data-icon="clipboard-check" class="text-success"></i> Fitur halaman ini</h3>
+      </div>
+      <div class="card-body">
+        <ul class="list-unstyled m-0 space-y-2 text-sm">
+          <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span>Kartu 3D bisa <b>dibalik</b> — sisi belakang memuat kode QRIS</span></li>
+          <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span>3 kartu contoh (debit, kredit, virtual) dengan tema berbeda</span></li>
+          <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span>Masking nomor kartu + tombol tampilkan/salin</span></li>
+          <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span>QRIS dinamis per nominal dengan hitung mundur 5 menit</span></li>
+          <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span>Payload EMVCo + <code>CRC16</code> yang sah (bisa diverifikasi)</span></li>
+          <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span>Unduh QR sebagai PNG atau salin payload ke papan klip</span></li>
+          <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span>Limit harian, per transaksi, dan luar negeri</span></li>
+          <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span>Blokir kartu lewat dialog konfirmasi bawaan template</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title"><i data-icon="code-slash" class="text-primary"></i> Kode inti</h3>
+      </div>
+      <div class="card-body">
+<pre class="code-block"><code>// 1) bangun payload QRIS (EMVCo MPM) + CRC16
+const teks = Qris.payload({
+  nmid: "ID1024351287941",
+  merchant: "AULIA SAPUTRA",
+  kota: "JAKARTA",
+  mcc: "5814",
+  tipe: "dinamis",        // "statis" | "dinamis"
+  nominal: 50000,
+  keterangan: "INV-2026-0918"
+});
+
+// 2) gambar QR (SVG) — pustaka lokal, tanpa jaringan
+Qris.render(document.querySelector("#kartu-qr"), teks, { logo: true });
+
+// 3) verifikasi ulang CRC16 sebelum dikirim ke server
+Qris.crcSah(teks);            // true
+Qris.parse(teks);             // daftar tag: 00, 01, 51, 52, 53, 54 …</code></pre>
+        <div class="callout callout-info mt-3 mb-0">
+          <b>Tentang gambar.</b> Panel logo di tengah QR hanya untuk tampilan; berkas PNG yang
+          diunduh memuat QR murni (level koreksi M) supaya tetap mudah dipindai.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

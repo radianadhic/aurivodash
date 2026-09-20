@@ -1,0 +1,1523 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light" data-skin="blue">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="Template mobile-first untuk nasabah — biometric/PIN, notifikasi push, saldo, tagihan & top up, QRIS, kartu, riwayat, jadwal otomatis, dan profil. 100% offline.">
+<title>Aplikasi Nasabah (Mobile) · Aurivo Dash</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%23007bff'/%3E%3Cpath d='M8 3.2a4.8 4.8 0 1 0 0 9.6 4.8 4.8 0 0 0 0-9.6Zm0 1.4 2.4 3.6H8V4.6Z' fill='white'/%3E%3C/svg%3E">
+
+<!-- ================= ASET LOKAL (tanpa internet) =================
+     tailwind di-compile ke satu file, ikon & font ikut dibundel. -->
+<link rel="stylesheet" href="../assets/css/app.css?v=19681127">
+<script src="../assets/js/theme-boot.js?v=19681127"></script>
+
+<!-- Urutan penting: ikon → bahasa (i18n) → app (daftarkan komponen Alpine) → charts → Alpine -->
+<script defer src="../assets/js/icons.js?v=19681127"></script>
+<script defer src="../assets/js/i18n.js?v=19681127"></script>
+<script defer src="../assets/js/app.js?v=19681127"></script>
+<script defer src="../assets/js/lock.js?v=19681127"></script>
+<script defer src="../assets/js/notify.js?v=19681127"></script>
+<script defer src="../assets/js/aichat.js?v=19681127"></script>
+<script defer src="../assets/js/charts.js?v=19681127"></script>
+<script defer src="../assets/js/alpine.min.js?v=19681127"></script>
+<script defer src="../assets/js/qrcode-generator.min.js"></script>
+<script defer src="../assets/js/qris.js"></script>
+<script defer src="../assets/js/biometric.js"></script>
+
+</head>
+<body x-data class="mobile-page page-mobile" data-page="mobile">
+<div class="mobile-app" x-data="nasabahApp()">
+
+  <!-- ============================== BAR ATAS ============================== -->
+  <header class="mobile-bar">
+    <template x-if="tab === 'beranda'">
+      <button type="button" class="mobile-bar-btn" @click="kunciAplikasi()" title="Kunci aplikasi"
+              aria-label="Kunci aplikasi (biometric/PIN)">
+        <i data-icon="shield-lock" data-size="16"></i>
+      </button>
+    </template>
+    <template x-if="tab !== 'beranda'">
+      <button type="button" class="mobile-bar-btn" @click="pindah('beranda')" aria-label="Kembali ke beranda">
+        <i data-icon="arrow-left" data-size="16"></i>
+      </button>
+    </template>
+
+    <div class="mobile-bar-judul">
+      <b x-text="$store.i18n.t(judulBar)"></b>
+      <span x-show="tab === 'beranda'">Bank Nusantara · nasabah</span>
+      <span x-show="tab !== 'beranda'" x-cloak x-text="$store.i18n.t(subBar)"></span>
+    </div>
+
+    <button type="button" class="mobile-bar-btn" @click="muatUlang()" aria-label="Muat ulang data" title="Muat ulang data">
+      <i data-icon="arrow-repeat" data-size="16"></i>
+    </button>
+    <button type="button" class="mobile-bar-btn" @click="pindah('notif')" aria-label="Notifikasi" title="Notifikasi">
+      <i data-icon="bell" data-size="16"></i>
+      <span class="lencana-nav" x-show="$store.notif.belum('mobile') > 0" x-cloak
+            x-text="$store.notif.belum('mobile')"></span>
+      <span class="mobile-titik-notif" x-show="$store.notif.belum('mobile') === 0"></span>
+    </button>
+  </header>
+
+  <!-- ============================== ISI ============================== -->
+  <main class="mobile-isi" id="mobile-isi">
+
+    <!-- ------------------------------ BERANDA ------------------------------ -->
+    <section class="mobile-layar" :class="tab === 'beranda' && 'aktif'" aria-label="Beranda">
+      <!-- kartu saldo -->
+      <div class="mobile-saldo">
+        <div class="flex items-start justify-between gap-2">
+          <div>
+            <div class="mobile-saldo-label">Saldo tersedia</div>
+            <div class="mobile-saldo-nilai" x-text="saldoTampil ? rp(saldo) : '•••••••'">Rp 0</div>
+            <div class="mobile-saldo-meta">
+              <span x-text="'Tabungan 8820 ' + (saldoTampil ? '1234 5678' : '•••• 5678')"></span>
+            </div>
+          </div>
+          <button type="button" class="mobile-mata" @click="saldoTampil = !saldoTampil"
+                  :aria-label="saldoTampil ? 'Sembunyikan saldo' : 'Tampilkan saldo'">
+            <span x-show="!saldoTampil"><i data-icon="eye" data-size="15"></i></span>
+            <span x-show="saldoTampil" x-cloak><i data-icon="eye-slash" data-size="15"></i></span>
+          </button>
+        </div>
+        <div class="mt-3 flex items-center gap-2">
+          <span class="badge" style="background:rgba(255,255,255,.18);color:#fff">Poin 12.480</span>
+          <span class="badge" style="background:rgba(255,255,255,.18);color:#fff">Level Gold</span>
+          <button type="button" class="ml-auto text-[0.72rem] underline" @click="salinRekening()">Salin no. rekening</button>
+        </div>
+      </div>
+
+      <!-- aksi cepat -->
+      <div class="mobile-seksi">
+        <div class="mobile-aksi-cepat">
+          <template x-for="a in aksiCepat" :key="a.id">
+            <button type="button" class="mobile-aksi" @click="jalankanAksi(a)">
+              <span><i :data-icon="a.ikon" data-size="17"></i></span>
+              <span x-text="$store.i18n.t(a.label)"></span>
+            </button>
+          </template>
+        </div>
+      </div>
+
+      <!-- pintasan QRIS & kartu -->
+      <div class="mobile-seksi grid grid-cols-2 gap-3">
+        <button type="button" class="mobile-kartu p-3 text-left" @click="pindah('bayar')">
+          <span class="mobile-baris-ikon mb-2"><i data-icon="qr-code" data-size="16"></i></span>
+          <b class="block text-sm">QRIS saya</b>
+          <span class="fs-8 text-muted-2">Tunjukkan kode untuk dibayar</span>
+        </button>
+        <button type="button" class="mobile-kartu p-3 text-left" @click="pindah('kartu')">
+          <span class="mobile-baris-ikon mb-2"><i data-icon="credit-card-2-front" data-size="16"></i></span>
+          <b class="block text-sm">Kartu saya</b>
+          <span class="fs-8 text-muted-2">Debit, kredit &amp; virtual</span>
+        </button>
+      </div>
+
+      <!-- promo -->
+      <div class="mobile-seksi">
+        <div class="mobile-judul"><h2>Promo untuk Anda</h2></div>
+        <div class="mobile-promo">
+          <div class="mobile-promo-kartu">
+            <b>Cashback QRIS 10%</b>
+            <span>Maksimal Rp 25.000 per transaksi, berlaku sampai 30 September.</span>
+          </div>
+          <div class="mobile-promo-kartu dua">
+            <b>Bebas biaya transfer</b>
+            <span>Transfer antar bank gratis 20x/bulan untuk nasabah Gold.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- layanan lain -->
+      <div class="mobile-seksi">
+        <div class="mobile-judul"><h2>Layanan</h2></div>
+        <div class="mobile-kartu">
+          <button type="button" class="mobile-baris w-full text-left" @click="pindah('jadwal')">
+            <span class="mobile-baris-ikon"><i data-icon="calendar-check" data-size="16"></i></span>
+            <span class="mobile-baris-teks">
+              <b>Jadwal otomatis</b>
+              <span x-text="T(jadwalAktif() + ' jadwal aktif · berikutnya ' + (jadwal[0] ? jadwal[0].berikut : '—'))"></span>
+            </span>
+            <i data-icon="chevron-right" data-size="14" class="text-muted-2"></i>
+          </button>
+          <button type="button" class="mobile-baris w-full text-left" @click="pindah('notif')">
+            <span class="mobile-baris-ikon"><i data-icon="bell" data-size="16"></i></span>
+            <span class="mobile-baris-teks">
+              <b>Pusat notifikasi</b>
+              <span x-text="T($store.notif.belum('mobile') + ' belum dibaca dari ' + $store.notif.lingkup('mobile').length + ' notifikasi')"></span>
+            </span>
+            <span class="badge badge-soft-danger" x-show="$store.notif.belum('mobile') > 0" x-cloak
+                  x-text="$store.notif.belum('mobile')"></span>
+            <i data-icon="chevron-right" data-size="14" class="text-muted-2"></i>
+          </button>
+          <button type="button" class="mobile-baris w-full text-left" @click="pindah('keamanan')">
+            <span class="mobile-baris-ikon"><i data-icon="fingerprint" data-size="16"></i></span>
+            <span class="mobile-baris-teks">
+              <b>Biometric &amp; PIN</b>
+              <span x-text="T(bioAktif ? 'Aktif · sidik jari + PIN 6 digit' : 'Nonaktif · ketuk untuk mengaktifkan')"></span>
+            </span>
+            <i data-icon="chevron-right" data-size="14" class="text-muted-2"></i>
+          </button>
+          <button type="button" class="mobile-baris w-full text-left" @click="bukaAksi({ id: 'tarik', label: 'Tarik tunai', ikon: 'cash-stack', sub: 'Kartu tanpa kartu di ATM' })">
+            <span class="mobile-baris-ikon"><i data-icon="cash-stack" data-size="16"></i></span>
+            <span class="mobile-baris-teks"><b>Tarik tunai</b><span>Tanpa kartu di ATM terdekat</span></span>
+            <i data-icon="chevron-right" data-size="14" class="text-muted-2"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- transaksi terbaru -->
+      <div class="mobile-seksi">
+        <div class="mobile-judul">
+          <h2>Transaksi terbaru</h2>
+          <a href="#" @click.prevent="pindah('riwayat')">Lihat semua</a>
+        </div>
+        <div class="mobile-kartu">
+          <template x-for="r in riwayat.slice(0, 4)" :key="r.id">
+            <div class="mobile-baris">
+              <span class="mobile-baris-ikon" :class="r.jenis === 'masuk' ? 'masuk' : 'keluar'">
+                <i :data-icon="r.jenis === 'masuk' ? 'arrow-down-left' : 'arrow-up-right'" data-size="15"></i>
+              </span>
+              <span class="mobile-baris-teks">
+                <b x-text="r.nama"></b>
+                <span x-text="r.waktu + ' · ' + $store.i18n.t(r.metode)"></span>
+              </span>
+              <span class="mobile-nominal" :class="r.jenis === 'masuk' ? 'masuk' : 'keluar'"
+                    x-text="(r.jenis === 'masuk' ? '+ ' : '− ') + rp(r.nominal)"></span>
+            </div>
+          </template>
+        </div>
+      </div>
+
+      <!-- keamanan -->
+      <div class="mobile-seksi">
+        <div class="mobile-kartu mobile-baris">
+          <span class="mobile-baris-ikon"><i data-icon="shield-check" data-size="16"></i></span>
+          <span class="mobile-baris-teks">
+            <b>Keamanan aktif</b>
+            <span>OTP dua langkah · notifikasi transaksi · pemantauan perangkat</span>
+          </span>
+          <button type="button" class="btn btn-light btn-sm" @click="demoKunciLayar()">Uji</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ------------------------------ QRIS SAYA ------------------------------ -->
+    <section class="mobile-layar" :class="tab === 'bayar' && 'aktif'" aria-label="QRIS saya">
+      <p class="fs-8 text-muted-2 mb-2">
+        Tunjukkan kode ini ke kasir atau minta pembeli memindai. Nominal bisa dikosongkan
+        (pembeli mengisi sendiri) atau diisi untuk QR sekali pakai.
+      </p>
+
+      <div class="mobile-kartu p-3">
+        <div class="mobile-qr" id="nasabah-qr"></div>
+        <div class="text-center mt-2">
+          <b class="block text-sm" id="nasabah-nama">AULIA SAPUTRA</b>
+          <span class="fs-8 text-muted-2" id="nasabah-nmid">ID1024351287941</span>
+          <div class="mt-2 text-sm">Nominal: <b id="nasabah-nominal" x-text="$store.i18n.t('Nominal bebas')">Nominal bebas</b></div>
+          <div class="fs-8 text-muted-2" id="nasabah-crc">CRC16 —</div>
+        </div>
+
+        <div class="flex flex-wrap justify-center gap-1.5 mt-3">
+          <template x-for="n in [0, 25000, 50000, 100000]" :key="n">
+            <button type="button" class="mobile-chip" :class="nominalQR === n && 'aktif'"
+                    @click="setNominalQR(n)" x-text="n === 0 ? $store.i18n.t('Nominal bebas') : rp(n)"></button>
+          </template>
+        </div>
+
+        <div class="flex flex-wrap justify-center gap-2 mt-3">
+          <button type="button" class="btn btn-primary btn-sm" @click="buatQR()">
+            <i data-icon="arrow-repeat"></i> Buat QR
+          </button>
+          <button type="button" class="btn btn-light btn-sm" @click="salinQR()">
+            <i data-icon="clipboard"></i> Salin payload
+          </button>
+          <button type="button" class="btn btn-light btn-sm" @click="unduhQR()">
+            <i data-icon="download"></i> Unduh PNG
+          </button>
+        </div>
+      </div>
+
+      <div class="mobile-seksi">
+        <div class="mobile-kartu mobile-baris">
+          <span class="mobile-baris-ikon"><i data-icon="shop" data-size="16"></i></span>
+          <span class="mobile-baris-teks"><b>Merchant</b><span>NMID terdaftar · kriteria UMI · acquirer ID.CO.QRIS.WWW</span></span>
+        </div>
+        <div class="mobile-kartu mobile-baris">
+          <span class="mobile-baris-ikon masuk"><i data-icon="check2-circle" data-size="16"></i></span>
+          <span class="mobile-baris-teks"><b>Versi payload</b><span>EMVCo MPM · tag 01, 51, 53, 54, 62, 63 (CRC16)</span></span>
+        </div>
+      </div>
+
+      <div class="seksi mt-3">
+        <a href="../pages/qris.html" class="btn btn-light btn-block btn-sm">
+          <i data-icon="box-arrow-up-right"></i> Buka halaman QRIS lengkap
+        </a>
+      </div>
+    </section>
+
+    <!-- ------------------------------ KARTU ------------------------------ -->
+    <section class="mobile-layar" :class="tab === 'kartu' && 'aktif'" aria-label="Kartu saya">
+      <div class="mobile-seksi grid gap-3">
+        <template x-for="k in kartuList" :key="k.id">
+          <div class="mobile-saldo" style="background:linear-gradient(135deg,#08203c,#14508c 55%,#1f86dd)">
+            <div class="flex items-start justify-between">
+              <div>
+                <div class="mobile-saldo-label" x-text="$store.i18n.t(k.jenis)"></div>
+                <div class="mt-1 font-mono tracking-[0.16em] text-sm" x-text="kartuTampil ? k.nomor : '•••• •••• •••• ' + k.nomor.slice(-4)"></div>
+                <div class="mobile-saldo-meta mt-1" x-text="k.pemilik + ' · ' + k.berlaku"></div>
+              </div>
+              <b class="text-sm" x-text="k.merek"></b>
+            </div>
+            <div class="mt-3 flex items-center gap-2">
+              <span class="badge" style="background:rgba(255,255,255,.18);color:#fff" x-text="$store.i18n.t('Limit') + ' ' + rp(k.limit)"></span>
+              <span class="badge" style="background:rgba(255,255,255,.18);color:#fff" x-text="$store.i18n.t(k.status)"></span>
+            </div>
+          </div>
+        </template>
+      </div>
+
+      <div class="mobile-seksi flex gap-2">
+        <button type="button" class="btn btn-light btn-sm flex-1" @click="kartuTampil = !kartuTampil">
+          <i data-icon="eye"></i> <span x-text="kartuTampil ? $store.i18n.t('Sembunyikan nomor') : $store.i18n.t('Tampilkan nomor')"></span>
+        </button>
+        <button type="button" class="btn btn-light btn-sm flex-1" @click="kunciKartu()">
+          <i data-icon="shield-lock"></i> Kunci kartu
+        </button>
+      </div>
+
+      <div class="mobile-seksi">
+        <div class="mobile-kartu mobile-baris">
+          <span class="mobile-baris-ikon"><i data-icon="sliders" data-size="16"></i></span>
+          <span class="mobile-baris-teks"><b>Atur limit harian</b><span>Rp 25.000.000 · terpakai Rp 8.420.000</span></span>
+          <i data-icon="chevron-right" data-size="14" class="text-muted-2"></i>
+        </div>
+        <div class="mobile-kartu mobile-baris">
+          <span class="mobile-baris-ikon"><i data-icon="qr-code" data-size="16"></i></span>
+          <span class="mobile-baris-teks"><b>Kartu virtual untuk QRIS</b><span>Bisa dibuat &amp; dihapus kapan saja</span></span>
+          <i data-icon="chevron-right" data-size="14" class="text-muted-2"></i>
+        </div>
+      </div>
+
+      <a href="../pages/kartu-qris.html" class="btn btn-light btn-block btn-sm">
+        <i data-icon="box-arrow-up-right"></i> Buka halaman Kartu dengan QRIS
+      </a>
+    </section>
+
+    <!-- ------------------------------ RIWAYAT ------------------------------ -->
+    <section class="mobile-layar" :class="tab === 'riwayat' && 'aktif'" aria-label="Riwayat transaksi">
+      <div class="flex flex-wrap items-center gap-1.5 mb-3">
+        <template x-for="f in filter" :key="f.id">
+          <button type="button" class="mobile-chip" :class="filterAktif === f.id && 'aktif'"
+                  @click="filterAktif = f.id" x-text="$store.i18n.t(f.label)"></button>
+        </template>
+        <button type="button" class="btn btn-light btn-sm ml-auto" @click="muatUlang()">
+          <i data-icon="arrow-repeat" data-size="13"></i> Muat ulang
+        </button>
+      </div>
+
+      <div class="mobile-kartu">
+        <template x-for="r in riwayatTampil()" :key="r.id">
+          <div class="mobile-baris">
+            <span class="mobile-baris-ikon" :class="r.jenis === 'masuk' ? 'masuk' : 'keluar'">
+              <i :data-icon="r.jenis === 'masuk' ? 'arrow-down-left' : 'arrow-up-right'" data-size="15"></i>
+            </span>
+            <span class="mobile-baris-teks">
+              <b x-text="r.nama"></b>
+              <span x-text="r.waktu + ' · ' + $store.i18n.t(r.metode)"></span>
+            </span>
+            <span class="mobile-nominal" :class="r.jenis === 'masuk' ? 'masuk' : 'keluar'"
+                  x-text="(r.jenis === 'masuk' ? '+ ' : '− ') + rp(r.nominal)"></span>
+          </div>
+        </template>
+        <div class="mobile-baris" x-show="!riwayatTampil().length">
+          <span class="mobile-baris-teks"><b>Tidak ada transaksi</b><span>Ubah filter untuk melihat yang lain.</span></span>
+        </div>
+      </div>
+
+      <p class="fs-8 text-muted-2 mt-2 m-0" id="mobile-log">Data contoh · 100% offline.</p>
+    </section>
+
+    <!-- ------------------------------ PROFIL ------------------------------ -->
+    <section class="mobile-layar" :class="tab === 'profil' && 'aktif'" aria-label="Profil">
+      <div class="mobile-kartu p-3 flex items-center gap-3">
+        <span class="avatar avatar-lg" style="background:var(--c-primary);color:#fff">AS</span>
+        <div class="min-w-0">
+          <b class="block">Aulia Saputra</b>
+          <span class="fs-8 text-muted-2">aulia@perusahaan.id · Nasabah Gold</span>
+        </div>
+      </div>
+
+      <div class="mobile-seksi mobile-kartu">
+        <div class="mobile-baris">
+          <span class="mobile-baris-ikon"><i data-icon="translate" data-size="16"></i></span>
+          <span class="mobile-baris-teks"><b>Bahasa</b><span x-text="$store.i18n.locale === 'en' ? 'English' : 'Bahasa Indonesia'"></span></span>
+          <button type="button" class="btn btn-light btn-sm" @click="$store.i18n.toggle()">Ganti</button>
+        </div>
+        <div class="mobile-baris">
+          <span class="mobile-baris-ikon"><i data-icon="moon-stars" data-size="16"></i></span>
+          <span class="mobile-baris-teks"><b>Mode gelap</b><span>Ikut tema perangkat/template</span></span>
+          <label class="form-switch mb-0">
+            <input type="checkbox" class="form-check-input" :checked="$store.ui.theme === 'dark'"
+                   @change="$store.ui.toggleTheme()" aria-label="Mode gelap">
+          </label>
+        </div>
+        <div class="mobile-baris">
+          <span class="mobile-baris-ikon"><i data-icon="bell" data-size="16"></i></span>
+          <span class="mobile-baris-teks"><b>Notifikasi transaksi</b><span>Push &amp; email</span></span>
+          <label class="form-switch mb-0">
+            <input type="checkbox" class="form-check-input" x-model="notifAktif" aria-label="Notifikasi transaksi">
+          </label>
+        </div>
+        <div class="mobile-baris">
+          <span class="mobile-baris-ikon"><i data-icon="shield-lock" data-size="16"></i></span>
+          <span class="mobile-baris-teks"><b>Kunci layar</b><span>Uji animasi kunci saat memuat data</span></span>
+          <button type="button" class="btn btn-light btn-sm" @click="demoKunciLayar()">Uji</button>
+        </div>
+      </div>
+
+      <div class="mobile-seksi mobile-kartu">
+        <button type="button" class="mobile-baris w-full text-left" @click="keluar()">
+          <span class="mobile-baris-ikon" style="background:color-mix(in oklab,var(--c-danger) 14%,transparent);color:var(--c-danger)">
+            <i data-icon="box-arrow-right" data-size="16"></i>
+          </span>
+          <span class="mobile-baris-teks"><b>Keluar</b><span>Akhiri sesi di perangkat ini</span></span>
+          <i data-icon="chevron-right" data-size="14" class="text-muted-2"></i>
+        </button>
+      </div>
+
+      <a href="../pages/index.html" class="btn btn-light btn-block btn-sm">
+        <i data-icon="box-arrow-up-right"></i> Buka dashboard admin
+      </a>
+    </section>
+
+    <!-- ============================== TAGIHAN & TOP UP ============================== -->
+    <section class="mobile-layar" :class="tab === 'tagihan' && 'aktif'" aria-label="Tagihan dan top up">
+      <div class="mobile-segmen" role="tablist">
+        <button type="button" :class="segmenTagihan === 'tagihan' && 'aktif'" @click="segmenTagihan = 'tagihan'">
+          <i data-icon="receipt" data-size="13"></i> Tagihan
+        </button>
+        <button type="button" :class="segmenTagihan === 'topup' && 'aktif'" @click="segmenTagihan = 'topup'">
+          <i data-icon="plus-circle" data-size="13"></i> Top up
+        </button>
+      </div>
+
+      <!-- daftar tagihan -->
+      <div x-show="segmenTagihan === 'tagihan'">
+        <div class="mobile-kartu p-3 mb-3 flex items-center gap-3">
+          <span class="mobile-baris-ikon"><i data-icon="receipt" data-size="16"></i></span>
+          <div class="min-w-0">
+            <b class="block text-sm" x-text="T(tagihanBelum() + ' tagihan menunggu')"></b>
+            <span class="fs-8 text-muted-2" x-text="T('Total ' + rp(tagihanTotal()) + ' · jatuh tempo terdekat ' + tagihanTerdekat())"></span>
+          </div>
+        </div>
+        <div class="mobile-kartu">
+          <template x-for="t in tagihan" :key="t.id">
+            <button type="button" class="tagihan-item" :class="t.lunas && 'lunas'" @click="bayarTagihan(t)">
+              <span class="tagihan-logo" :style="'background:' + t.warna" x-text="t.singkat"></span>
+              <span class="tagihan-isi">
+                <b x-text="t.nama"></b>
+                <span x-text="T(t.pelanggan + ' · ' + t.jatuhTempo)"></span>
+              </span>
+              <span class="tagihan-nominal">
+                <b x-text="T(rp(t.nominal))"></b>
+                <span x-text="T(t.lunas ? 'Lunas' : 'Bayar')"></span>
+              </span>
+            </button>
+          </template>
+        </div>
+        <p class="fs-8 text-muted-2 mt-2 m-0">Ketuk tagihan untuk membayar. Nominal bisa diubah pada lembar pembayaran.</p>
+      </div>
+
+      <!-- daftar top up -->
+      <div x-show="segmenTagihan === 'topup'" x-cloak>
+        <div class="mobile-judul"><h2>Dompet digital &amp; pulsa</h2></div>
+        <div class="mobile-kartu">
+          <template x-for="w in dompet" :key="w.id">
+            <button type="button" class="tagihan-item" @click="topUp(w)">
+              <span class="tagihan-logo" :style="'background:' + w.warna" x-text="w.singkat"></span>
+              <span class="tagihan-isi">
+                <b x-text="w.nama"></b>
+                <span x-text="T(w.jenis + ' · saldo ' + rp(w.saldo))"></span>
+              </span>
+              <i data-icon="plus-circle" data-size="16" class="text-primary"></i>
+            </button>
+          </template>
+        </div>
+
+        <div class="mobile-judul mt-3"><h2>Paket data &amp; voucher</h2></div>
+        <div class="mobile-kartu">
+          <template x-for="pk in paket" :key="pk.id">
+            <button type="button" class="tagihan-item" @click="topUp(pk)">
+              <span class="tagihan-logo" style="background:#0f6b4a" x-text="pk.singkat"></span>
+              <span class="tagihan-isi">
+                <b x-text="pk.nama"></b>
+                <span x-text="T(pk.jenis + ' · masa aktif ' + pk.masa)"></span>
+              </span>
+              <span class="tagihan-nominal"><b x-text="rp(pk.nominal)"></b><span>Beli</span></span>
+            </button>
+          </template>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================== JADWAL OTOMATIS ============================== -->
+    <section class="mobile-layar" :class="tab === 'jadwal' && 'aktif'" aria-label="Jadwal otomatis">
+      <div class="mobile-seksi grid grid-cols-3 gap-2">
+        <div class="mobile-kartu p-2 text-center">
+          <b class="block text-lg" x-text="jadwalAktif()"></b>
+          <span class="fs-8 text-muted-2">jadwal aktif</span>
+        </div>
+        <div class="mobile-kartu p-2 text-center">
+          <b class="block text-lg" x-text="jadwal.length"></b>
+          <span class="fs-8 text-muted-2">total jadwal</span>
+        </div>
+        <div class="mobile-kartu p-2 text-center">
+          <b class="block text-lg" x-text="jadwalLog.length"></b>
+          <span class="fs-8 text-muted-2">eksekusi</span>
+        </div>
+      </div>
+
+      <div class="mobile-seksi mobile-kartu p-3">
+        <div class="mobile-judul mb-2">
+          <h2>Pekan ini</h2>
+          <span class="fs-8 text-muted-2" x-text="T('Hari ini ' + hariIni)"></span>
+        </div>
+        <div class="jadwal-kalender">
+          <template x-for="h in ['Sen','Sel','Rab','Kam','Jum','Sab','Min']" :key="h">
+            <span class="hari" x-text="T(h)"></span>
+          </template>
+          <template x-for="(sel, i) in kalender" :key="'s' + i">
+            <span class="sel" :class="sel.kini && 'kini'">
+              <template x-for="(titik, j) in sel.titik" :key="'t' + i + j">
+                <span class="titik" :class="titik"></span>
+              </template>
+            </span>
+          </template>
+        </div>
+        <p class="fs-8 text-muted-2 mt-2 mb-0">Titik = satu jadwal pada hari itu. Merah = eksekusi gagal, abu-abu = dijeda.</p>
+      </div>
+
+      <div class="mobile-seksi">
+        <div class="mobile-judul">
+          <h2>Daftar jadwal</h2>
+          <button type="button" class="btn btn-light btn-sm" @click="bukaJadwalBaru()">
+            <i data-icon="plus-lg" data-size="13"></i> Jadwal baru
+          </button>
+        </div>
+        <div class="mobile-kartu">
+          <template x-for="j in jadwal" :key="j.id">
+            <div class="jadwal-item" :data-aktif="j.aktif ? '1' : '0'">
+              <div class="jadwal-kepala">
+                <span class="mobile-baris-ikon" :class="j.jenis === 'tagihan' ? 'keluar' : 'masuk'">
+                  <i :data-icon="j.jenis === 'tagihan' ? 'receipt' : (j.jenis === 'topup' ? 'plus-circle' : 'arrow-left-right')" data-size="15"></i>
+                </span>
+                <span class="jadwal-isi">
+                  <b x-text="j.nama"></b>
+                  <span x-text="j.ke"></span>
+                </span>
+                <button type="button" class="sakelar" :data-hidup="j.aktif ? '1' : '0'"
+                        :aria-label="(j.aktif ? 'Jeda ' : 'Aktifkan ') + j.nama" @click="toggleJadwal(j)"></button>
+              </div>
+              <div class="jadwal-meta">
+                <span class="mobile-chip" x-text="T(rp(j.nominal))"></span>
+                <span class="mobile-chip" x-text="$store.i18n.t(j.frekuensi)"></span>
+                <span class="mobile-chip" x-text="T('Berikutnya ' + j.berikut)"></span>
+              </div>
+              <div class="jadwal-aksi">
+                <button type="button" class="btn btn-primary btn-sm flex-1" @click="jalankanJadwal(j)">
+                  <i data-icon="play-circle" data-size="13"></i> Jalankan sekarang
+                </button>
+                <button type="button" class="btn btn-light btn-sm" @click="hapusJadwal(j)" aria-label="Hapus jadwal">
+                  <i data-icon="trash" data-size="13"></i>
+                </button>
+              </div>
+            </div>
+          </template>
+          <div class="jadwal-item" x-show="!jadwal.length">
+            <b class="block text-sm">Belum ada jadwal</b>
+            <span class="fs-8 text-muted-2">Tambahkan transfer berulang atau autodebet.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="mobile-seksi">
+        <div class="mobile-judul"><h2>Riwayat eksekusi</h2></div>
+        <div class="mobile-kartu">
+          <template x-for="l in jadwalLog.slice(0, 6)" :key="l.id">
+            <div class="mobile-baris">
+              <span class="mobile-baris-ikon" :class="l.status === 'Berhasil' ? 'masuk' : 'keluar'">
+                <i :data-icon="l.status === 'Berhasil' ? 'check2-circle' : 'exclamation-triangle-fill'" data-size="15"></i>
+              </span>
+              <span class="mobile-baris-teks"><b x-text="l.nama"></b><span x-text="T(l.waktu + ' · ' + l.status)"></span></span>
+              <span class="mobile-nominal" :class="l.status === 'Berhasil' ? 'keluar' : 'masuk'" x-text="T('− ' + rp(l.nominal))"></span>
+            </div>
+          </template>
+          <div class="mobile-baris" x-show="!jadwalLog.length">
+            <span class="mobile-baris-teks"><b>Belum ada eksekusi</b><span>Jalankan jadwal untuk melihat catatannya.</span></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================== PUSAT NOTIFIKASI ============================== -->
+    <section class="mobile-layar" :class="tab === 'notif' && 'aktif'" aria-label="Notifikasi">
+      <div class="mobile-kartu p-3 mb-3 flex items-center gap-3">
+        <span class="mobile-baris-ikon"><i data-icon="bell-fill" data-size="16"></i></span>
+        <div class="min-w-0 flex-1">
+          <b class="block text-sm" x-text="T($store.notif.belum('mobile') + ' belum dibaca')"></b>
+          <span class="fs-8 text-muted-2" x-text="T($store.notif.lingkup('mobile').length + ' notifikasi tersimpan di peramban ini')"></span>
+        </div>
+        <button type="button" class="btn btn-light btn-sm" @click="kirimNotifUji()">
+          <i data-icon="send" data-size="13"></i> Uji
+        </button>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-1.5 mb-3">
+        <template x-for="k in kategoriNotif" :key="k">
+          <button type="button" class="mobile-chip" :class="notifKategori === k && 'aktif'"
+                  @click="notifKategori = k" x-text="$store.i18n.t(k)"></button>
+        </template>
+      </div>
+
+      <div class="mobile-kartu">
+        <template x-for="n in notifTampil()" :key="n.id">
+          <div class="mobile-baris items-start" :data-baca="n.baca ? '1' : '0'">
+            <span class="notif-ikon" :data-tone="n.tone"><i :data-icon="n.ikon" data-size="15"></i></span>
+            <span class="mobile-baris-teks" @click="bacaNotif(n)">
+              <b x-text="n.judul"></b>
+              <span x-text="n.pesan"></span>
+              <span class="fs-8 text-muted-2" x-text="T($store.notif.waktu(n.waktu)) + ' · ' + $store.i18n.t(n.kategori)"></span>
+            </span>
+            <span class="flex flex-col items-center gap-1">
+              <span class="notif-titik" x-show="!n.baca"></span>
+              <button type="button" class="text-muted-2" @click="$store.notif.hapus(n.id, 'mobile')" aria-label="Hapus notifikasi">
+                <i data-icon="x-lg" data-size="13"></i>
+              </button>
+            </span>
+          </div>
+        </template>
+        <div class="mobile-baris" x-show="!notifTampil().length">
+          <span class="mobile-baris-teks"><b>Tidak ada notifikasi</b><span>Ubah penyaring atau kirim notifikasi uji.</span></span>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap gap-2 mt-3">
+        <button type="button" class="btn btn-light btn-sm flex-1" @click="$store.notif.bacaSemua('mobile')">
+          <i data-icon="check2-all" data-size="13"></i> Tandai semua dibaca
+        </button>
+        <button type="button" class="btn btn-light btn-sm flex-1" @click="$store.notif.hapusTerbaca('mobile')">
+          <i data-icon="trash" data-size="13"></i> Hapus yang terbaca
+        </button>
+      </div>
+      <p class="fs-8 text-muted-2 mt-2 text-center">
+        Notifikasi ini tiruan (tanpa server) dan disimpan di localStorage peramban.
+      </p>
+    </section>
+
+    <!-- ============================== KEAMANAN (biometric/PIN) ============================== -->
+    <section class="mobile-layar" :class="tab === 'keamanan' && 'aktif'" aria-label="Keamanan">
+      <div class="mobile-kartu p-3 mb-3 grid gap-3">
+        <div class="flex items-center gap-3">
+          <span class="mobile-baris-ikon" style="width:3rem;height:3rem">
+            <i data-icon="fingerprint" data-size="22"></i>
+          </span>
+          <div class="min-w-0">
+            <b class="block text-sm">Sidik jari &amp; PIN</b>
+            <span class="fs-8 text-muted-2">Kunci aplikasi setiap dibuka atau setelah tidak aktif</span>
+          </div>
+          <label class="form-switch mb-0 ml-auto">
+            <input type="checkbox" class="form-check-input" x-model="bioAktif" @change="setBio()" aria-label="Aktifkan biometric">
+          </label>
+        </div>
+        <div class="flex gap-2">
+          <button type="button" class="btn btn-primary btn-sm flex-1" @click="ujiBio()">
+            <i data-icon="fingerprint" data-size="13"></i> Uji sidik jari
+          </button>
+          <button type="button" class="btn btn-light btn-sm flex-1" @click="kunciAplikasi()">
+            <i data-icon="lock" data-size="13"></i> Kunci sekarang
+          </button>
+        </div>
+      </div>
+
+      <div class="mobile-seksi mobile-kartu p-3">
+        <div class="mobile-judul mb-2"><h2>Kunci otomatis</h2></div>
+        <div class="flex flex-wrap gap-1.5">
+          <template x-for="o in opsiIdle" :key="o.ms">
+            <button type="button" class="mobile-chip" :class="idleMs === o.ms && 'aktif'"
+                    @click="setIdle(o.ms)" x-text="$store.i18n.t(o.label)"></button>
+          </template>
+        </div>
+        <p class="fs-8 text-muted-2 mt-2 mb-0">
+          Aplikasi terkunci sendiri setelah tidak ada aktivitas, dan setiap kali kembali dari aplikasi lain.
+        </p>
+      </div>
+
+      <div class="mobile-seksi mobile-kartu p-3">
+        <div class="mobile-judul mb-2"><h2>PIN aplikasi</h2></div>
+        <div class="mobile-baris flex items-center gap-2">
+          <span class="mobile-baris-ikon"><i data-icon="keyboard" data-size="16"></i></span>
+          <span class="mobile-baris-teks"><b>6 digit PIN</b><span x-text="T('PIN saat ini: ' + pinTersamar)"></span></span>
+        </div>
+        <div class="flex gap-2 mt-2">
+          <input class="form-control" type="text" inputmode="numeric" maxlength="6" placeholder="PIN baru 6 digit"
+                 x-model="pinBaru" aria-label="PIN baru">
+          <button type="button" class="btn btn-primary btn-sm" @click="simpanPin()">Simpan</button>
+        </div>
+        <p class="fs-8 text-muted-2 mt-2 mb-0">PIN demo disimpan di localStorage — di aplikasi sungguhan, PIN harus disimpan di sisi server/sensor.</p>
+      </div>
+
+      <div class="mobile-seksi mobile-kartu p-3">
+        <div class="mobile-baris">
+          <span class="mobile-baris-ikon"><i data-icon="shield-check" data-size="16"></i></span>
+          <span class="mobile-baris-teks">
+            <b>Minta PIN untuk transaksi besar</b>
+            <span>Verifikasi ulang untuk nominal ≥ Rp 1.000.000</span>
+          </span>
+          <label class="form-switch mb-0">
+            <input type="checkbox" class="form-check-input" x-model="pinBesar" @change="simpanSetelan()" aria-label="Minta PIN untuk transaksi besar">
+          </label>
+        </div>
+      </div>
+
+      <div class="callout callout-info mt-3 mb-0">
+        <b>Catatan implementasi.</b> Sidik jari di sini simulasi (animasi pemindaian). Di produksi gunakan
+        WebAuthn <code>navigator.credentials.get()</code> atau SDK perangkat; PIN tetap diverifikasi di server.
+      </div>
+    </section>
+  </main>
+
+  <!-- ============================== LEMBAR AKSI (sheet) ============================== -->
+  <div class="mobile-sheet" :class="sheet && 'terbuka'" aria-live="polite">
+    <div class="mobile-sheet-pegangan"></div>
+    <div class="p-3">
+      <div class="flex items-center gap-2 mb-2">
+        <span class="mobile-baris-ikon"><i :data-icon="aksiAktif ? aksiAktif.ikon : 'cash-coin'" data-size="16"></i></span>
+        <div class="mobile-baris-teks">
+          <b x-text="aksiAktif ? aksiAktif.label : ''"></b>
+          <span x-text="aksiAktif ? aksiAktif.sub : ''"></span>
+        </div>
+        <button type="button" class="mobile-bar-btn" style="background:var(--c-body-bg);color:var(--c-fg)"
+                @click="tutupSheet()" aria-label="Tutup"><i data-icon="x-lg" data-size="14"></i></button>
+      </div>
+
+      <label class="form-label" for="mobile-nominal">Nominal</label>
+      <input id="mobile-nominal" class="mobile-input-nominal" type="text" inputmode="numeric"
+             :value="rp(nominal)" @input="ketikNominal($event)" aria-label="Nominal transaksi">
+
+      <div class="mobile-numpad mt-3">
+        <template x-for="d in ['1','2','3','4','5','6','7','8','9','000','0','⌫']" :key="d">
+          <button type="button" @click="tombolNumpad(d)" x-text="d"></button>
+        </template>
+      </div>
+
+      <div class="mt-3">
+        <label class="form-label" for="mobile-tujuan">Tujuan / keterangan</label>
+        <input id="mobile-tujuan" class="form-control" type="text" x-model="tujuan"
+               placeholder="mis. 8820 1122 3344 · Budi" aria-label="Tujuan transaksi">
+      </div>
+
+      <button type="button" class="btn btn-primary btn-block btn-lg mt-3"
+              :disabled="nominal < 1000 || kirim" @click="konfirmasiSheet()">
+        <span x-show="!kirim">
+          <i data-icon="shield-check"></i>
+          <span x-text="aksiAktif && aksiAktif.id === 'tagihan' ? $store.i18n.t('Bayar sekarang')
+                 : (aksiAktif && aksiAktif.id === 'topup' ? $store.i18n.t('Top up sekarang') : $store.i18n.t('Lanjut & verifikasi'))"></span>
+        </span>
+        <span x-show="kirim" x-cloak class="flex items-center gap-2"><span class="spinner !h-4 !w-4 !border-2"></span> Memproses…</span>
+      </button>
+      <p class="fs-8 text-muted-2 mt-2 mb-3 text-center">
+        Minimal Rp 1.000 · tanpa biaya admin (demo). Data tidak dikirim ke mana pun.
+      </p>
+    </div>
+  </div>
+
+  <!-- ============================== LEMBAR: JADWAL BARU ============================== -->
+  <div class="mobile-sheet" :class="jadwalSheet && 'terbuka'" aria-live="polite">
+    <div class="mobile-sheet-pegangan"></div>
+    <div class="p-3">
+      <div class="flex items-center gap-2 mb-3">
+        <span class="mobile-baris-ikon"><i data-icon="calendar-plus" data-size="16"></i></span>
+        <div class="mobile-baris-teks"><b>Jadwal baru</b><span>Transfer berulang, autodebet, atau top up</span></div>
+        <button type="button" class="mobile-bar-btn" style="background:var(--c-body-bg);color:var(--c-fg)"
+                @click="tutupSheet()" aria-label="Tutup"><i data-icon="x-lg" data-size="14"></i></button>
+      </div>
+
+      <div class="grid gap-2">
+        <div>
+          <label class="form-label" for="jadwal-nama">Nama jadwal</label>
+          <input id="jadwal-nama" class="form-control" type="text" x-model="jadwalBaruForm.nama"
+                 placeholder="mis. Transfer bulanan Ibu">
+        </div>
+        <div>
+          <label class="form-label" for="jadwal-ke">Tujuan / rekening</label>
+          <input id="jadwal-ke" class="form-control" type="text" x-model="jadwalBaruForm.ke"
+                 placeholder="mis. 8820 4455 6677 · Ibu Sari">
+        </div>
+        <div>
+          <label class="form-label" for="jadwal-nominal">Nominal</label>
+          <input id="jadwal-nominal" class="form-control" type="text" inputmode="numeric"
+                 :value="rp(jadwalBaruForm.nominal)"
+                 @input="jadwalBaruForm.nominal = Math.min(50000000, Number(String($event.target.value).replace(/\D/g,'') || 0))">
+        </div>
+        <div>
+          <label class="form-label">Frekuensi</label>
+          <div class="flex flex-wrap gap-1.5">
+            <template x-for="f in ['Harian','Mingguan','Bulanan']" :key="f">
+              <button type="button" class="mobile-chip" :class="jadwalBaruForm.frekuensi === f && 'aktif'"
+                      @click="jadwalBaruForm.frekuensi = f" x-text="$store.i18n.t(f)"></button>
+            </template>
+          </div>
+        </div>
+        <div>
+          <label class="form-label">Jenis</label>
+          <div class="flex flex-wrap gap-1.5">
+            <template x-for="j in [['transfer','Transfer'],['tagihan','Tagihan'],['topup','Top up']]" :key="j[0]">
+              <button type="button" class="mobile-chip" :class="jadwalBaruForm.jenis === j[0] && 'aktif'"
+                      @click="jadwalBaruForm.jenis = j[0]" x-text="$store.i18n.t(j[1])"></button>
+            </template>
+          </div>
+        </div>
+      </div>
+
+      <button type="button" class="btn btn-primary btn-block btn-lg mt-3" @click="simpanJadwalBaru()">
+        <i data-icon="check2-circle"></i> Simpan jadwal
+      </button>
+      <p class="fs-8 text-muted-2 mt-2 mb-3 text-center">
+        Jadwal disimpan di peramban ini (localStorage) — tidak ada penjadwal di sisi server.
+      </p>
+    </div>
+  </div>
+
+  <!-- ============================== NAVIGASI BAWAH ============================== -->
+  <nav class="mobile-nav" aria-label="Navigasi utama nasabah">
+    <template x-for="t in tabs" :key="t.id">
+      <button type="button" class="mobile-nav-btn" :class="navAktif(t.id) && 'aktif'"
+              @click="pindah(t.id)" :aria-current="navAktif(t.id) ? 'page' : null">
+        <i :data-icon="navAktif(t.id) ? t.ikonAktif : t.ikon" data-size="19"></i>
+        <span x-text="$store.i18n.t(t.label)"></span>
+        <span class="lencana" x-show="t.id === 'riwayat' && $store.notif.belum('mobile') > 3" x-cloak
+              x-text="$store.notif.belum('mobile')"></span>
+      </button>
+    </template>
+  </nav>
+</div>
+
+<script>
+  document.addEventListener("alpine:init", function () {
+    Alpine.data("nasabahApp", function () {
+      /* ---------------- util ---------------- */
+      function acakSeed(seed) {
+        var a = seed >>> 0;
+        return function () {
+          a = (a + 0x6d2b79f5) >>> 0;
+          var t = Math.imul(a ^ (a >>> 15), 1 | a);
+          t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+          return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+        };
+      }
+      var rnd = acakSeed(20260918);
+      /* memakai T() global (reaktif terhadap perubahan bahasa) bila tersedia */
+      function T(s) { return window.T ? window.T(s) : ((window.I18n && window.I18n.t) ? window.I18n.t(s, s) : s); }
+      function simpanLS(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+      function muatLS(k) { try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : null; } catch (e) { return null; } }
+      var HARI = ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"];
+      var BULAN = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
+      function tanggal(d) { return d.getDate() + " " + BULAN[d.getMonth()] + " " + d.getFullYear(); }
+      function jamPendek(d) {
+        return String(d.getDate()).padStart(2, "0") + "/" + String(d.getMonth() + 1).padStart(2, "0") + " " +
+          String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0");
+      }
+      /* jadwal bawaan (contoh) — disimpan di localStorage supaya bisa diubah pengguna */
+      function jadwalAwal() {
+        var kini = new Date();
+        var besok = new Date(kini.getTime() + 7 * 864e5);
+        return [
+          { id: "JD-1", nama: "Transfer bulanan Ibu", ke: "8820 4455 6677 · Ibu Sari", jenis: "transfer",
+            nominal: 1500000, frekuensi: "Bulanan", hari: 5, aktif: true, berikut: "05 " + BULAN[(kini.getMonth() + 1) % 12] },
+          { id: "JD-2", nama: "Autodebet PLN", ke: "Pelanggan 5123 8890 1120", jenis: "tagihan",
+            nominal: 245600, frekuensi: "Bulanan", hari: 25, aktif: true, berikut: "25 " + BULAN[(kini.getMonth() + 1) % 12] },
+          { id: "JD-3", nama: "Top up GoPay", ke: "GoPay 0812••••3456", jenis: "topup",
+            nominal: 100000, frekuensi: "Mingguan", hari: 1, aktif: true, berikut: HARI[besok.getDay()] + " " + tanggal(besok) },
+          { id: "JD-4", nama: "Zakat & infaq", ke: "Masjid Al-Ikhlas", jenis: "transfer",
+            nominal: 250000, frekuensi: "Bulanan", hari: 28, aktif: false, berikut: "28 " + BULAN[(kini.getMonth() + 1) % 12] }
+        ];
+      }
+      function logAwal() {
+        var kini = Date.now();
+        return [
+          { id: "JL-1", nama: "Autodebet PLN", nominal: 245600, status: "Berhasil", waktu: jamPendek(new Date(kini - 6 * 3600e3)) },
+          { id: "JL-2", nama: "Top up GoPay", nominal: 100000, status: "Berhasil", waktu: jamPendek(new Date(kini - 3 * 864e5)) },
+          { id: "JL-3", nama: "Transfer bulanan Ibu", nominal: 1500000, status: "Berhasil", waktu: jamPendek(new Date(kini - 13 * 864e5)) },
+          { id: "JL-4", nama: "Zakat & infaq", nominal: 250000, status: "Gagal · saldo kurang", waktu: jamPendek(new Date(kini - 34 * 864e5)) }
+        ];
+      }
+
+      function buatRiwayat(n) {
+        var merchant = [
+          ["Kopi Nusantara", "QRIS", "masuk"],
+          ["Indomaret Sudirman", "Kartu debit", "keluar"],
+          ["Transfer dari Budi", "Transfer", "masuk"],
+          ["Tokopedia", "QRIS", "keluar"],
+          ["Gaji September", "Payroll", "masuk"],
+          ["SPBU Pertamina", "Kartu debit", "keluar"],
+          ["Tagihan PLN", "Autodebet", "keluar"],
+          ["Top up GoPay", "E-wallet", "keluar"],
+          ["Cashback QRIS", "Promo", "masuk"],
+          ["Netflix", "Kartu kredit", "keluar"]
+        ];
+        var out = [];
+        var dasar = new Date();
+        dasar.setHours(20, 40, 0, 0);
+        for (var i = 0; i < n; i++) {
+          var m = merchant[Math.floor(rnd() * merchant.length)];
+          var jam = new Date(dasar.getTime() - i * (25 + Math.floor(rnd() * 120)) * 60000);
+          var mel = (m[2] === "masuk" ? 1 : -1);
+          var nominal = (m[2] === "masuk" ? 50000 + Math.floor(rnd() * 40) * 50000 : 15000 + Math.floor(rnd() * 30) * 25000);
+          out.push({
+            id: "TRX-MB-" + String(4711 - i),
+            nama: m[0],
+            metode: m[1],
+            jenis: m[2],
+            nominal: nominal,
+            arah: mel,
+            waktu: String(jam.getDate()).padStart(2, "0") + "/" + String(jam.getMonth() + 1).padStart(2, "0") +
+              " " + String(jam.getHours()).padStart(2, "0") + ":" + String(jam.getMinutes()).padStart(2, "0")
+          });
+        }
+        return out;
+      }
+
+      return {
+        /* ---------------- keadaan ---------------- */
+        tab: "beranda",
+        saldoTampil: true,
+        saldo: 24850750,
+        riwayat: buatRiwayat(18),
+        filterAktif: "semua",
+        notifAktif: true,
+        notif: false,
+        /* --- tagihan & top up --- */
+        segmenTagihan: "tagihan",
+        tagihan: [
+          { id: "TG-1", nama: "PLN Pascabayar", pelanggan: "5123 8890 1120", nominal: 245600, jatuhTempo: "Jatuh tempo 25 Sep", singkat: "PLN", warna: "#f0a51e", lunas: false },
+          { id: "TG-2", nama: "PDAM Tirta", pelanggan: "2201 7788 31", nominal: 128500, jatuhTempo: "Jatuh tempo 28 Sep", singkat: "PDAM", warna: "#1f86dd", lunas: false },
+          { id: "TG-3", nama: "IndiHome 100 Mbps", pelanggan: "1220 8890 4412", nominal: 385000, jatuhTempo: "Jatuh tempo 30 Sep", singkat: "IH", warna: "#dc3545", lunas: false },
+          { id: "TG-4", nama: "Telkomsel Halo", pelanggan: "0812 7788 9900", nominal: 199000, jatuhTempo: "Jatuh tempo 03 Okt", singkat: "TSEL", warna: "#0f6b4a", lunas: false },
+          { id: "TG-5", nama: "Netflix Premium", pelanggan: "aulia@perusahaan.id", nominal: 186000, jatuhTempo: "Autodebet 20 Sep", singkat: "NFLX", warna: "#b3121a", lunas: true },
+          { id: "TG-6", nama: "Kartu Kredit BNI", pelanggan: "•••• 7712 · tagihan Sep", nominal: 2450000, jatuhTempo: "Jatuh tempo 12 Okt", singkat: "BNI", warna: "#c85b1c", lunas: false }
+        ],
+        dompet: [
+          { id: "DW-1", nama: "GoPay", jenis: "Dompet digital", saldo: 325000, singkat: "GO", warna: "#0f6b4a" },
+          { id: "DW-2", nama: "OVO", jenis: "Dompet digital", saldo: 128400, singkat: "OVO", warna: "#4c2a86" },
+          { id: "DW-3", nama: "DANA", jenis: "Dompet digital", saldo: 78000, singkat: "DANA", warna: "#1e7fd6" },
+          { id: "DW-4", nama: "ShopeePay", jenis: "Dompet digital", saldo: 215600, singkat: "SP", warna: "#ee4d2d" },
+          { id: "DW-5", nama: "Pulsa & data 0812••••3456", jenis: "Prabayar Telkomsel", saldo: 24000, singkat: "TSEL", warna: "#0f6b4a" }
+        ],
+        paket: [
+          { id: "PK-1", nama: "Paket Data 25 GB", jenis: "30 hari", masa: "30 hari", nominal: 99000, singkat: "25GB" },
+          { id: "PK-2", nama: "Paket Data 50 GB", jenis: "30 hari", masa: "30 hari", nominal: 149000, singkat: "50GB" },
+          { id: "PK-3", nama: "Voucher Game 100K", jenis: "Prabayar", masa: "tanpa kedaluwarsa", nominal: 100000, singkat: "GAME" }
+        ],
+        /* --- jadwal --- */
+        jadwal: muatLS("app.jadwal") || jadwalAwal(),
+        jadwalLog: muatLS("app.jadwalLog") || logAwal(),
+        jadwalBaruForm: { nama: "", ke: "", nominal: 0, frekuensi: "Bulanan", jenis: "transfer" },
+        jadwalSheet: false,
+        /* --- notifikasi --- */
+        notifKategori: "Semua",
+        kategoriNotif: ["Semua", "Transaksi", "Tagihan", "Promo", "Jadwal", "Keamanan"],
+        /* --- keamanan / biometric --- */
+        bioAktif: true,
+        pinBesar: true,
+        pinBaru: "",
+        idleMs: 90000,
+        opsiIdle: [
+          { ms: 30000, label: "30 detik" },
+          { ms: 60000, label: "1 menit" },
+          { ms: 120000, label: "2 menit" },
+          { ms: 0, label: "Mati" }
+        ],
+        kartuTampil: false,
+        kirim: false,
+        sheet: false,
+        aksiAktif: null,
+        nominal: 0,
+        tujuan: "",
+        nominalQR: 0,
+        kartuList: [
+          { id: "debit", jenis: "Kartu Debit Utama", nomor: "4321 8890 1120 4821", pemilik: "AULIA SAPUTRA", berlaku: "08/29", merek: "GPN", limit: 25000000, status: "QRIS aktif" },
+          { id: "kredit", jenis: "Kartu Kredit Platinum", nomor: "5211 6634 9087 7712", pemilik: "AULIA SAPUTRA", berlaku: "03/28", merek: "VISA", limit: 50000000, status: "QRIS aktif" },
+          { id: "virtual", jenis: "Kartu Virtual QRIS", nomor: "6013 7781 2204 1290", pemilik: "AULIA SAPUTRA", berlaku: "11/27", merek: "QRIS", limit: 10000000, status: "QRIS aktif" }
+        ],
+
+        /* ---------------- daftar aksi & tab ---------------- */
+        aksiCepat: [
+          { id: "transfer", label: "Transfer", ikon: "arrow-left-right", sub: "Antar rekening & bank lain" },
+          { id: "topup", label: "Top up", ikon: "plus-circle", sub: "Isi saldo dompet digital & pulsa" },
+          { id: "tagihan", label: "Tagihan", ikon: "receipt", sub: "Listrik, air, internet, kartu" },
+          { id: "jadwal", label: "Jadwal", ikon: "calendar-check", sub: "Transfer berulang & autodebet" }
+        ],
+        tabs: [
+          { id: "beranda", label: "Beranda", ikon: "house-door", ikonAktif: "house-door-fill" },
+          { id: "tagihan", label: "Tagihan", ikon: "receipt", ikonAktif: "receipt" },
+          { id: "bayar", label: "QRIS", ikon: "qr-code", ikonAktif: "qr-code" },
+          { id: "riwayat", label: "Riwayat", ikon: "clock-history", ikonAktif: "clock-history" },
+          { id: "profil", label: "Profil", ikon: "person-circle", ikonAktif: "person-circle" }
+        ],
+        filter: [
+          { id: "semua", label: "Semua" },
+          { id: "masuk", label: "Uang masuk" },
+          { id: "keluar", label: "Uang keluar" },
+          { id: "qris", label: "QRIS" }
+        ],
+
+        /* ---------------- label bar atas ---------------- */
+        get judulBar() {
+          var t = {
+            beranda: "Halo, Aulia", tagihan: "Tagihan & Top up", bayar: "QRIS saya", kartu: "Kartu saya",
+            jadwal: "Jadwal otomatis", notif: "Notifikasi", keamanan: "Keamanan", riwayat: "Riwayat", profil: "Profil"
+          };
+          return t[this.tab] || "Aplikasi Nasabah";
+        },
+        get subBar() {
+          var t = {
+            tagihan: "Bayar rutin & isi saldo", bayar: "Terima pembayaran", kartu: "Debit · Kredit · Virtual",
+            jadwal: "Transfer berulang & autodebet", notif: "Pemberitahuan terbaru", keamanan: "Biometric · PIN · kunci otomatis",
+            riwayat: "18 transaksi terakhir", profil: "Keamanan & preferensi"
+          };
+          return t[this.tab] || "";
+        },
+        get pinTersamar() { return "••••••"; },
+        get hariIni() { return tanggal(new Date()); },
+
+        /* kartu kalender pekan ini: titik per hari menurut jadwal aktif */
+        get kalender() {
+          var hariIni = new Date().getDay();
+          var sel = [];
+          for (var i = 0; i < 7; i++) {
+            var titik = [];
+            for (var j = 0; j < this.jadwal.length; j++) {
+              var it = this.jadwal[j];
+              var cocok = it.frekuensi === "Harian" || (it.frekuensi === "Mingguan" && it.hari === i) ||
+                (it.frekuensi === "Bulanan" && ((it.hari % 7) === i));
+              if (!cocok) continue;
+              titik.push(it.aktif ? (this.jadwalLog.some(function (l) { return l.status !== "Berhasil" && l.nama === it.nama; }) ? "gagal" : "") : "jeda");
+            }
+            sel.push({ kini: i === hariIni, titik: titik });
+          }
+          return sel;
+        },
+
+        /* ---------------- util tampilan ---------------- */
+        rp: function (n) { return "Rp " + Number(n || 0).toLocaleString("id-ID"); },
+        pindah: function (t) {
+          this.tab = t;
+          this.tutupSheet();
+          var i = document.getElementById("mobile-isi");
+          if (i) i.scrollTop = 0;
+          if (t === "bayar") this.buatQR();
+        },
+        navAktif: function (id) {
+          var bawahan = ["kartu", "jadwal", "notif", "keamanan"];
+          if (id === "beranda") return this.tab === "beranda" || bawahan.indexOf(this.tab) > -1;
+          return this.tab === id;
+        },
+        jalankanAksi: function (a) {
+          if (a.id === "tagihan") { this.segmenTagihan = "tagihan"; this.pindah("tagihan"); return; }
+          if (a.id === "topup") { this.segmenTagihan = "topup"; this.pindah("tagihan"); return; }
+          if (a.id === "jadwal") { this.pindah("jadwal"); return; }
+          this.bukaAksi(a);
+        },
+        riwayatTampil: function () {
+          var f = this.filterAktif;
+          if (f === "semua") return this.riwayat;
+          if (f === "qris") return this.riwayat.filter(function (r) { return /QRIS/.test(r.metode); });
+          return this.riwayat.filter(function (r) { return r.jenis === f; });
+        },
+
+        /* ---------------- aksi cepat / sheet ---------------- */
+        bukaAksi: function (a) {
+          this.aksiAktif = a;
+          this.nominal = a.id === "tarik" ? 100000 : 0;
+          this.tujuan = "";
+          this.sheet = true;
+        },
+        tutupSheet: function () { this.sheet = false; },
+        ketikNominal: function (ev) {
+          var angka = String(ev.target.value || "").replace(/\D/g, "");
+          this.nominal = Math.min(50000000, Number(angka || 0));
+          ev.target.value = this.rp(this.nominal);
+        },
+        tombolNumpad: function (d) {
+          if (d === "⌫") this.nominal = Math.floor(this.nominal / 10);
+          else this.nominal = Math.min(50000000, Number(String(this.nominal) + d));
+        },
+        /* ---------------- pembayaran: tagihan, top up, transfer ---------------- */
+        tagihanBelum: function () { return this.tagihan.filter(function (t) { return !t.lunas; }).length; },
+        tagihanTotal: function () {
+          return this.tagihan.filter(function (t) { return !t.lunas; }).reduce(function (n, t) { return n + t.nominal; }, 0);
+        },
+        tagihanTerdekat: function () {
+          var belum = this.tagihan.filter(function (t) { return !t.lunas; });
+          return belum.length ? belum[0].jatuhTempo.replace("Jatuh tempo ", "").replace("Autodebet ", "") : "—";
+        },
+        bayarTagihan: function (t) {
+          if (t.lunas) { window.toast(T("Tagihan ini sudah lunas."), "info", T("Tagihan")); return; }
+          this.bukaSheet({ id: "tagihan", label: t.nama, sub: t.pelanggan + " · " + t.jatuhTempo, ikon: "receipt", nominal: t.nominal, data: t });
+        },
+        topUp: function (w) {
+          this.bukaSheet({ id: "topup", label: w.nama, sub: w.jenis, ikon: "plus-circle", nominal: w.nominal || 50000, data: w });
+        },
+        bukaAksi: function (a) {
+          this.bukaSheet({ id: a.id, label: a.label, sub: a.sub, ikon: a.ikon, nominal: a.id === "tarik" ? 100000 : 0 });
+        },
+        bukaSheet: function (o) {
+          this.aksiAktif = { id: o.id, label: o.label, sub: o.sub, ikon: o.ikon, data: o.data || null };
+          this.nominal = o.nominal || 0;
+          this.tujuan = "";
+          this.sheet = true;
+        },
+        tutupSheet: function () { this.sheet = false; this.jadwalSheet = false; },
+        ketikNominal: function (ev) {
+          var angka = String(ev.target.value || "").replace(/\D/g, "");
+          this.nominal = Math.min(50000000, Number(angka || 0));
+          ev.target.value = this.rp(this.nominal);
+        },
+        tombolNumpad: function (d) {
+          if (d === "⌫") this.nominal = Math.floor(this.nominal / 10);
+          else this.nominal = Math.min(50000000, Number(String(this.nominal) + d));
+        },
+
+        /* biometric dulu (bila perlu), lalu kunci layar + proses */
+        konfirmasiSheet: function () {
+          var self = this;
+          if (this.kirim || this.nominal < 1000) return;
+          var lanjut = function () { self.prosesTransaksi(); };
+          if (this.pinBesar && this.nominal >= 1000000 && window.Bio) {
+            window.Bio.minta({ alasan: T("Verifikasi untuk") + " " + (this.aksiAktif ? this.aksiAktif.label : T("transaksi")) + " " + this.rp(this.nominal) })
+              .then(function (ok) {
+                if (ok) lanjut();
+                else window.toast(T("Verifikasi dibatalkan."), "warning", T("Keamanan"));
+              });
+            return;
+          }
+          lanjut();
+        },
+
+        prosesTransaksi: function () {
+          var self = this;
+          var aksi = this.aksiAktif || {};
+          this.kirim = true;
+          if (window.Lock) {
+            window.Lock.show({
+              mode: "form",
+              title: (aksi.label || T("Transaksi")) + " " + T("diproses"),
+              message: T("Memverifikasi") + " " + this.rp(this.nominal) + " · " + T("jangan tutup aplikasi.")
+            });
+          }
+          setTimeout(function () {
+            var jam = new Date();
+            self.kirim = false;
+            if (window.Lock) window.Lock.hide();
+            var metode = "Transfer", namaBaris = aksi.label || T("Transaksi");
+            if (aksi.id === "tagihan") { metode = "Tagihan"; if (aksi.data) aksi.data.lunas = true; }
+            else if (aksi.id === "topup") {
+              metode = /Pulsa|Paket|Voucher/.test(namaBaris) ? "Pulsa" : "E-wallet";
+              /* saldo dompet/pulsa tujuan ikut bertambah */
+              if (aksi.data && typeof aksi.data.saldo === "number") aksi.data.saldo += self.nominal;
+            }
+            else if (aksi.id === "tarik") { metode = "Tarik tunai"; namaBaris = "Tarik tunai ATM"; }
+            else if (self.tujuan) { namaBaris = self.tujuan; }
+
+            self.riwayat.unshift({
+              id: "TRX-MB-" + Math.floor(1000 + Math.random() * 8999),
+              nama: namaBaris, metode: metode, jenis: "keluar", nominal: self.nominal, arah: -1,
+              waktu: jamPendek(jam)
+            });
+            self.saldo -= self.nominal;
+
+            /* notifikasi "push" palsu sesuai jenis transaksi */
+            if (window.Notify) {
+              window.Notify.push({
+                lingkup: "mobile",
+                judul: aksi.id === "tagihan" ? T("Pembayaran berhasil") : (aksi.id === "topup" ? T("Top up berhasil") : T("Transaksi berhasil")),
+                pesan: self.rp(self.nominal) + " · " + namaBaris + ". " + T("Kuitansi dikirim ke email Anda."),
+                ikon: "check2-circle", tone: "success",
+                kategori: aksi.id === "tagihan" ? "Tagihan" : "Transaksi"
+              });
+            }
+            window.toast(T("Transaksi berhasil") + " " + self.rp(self.nominal) + ".", "success", "Aplikasi Nasabah");
+            self.tutupSheet();
+            self.pindah("riwayat");
+          }, 1400);
+        },
+
+        /* ---------------- muat ulang + kunci layar ---------------- */
+        /* ---------------- notifikasi ---------------- */
+        notifTampil: function () {
+          var arr = this.$store.notif.lingkup("mobile");
+          if (this.notifKategori === "Semua") return arr;
+          var k = this.notifKategori;
+          return arr.filter(function (n) { return n.kategori === k; });
+        },
+        bacaNotif: function (n) { if (!n.baca) this.$store.notif.baca(n.id, "mobile"); },
+        kirimNotifUji: function () {
+          this.$store.notif.uji("mobile");
+          window.toast(T("Notifikasi uji dikirim."), "info", T("Notifikasi"));
+        },
+
+        /* ---------------- jadwal otomatis ---------------- */
+        jadwalAktif: function () { return this.jadwal.filter(function (j) { return j.aktif; }).length; },
+        simpanJadwal: function () {
+          simpanLS("app.jadwal", this.jadwal);
+          simpanLS("app.jadwalLog", this.jadwalLog);
+        },
+        toggleJadwal: function (j) {
+          j.aktif = !j.aktif;
+          this.simpanJadwal();
+          window.toast((j.aktif ? T("Jadwal diaktifkan: ") : T("Jadwal dijeda: ")) + j.nama, j.aktif ? "success" : "info", T("Jadwal otomatis"));
+        },
+        hapusJadwal: function (j) {
+          var self = this;
+          if (!(window.Alpine && window.Alpine.store("dialog"))) return;
+          window.Alpine.store("dialog").ask({
+            title: T("Hapus jadwal ini?"),
+            message: j.nama + " · " + self.rp(j.nominal) + ". " + T("Jadwal tidak akan dieksekusi lagi."),
+            confirmText: T("Hapus"), tone: "danger",
+            onConfirm: function () {
+              self.jadwal = self.jadwal.filter(function (x) { return x.id !== j.id; });
+              self.simpanJadwal();
+              window.toast(T("Jadwal dihapus."), "danger", T("Jadwal otomatis"));
+            }
+          });
+        },
+        jalankanJadwal: function (j) {
+          var self = this;
+          var lanjut = function () {
+            if (window.Lock) {
+              window.Lock.show({ mode: "form", title: T("Menjalankan jadwal"), message: j.nama + " · " + self.rp(j.nominal) });
+            }
+            setTimeout(function () {
+              if (window.Lock) window.Lock.hide();
+              var jam = new Date();
+              var cukup = self.saldo >= j.nominal;
+              self.jadwalLog.unshift({
+                id: "JL-" + Math.floor(1000 + Math.random() * 8999), nama: j.nama, nominal: j.nominal,
+                status: cukup ? "Berhasil" : "Gagal · saldo kurang", waktu: jamPendek(jam)
+              });
+              if (cukup) {
+                self.saldo -= j.nominal;
+                self.riwayat.unshift({
+                  id: "TRX-MB-" + Math.floor(1000 + Math.random() * 8999), nama: j.nama,
+                  metode: j.jenis === "tagihan" ? "Tagihan" : (j.jenis === "topup" ? "E-wallet" : "Transfer"),
+                  jenis: "keluar", nominal: j.nominal, arah: -1, waktu: jamPendek(jam)
+                });
+              }
+              if (j.jenis === "tagihan" && cukup) {
+                var t = self.tagihan.filter(function (x) { return x.nama === "PLN Pascabayar"; })[0];
+                if (t && j.nama.indexOf("PLN") > -1) t.lunas = true;
+              }
+              self.simpanJadwal();
+              if (window.Notify) {
+                window.Notify.push({
+                  lingkup: "mobile",
+                  judul: cukup ? T("Jadwal dieksekusi") : T("Jadwal gagal dijalankan"),
+                  pesan: j.nama + " · " + self.rp(j.nominal),
+                  ikon: cukup ? "calendar-check" : "exclamation-triangle-fill",
+                  tone: cukup ? "success" : "danger", kategori: "Jadwal"
+                });
+              }
+              window.toast((cukup ? T("Jadwal dieksekusi: ") : T("Gagal, saldo kurang: ")) + j.nama, cukup ? "success" : "danger", T("Jadwal otomatis"));
+              self.pindah("jadwal");
+            }, 1200);
+          };
+          if (this.pinBesar && j.nominal >= 1000000 && window.Bio) {
+            window.Bio.minta({ alasan: T("Verifikasi untuk menjalankan") + " " + j.nama }).then(function (ok) {
+              if (ok) lanjut(); else window.toast(T("Verifikasi dibatalkan."), "warning", T("Keamanan"));
+            });
+          } else lanjut();
+        },
+        bukaJadwalBaru: function () {
+          this.jadwalBaruForm = { nama: "", ke: "", nominal: 0, frekuensi: "Bulanan", jenis: "transfer" };
+          this.jadwalSheet = true;
+        },
+        simpanJadwalBaru: function () {
+          var f = this.jadwalBaruForm;
+          if (!f.nama || f.nominal < 1000) {
+            window.toast(T("Lengkapi nama dan nominal minimal Rp 1.000."), "danger", T("Jadwal otomatis"));
+            return;
+          }
+          var kini = new Date();
+          var hari = f.frekuensi === "Mingguan" ? kini.getDay() : Math.min(28, kini.getDate() + 3);
+          var berikut = f.frekuensi === "Mingguan"
+            ? HARI[(kini.getDay() + 7) % 7] + " " + tanggal(new Date(kini.getTime() + 7 * 864e5))
+            : hari + " " + BULAN[(kini.getMonth() + 1) % 12];
+          this.jadwal.push({
+            id: "JD-" + Math.floor(100 + Math.random() * 899), nama: f.nama, ke: f.ke || T("Belum diisi"),
+            jenis: f.jenis, nominal: f.nominal, frekuensi: f.frekuensi, hari: hari, aktif: true, berikut: berikut
+          });
+          this.simpanJadwal();
+          this.jadwalSheet = false;
+          window.toast(T("Jadwal baru disimpan."), "success", T("Jadwal otomatis"));
+          if (window.Notify) {
+            window.Notify.push({
+              lingkup: "mobile", judul: T("Jadwal baru aktif"),
+              pesan: f.nama + " · " + f.frekuensi + " · " + this.rp(f.nominal),
+              ikon: "calendar-check", tone: "info", kategori: "Jadwal"
+            });
+          }
+        },
+
+        /* ---------------- keamanan / biometric ---------------- */
+        kunciAplikasi: function () {
+          if (!window.Bio) return;
+          window.Bio.kunci({ alasan: T("Buka aplikasi nasabah Anda") });
+        },
+        ujiBio: function () { if (window.Bio) window.Bio.uji(); },
+        setBio: function () {
+          if (window.Bio) window.Bio.setAktif(this.bioAktif);
+          simpanLS("app.bioSet", this.bioAktif);
+          window.toast(this.bioAktif ? T("Biometric diaktifkan.") : T("Biometric dimatikan."), this.bioAktif ? "success" : "warning", T("Keamanan"));
+          if (this.bioAktif && window.Bio) window.Bio.kunci({ alasan: T("Konfirmasi sidik jari untuk mengaktifkan") });
+        },
+        simpanPin: function () {
+          if (!/^\d{6}$/.test(String(this.pinBaru))) {
+            window.toast(T("PIN harus 6 digit angka."), "danger", T("Keamanan"));
+            return;
+          }
+          if (this.pinBaru === "123456") {
+            window.toast(T("Gunakan PIN selain PIN bawaan."), "warning", T("Keamanan"));
+            return;
+          }
+          if (window.Bio) window.Bio.setPin(this.pinBaru);
+          this.pinBaru = "";
+          window.toast(T("PIN aplikasi diperbarui."), "success", T("Keamanan"));
+        },
+        setIdle: function (ms) {
+          this.idleMs = ms;
+          simpanLS("app.idleMs", ms);
+          if (window.Bio) window.Bio.idle(ms || 86400000);
+          window.toast(ms ? T("Kunci otomatis: ") + T((this.opsiIdle.filter(function (o) { return o.ms === ms; })[0] || {}).label || "") : T("Kunci otomatis dimatikan."),
+            "info", T("Keamanan"));
+        },
+        simpanSetelan: function () {
+          simpanLS("app.pinBesar", this.pinBesar);
+          window.toast(this.pinBesar ? T("PIN diminta untuk transaksi ≥ Rp 1 juta.") : T("PIN besar tidak diminta."), "info", T("Keamanan"));
+        },
+
+        muatUlang: function () {
+          var self = this;
+          if (window.Lock) {
+            window.Lock.show({
+              mode: "load", title: "Memuat data terbaru",
+              message: "Menyinkronkan saldo, kartu, dan transaksi…"
+            });
+          }
+          setTimeout(function () {
+            self.riwayat = buatRiwayat(18);
+            rnd = acakSeed(Date.now() >>> 3);
+            if (window.Lock) window.Lock.hide();
+            window.toast("Data dimuat ulang.", "success", "Aplikasi Nasabah");
+            var log = document.getElementById("mobile-log");
+            if (log) log.textContent = T("Data contoh diperbarui") + " · " + new Date().toLocaleTimeString("id-ID") + " · " + T("100% offline") + ".";
+          }, 1100);
+        },
+        demoKunciLayar: function () {
+          if (window.Lock) {
+            window.Lock.demo(3, {
+              mode: "screen", title: "Layar terkunci",
+              message: "Contoh animasi saat aplikasi tidak aktif."
+            });
+          }
+        },
+        kunciKartu: function () {
+          var self = this;
+          if (window.Alpine && window.Alpine.store("dialog")) {
+            window.Alpine.store("dialog").ask({
+              title: "Kunci kartu ini?",
+              message: "Kartu tidak bisa dipakai sampai dibuka blokirnya.",
+              tone: "danger", confirmText: "Kunci kartu",
+              onConfirm: function () {
+                window.toast("Kartu diblokir sementara.", "warning", "Kartu");
+                if (window.Lock) window.Lock.show({ mode: "screen", tone: "danger", title: "Kartu terkunci", message: "QRIS pada kartu dinonaktifkan." });
+                setTimeout(function () { if (window.Lock) window.Lock.hide(); }, 1200);
+                self.kartuList = self.kartuList.map(function (k) { return Object.assign({}, k, { status: "Terblokir" }); });
+              }
+            });
+          }
+        },
+        keluar: function () {
+          if (window.Alpine && window.Alpine.store("dialog")) {
+            window.Alpine.store("dialog").ask({
+              title: "Keluar dari aplikasi?",
+              message: "Sesi di perangkat ini akan diakhiri.",
+              tone: "danger", confirmText: "Keluar",
+              onConfirm: function () {
+                if (window.Lock) window.Lock.show({ mode: "screen", title: "Mengakhiri sesi", message: "Membersihkan data sesi…" });
+                setTimeout(function () { window.location.href = "../login.html"; }, 1200);
+              }
+            });
+          }
+        },
+        salinRekening: function () {
+          var teks = "882012345678";
+          if (navigator.clipboard) navigator.clipboard.writeText(teks).catch(function () {});
+          window.toast("Nomor rekening disalin.", "success", "Rekening");
+        },
+
+        /* ---------------- QRIS saya ---------------- */
+        setNominalQR: function (n) { this.nominalQR = n; this.buatQR(); },
+        buatQR: function () {
+          if (!window.Qris) return;
+          var host = document.getElementById("nasabah-qr");
+          if (!host) return;
+          var teks = window.Qris.payload({
+            nmid: "ID1024351287941", merchant: "AULIA SAPUTRA", kota: "JAKARTA",
+            mcc: "5411", tipe: this.nominalQR > 0 ? "dinamis" : "statis",
+            nominal: this.nominalQR, keterangan: this.nominalQR > 0 ? "QR NASABAH" : "", terminal: "MB01"
+          });
+          this._qr = teks;
+          window.Qris.render(host, teks, { logo: true });
+          var nm = document.getElementById("nasabah-nominal");
+          if (nm) nm.textContent = this.nominalQR > 0 ? this.rp(this.nominalQR) : T("Nominal bebas");
+          var crc = document.getElementById("nasabah-crc");
+          if (crc) crc.textContent = "CRC16 " + teks.slice(-4) + (window.Qris.crcSah(teks) ? " ✓" : " ✗");
+        },
+        salinQR: function () {
+          if (!this._qr) return;
+          if (navigator.clipboard) navigator.clipboard.writeText(this._qr).catch(function () {});
+          window.toast("Payload QRIS disalin.", "success", "QRIS");
+        },
+        unduhQR: function () {
+          if (!this._qr || !window.Qris) return;
+          var a = document.createElement("a");
+          a.href = window.Qris.png(this._qr, 8, 32);
+          a.download = "qris-nasabah.png";
+          document.body.appendChild(a); a.click(); document.body.removeChild(a);
+          window.toast("QRIS diunduh sebagai PNG.", "success", "QRIS");
+        },
+
+        init: function () {
+          var self = this;
+          this.$nextTick(function () { self.buatQR(); });
+
+          /* setelan tersimpan: biometric, kunci otomatis, PIN transaksi besar */
+          if (window.Bio) {
+            this.bioAktif = window.Bio.aktif();
+            var idleTersimpan = muatLS("app.idleMs");
+            this.idleMs = idleTersimpan === null ? 90000 : idleTersimpan;
+            window.Bio.idle(this.idleMs || 86400000);
+          }
+          var pinBesarTersimpan = muatLS("app.pinBesar");
+          if (pinBesarTersimpan !== null) this.pinBesar = !!pinBesarTersimpan;
+
+          /* kunci aplikasi saat dibuka (biometric/PIN) */
+          setTimeout(function () {
+            if (window.Bio && self.bioAktif) {
+              window.Bio.kunci({ alasan: T("Buka aplikasi nasabah Anda") }).then(function (ok) {
+                if (ok) window.toast(T("Selamat datang kembali, Aulia."), "success", "Bank Nusantara");
+              });
+            }
+          }, 900);
+
+          /* contoh notifikasi "push" masuk sendiri (tanpa server) */
+          setTimeout(function () {
+            if (window.Notify) {
+              window.Notify.push({
+                lingkup: "mobile", judul: T("Transfer masuk"), pesan: "Rp 1.250.000 dari Budi Santoso.",
+                ikon: "arrow-down-left", tone: "success", kategori: "Transaksi"
+              });
+            }
+          }, 9000);
+          setTimeout(function () {
+            if (window.Notify) {
+              window.Notify.push({
+                lingkup: "mobile", judul: T("Promo QRIS akhir pekan"), pesan: T("Diskon 20% di merchant QRIS pilihan sampai Minggu."),
+                ikon: "gift", tone: "info", kategori: "Promo"
+              });
+            }
+          }, 21000);
+
+          /* klik banner notifikasi → buka pusat notifikasi */
+          window.addEventListener("notify:open", function () { self.pindah("notif"); });
+          window.addEventListener("notify:changed", function () { /* reaktif lewat store */ });
+          window.addEventListener("i18n:changed", function () {
+            if (window.Alpine && window.Alpine.store("notif")) window.Alpine.store("notif").segarkan();
+          });
+        }
+      };
+    });
+  });
+</script>
+<!-- ===================== TOAST ===================== -->
+<div class="pointer-events-none fixed right-4 top-20 z-[100] flex w-[22rem] max-w-[92vw] flex-col gap-2 no-print"
+     aria-live="polite" aria-atomic="true">
+  <template x-for="t in $store.toasts.items" :key="t.id">
+    <div class="toast pointer-events-auto"
+         :class="'toast-' + t.type"
+         x-transition:enter="transition ease-out duration-200"
+         x-transition:enter-start="opacity-0 translate-x-6"
+         x-transition:leave="transition ease-in duration-150"
+         x-transition:leave-end="opacity-0 translate-x-6">
+      <span class="mt-0.5 flex-none"
+            :class="{
+              'text-success': t.type === 'success',
+              'text-danger': t.type === 'danger',
+              'text-warning': t.type === 'warning',
+              'text-info': t.type === 'info',
+              'text-primary': !['success','danger','warning','info'].includes(t.type)
+            }">
+        <i data-icon="check-circle-fill" x-show="t.type === 'success'"></i>
+        <i data-icon="exclamation-triangle-fill" x-show="t.type === 'danger' || t.type === 'warning'" x-cloak></i>
+        <i data-icon="info-circle-fill" x-show="!['success','danger','warning'].includes(t.type)" x-cloak></i>
+      </span>
+      <div class="min-w-0 flex-1">
+        <strong class="block text-sm" x-text="t.title" x-show="t.title"></strong>
+        <span class="block text-sm" x-text="t.message"></span>
+      </div>
+      <button class="link-muted flex-none" @click="$store.toasts.remove(t.id)" aria-label="Tutup notifikasi">
+        <i data-icon="x-lg" data-size="13"></i>
+      </button>
+    </div>
+  </template>
+</div>
+
+<!-- ===================== DIALOG KONFIRMASI ===================== -->
+<div class="no-print">
+  <template x-if="$store.dialog.open">
+    <div class="modal-backdrop" @keydown.escape.window="$store.dialog.cancel()">
+      <div class="modal-panel" role="dialog" aria-modal="true">
+        <div class="modal-header">
+          <span class="grid h-9 w-9 flex-none place-items-center rounded-full"
+                :class="$store.dialog.tone === 'danger' ? 'bg-danger/15 text-danger' : 'bg-primary/15 text-primary'">
+            <i data-icon="exclamation-triangle-fill" data-size="18" x-show="$store.dialog.tone === 'danger'"></i>
+            <i data-icon="question-circle" data-size="18" x-show="$store.dialog.tone !== 'danger'" x-cloak></i>
+          </span>
+          <h3 class="m-0 text-lg font-semibold" x-text="$store.dialog.title"></h3>
+        </div>
+        <div class="modal-body">
+          <p class="m-0 text-muted-2" x-text="$store.dialog.message"></p>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-light" @click="$store.dialog.cancel()" x-text="$store.dialog.cancelText"></button>
+          <button class="btn" :class="$store.dialog.tone === 'danger' ? 'btn-danger' : 'btn-primary'"
+                  @click="$store.dialog.confirm()" x-text="$store.dialog.confirmText"></button>
+        </div>
+      </div>
+    </div>
+  </template>
+</div>
+
+<!-- ===================== TOMBOL ATAS ===================== -->
+<button class="no-print fixed bottom-[5.8rem] right-5 z-[70] grid h-11 w-11 place-items-center rounded-full bg-primary text-primary-fg shadow-lg transition hover:brightness-110"
+        data-back-to-top aria-label="Kembali ke atas"
+        x-data="{ show:false }" x-init="window.addEventListener('scroll', () => show = window.scrollY > 320)"
+        x-show="show" x-cloak x-transition.opacity>
+  <i data-icon="arrow-up-short" data-size="22"></i>
+</button>
+
+</body>
+</html>

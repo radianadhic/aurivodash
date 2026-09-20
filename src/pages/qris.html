@@ -1,0 +1,371 @@
+---
+path: pages/qris.html
+title: QRIS — Pembangkit QR Pembayaran
+pageTitle: QRIS
+subtitle: QRIS statis &amp; dinamis (EMVCo + CRC16) · struktur payload terbaca · riwayat transaksi merchant
+crumb: Home|index.html, QRIS
+description: Halaman QRIS: pembangkit QR statis/dinamis sesuai spesifikasi EMVCo dengan CRC16, penjelasan struktur tag, simulasi pembayaran masuk, dan riwayat transaksi merchant.
+scripts: qrcode-generator.min.js, qris.js
+bodyClass: page-qris
+---
+<!--#navbar-->
+<button type="button" class="nav-icon-btn" data-qris="unduh" title="Unduh QRIS (PNG)"
+        aria-label="Unduh QRIS">
+  <i data-icon="download" data-size="17"></i>
+</button>
+<button type="button" class="nav-icon-btn" data-qris="salin" title="Salin payload QRIS"
+        aria-label="Salin payload QRIS">
+  <i data-icon="clipboard" data-size="17"></i>
+</button>
+<button type="button" class="nav-icon-btn" data-qris="bayar" title="Simulasi pembayaran masuk"
+        aria-label="Simulasi pembayaran masuk">
+  <i data-icon="cash-coin" data-size="17"></i>
+</button>
+<!--/#navbar-->
+
+<!--#actions-->
+<button class="btn btn-light" onclick="window.print()"><i data-icon="printer"></i> Cetak label</button>
+<button class="btn btn-light" id="qris-contoh"><i data-icon="arrow-clockwise"></i> Data contoh</button>
+<button class="btn btn-light" data-qris="salin"><i data-icon="clipboard"></i> Salin payload</button>
+<button class="btn btn-success" data-qris="bayar"><i data-icon="cash-coin"></i> Simulasi pembayaran</button>
+<!--/#actions-->
+
+<div class="alert alert-info items-start">
+  <i data-icon="qr-code" class="mt-0.5"></i>
+  <div>
+    <b>QRIS.</b> Halaman ini membangun QR pembayaran sesuai <b>EMVCo Merchant-Presented Mode</b> —
+    tag TLV, mata uang 360 (IDR), <code>NMID</code> merchant, dan penutup <code>CRC16</code>.
+    Ubah data merchant atau nominal, QR langsung diperbarui. Tombol <b>Simulasi pembayaran</b>
+    menambah baris transaksi masuk agar riwayat dan ringkasan ikut berubah.
+  </div>
+</div>
+
+<!-- ringkasan hari ini -->
+<div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+  <div class="info-box">
+    <span class="info-box-icon" style="--ib: var(--c-primary)"><i data-icon="receipt"></i></span>
+    <div class="info-box-content">
+      <span class="info-box-text">Transaksi hari ini</span>
+      <span class="info-box-number" id="qris-stat-transaksi">0</span>
+      <span class="fs-8 text-muted-2"><span id="qris-stat-berhasil">0</span> berhasil</span>
+    </div>
+  </div>
+  <div class="info-box">
+    <span class="info-box-icon" style="--ib: var(--c-success)"><i data-icon="cash-stack"></i></span>
+    <div class="info-box-content">
+      <span class="info-box-text">Volume</span>
+      <span class="info-box-number" id="qris-stat-volume">Rp 0</span>
+      <span class="fs-8 text-muted-2">total nilai transaksi berhasil</span>
+    </div>
+  </div>
+  <div class="info-box">
+    <span class="info-box-icon" style="--ib: var(--c-info)"><i data-icon="percent"></i></span>
+    <div class="info-box-content">
+      <span class="info-box-text">Estimasi MDR</span>
+      <span class="info-box-number" id="qris-stat-mdr">Rp 0</span>
+      <span class="fs-8 text-muted-2">0,7% dari volume (contoh)</span>
+    </div>
+  </div>
+  <div class="info-box">
+    <span class="info-box-icon" style="--ib: var(--c-warning)"><i data-icon="bank"></i></span>
+    <div class="info-box-content">
+      <span class="info-box-text">Settlement</span>
+      <span class="info-box-number">T+1</span>
+      <span class="fs-8 text-muted-2">masuk rekening besok pagi</span>
+    </div>
+  </div>
+</div>
+
+<div class="mt-4 grid gap-4 xl:grid-cols-3">
+  <!-- ============================ kolom utama ============================ -->
+  <div class="space-y-4 xl:col-span-2">
+    <!-- Pembangkit QRIS -->
+    <div class="card" id="qris-buat">
+      <div class="card-header">
+        <h3 class="card-title"><i data-icon="qr-code" class="text-primary"></i> Pembangkit QRIS</h3>
+        <div class="card-tools flex flex-wrap items-center gap-2">
+          <span class="badge badge-soft-primary" id="qris-tipe-tampil">QRIS Statis</span>
+          <span class="badge badge-soft-success" id="qris-crc">CRC16 —</span>
+        </div>
+      </div>
+      <div class="card-body grid gap-5 lg:grid-cols-[minmax(0,17rem)_1fr]">
+        <!-- kiri: pratinjau QR -->
+        <div class="space-y-3">
+          <div class="qr-kotak" data-qr-kotak>
+            <div class="qr-isi" id="qris-qr"></div>
+            <div class="qr-logo" aria-hidden="true">
+              <span class="qr-tanda"><i></i><i></i><i></i><i></i></span>
+              <b>QRIS</b>
+            </div>
+            <span class="qr-kedaluwarsa-pesan">QR kedaluwarsa — tekan Bangun ulang</span>
+          </div>
+          <div class="text-center">
+            <div class="font-semibold" id="qris-nama-tampil">KOPI NUSANTARA</div>
+            <div class="fs-8 text-muted-2" id="qris-kota-tampil">JAKARTA · 5814</div>
+            <div class="mt-2 flex items-center justify-center gap-2 text-sm">
+              <span class="text-muted-2">Nominal</span>
+              <b class="tabular-nums" id="qris-nominal-tampil">Nominal bebas</b>
+            </div>
+            <div class="fs-8 text-muted-2 mt-1">
+              Berlaku <span class="tabular-nums font-semibold" id="qris-hitung">berlaku terus</span>
+            </div>
+          </div>
+          <div class="flex flex-wrap justify-center gap-2">
+            <button type="button" class="btn btn-primary btn-sm" id="qris-buat-ulang">
+              <i data-icon="arrow-repeat"></i> Bangun ulang
+            </button>
+            <button type="button" class="btn btn-light btn-sm" data-qris="unduh">
+              <i data-icon="download"></i> Unduh PNG
+            </button>
+          </div>
+        </div>
+
+        <!-- kanan: formulir merchant -->
+        <div class="space-y-4">
+          <div id="qris-form" class="grid gap-3 sm:grid-cols-2">
+            <div class="sm:col-span-2">
+              <label class="form-label" for="qris-nama">Nama merchant</label>
+              <input type="text" class="form-control" id="qris-nama" value="KOPI NUSANTARA" maxlength="25"
+                     aria-label="Nama merchant">
+            </div>
+            <div>
+              <label class="form-label" for="qris-nmid">NMID</label>
+              <input type="text" class="form-control font-mono" id="qris-nmid" value="ID1024351287941"
+                     aria-label="NMID merchant">
+            </div>
+            <div>
+              <label class="form-label" for="qris-kota">Kota</label>
+              <input type="text" class="form-control" id="qris-kota" value="JAKARTA" maxlength="15"
+                     aria-label="Kota merchant">
+            </div>
+            <div>
+              <label class="form-label" for="qris-mcc">Kategori merchant (MCC)</label>
+              <select class="form-select" id="qris-mcc" aria-label="Kategori merchant">
+                <option value="5814" selected>5814 — Restoran cepat saji</option>
+                <option value="5411">5411 — Toko kelontong</option>
+                <option value="5912">5912 — Apotek</option>
+                <option value="5992">5992 — Toko bunga</option>
+                <option value="4121">4121 — Transportasi daring</option>
+                <option value="8099">8099 — Jasa kesehatan</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label" for="qris-tipe">Tipe QR</label>
+              <select class="form-select" id="qris-tipe" aria-label="Tipe QR">
+                <option value="statis">Statis — nominal diisi pembeli</option>
+                <option value="dinamis">Dinamis — nominal ditentukan</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label" for="qris-nominal">Nominal</label>
+              <input type="number" class="form-control" id="qris-nominal" min="0" step="500"
+                     placeholder="mis. 75000" aria-label="Nominal QRIS">
+            </div>
+            <div>
+              <label class="form-label" for="qris-keterangan">Nomor tagihan</label>
+              <input type="text" class="form-control" id="qris-keterangan" placeholder="mis. INV-2026-0918"
+                     maxlength="25" aria-label="Nomor tagihan">
+            </div>
+            <div>
+              <label class="form-label" for="qris-terminal">Label terminal</label>
+              <input type="text" class="form-control" id="qris-terminal" value="A01" maxlength="8"
+                     aria-label="Label terminal">
+            </div>
+            <div>
+              <label class="form-label" for="qris-pos">Kode pos</label>
+              <input type="text" class="form-control" id="qris-pos" value="12190" maxlength="10"
+                     aria-label="Kode pos">
+            </div>
+          </div>
+
+          <div>
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <span class="form-label m-0">Payload EMVCo</span>
+              <span class="fs-8 text-muted-2">
+                <span class="tabular-nums" id="qris-panjang">0 karakter</span> · tag TLV + CRC16
+              </span>
+            </div>
+            <code class="qr-payload" id="qris-payload">—</code>
+          </div>
+
+          <div class="flex flex-wrap gap-2">
+            <button type="button" class="btn btn-success btn-sm" id="qris-bayar">
+              <i data-icon="cash-coin"></i> Simulasi pembayaran
+            </button>
+            <button type="button" class="btn btn-light btn-sm" id="qris-unduh">
+              <i data-icon="download"></i> Unduh PNG
+            </button>
+            <button type="button" class="btn btn-light btn-sm" id="qris-salin">
+              <i data-icon="clipboard"></i> Salin payload
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- struktur payload -->
+      <div class="card-body border-t border-slate-200 !pt-3 dark:border-slate-700">
+        <div class="mb-2 flex flex-wrap items-center justify-between gap-2">
+          <h4 class="m-0 text-sm font-semibold"><i data-icon="list-check" class="text-info"></i> Struktur payload</h4>
+          <span class="fs-8 text-muted-2">dibaca ulang dari string QR — bukti payload bisa diparsing</span>
+        </div>
+        <div class="table-wrap table-wrap-static max-h-72">
+          <table class="table table-sm table-striped">
+            <thead>
+              <tr>
+                <th style="width:6rem">Tag</th>
+                <th style="width:11rem">Arti</th>
+                <th class="text-right" style="width:5rem">Panjang</th>
+                <th>Nilai</th>
+              </tr>
+            </thead>
+            <tbody id="qris-struktur"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Riwayat transaksi -->
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title"><i data-icon="clock-history" class="text-primary"></i> Riwayat transaksi QRIS</h3>
+        <div class="card-tools">
+          <button type="button" class="btn btn-light btn-sm" id="qris-csv">
+            <i data-icon="file-earmark-spreadsheet"></i> Unduh CSV
+          </button>
+        </div>
+      </div>
+      <div class="card-body !py-2">
+        <div class="flex flex-wrap items-end gap-2">
+          <div>
+            <label class="form-label m-0 fs-8" for="cari-qris">Cari</label>
+            <input type="search" id="cari-qris" data-dt-search class="form-control !w-56 !py-1 text-sm"
+                   placeholder="Cari ID, penerbit, RRN…" aria-label="Cari transaksi QRIS">
+          </div>
+          <div>
+            <label class="form-label m-0 fs-8" for="baris-qris">Baris</label>
+            <select id="baris-qris" data-dt-length class="form-select !py-1 text-sm" aria-label="Baris per halaman">
+              <option>10</option>
+              <option selected>25</option>
+              <option>50</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="table-wrap table-wrap-static">
+        <table class="table table-hover table-sm table-sortable" data-datatable id="tabel-qris">
+          <thead>
+            <tr>
+              <th data-sort>ID</th>
+              <th data-sort>Waktu</th>
+              <th data-sort>Penerbit</th>
+              <th data-sort>Metode</th>
+              <th data-sort class="text-right">Nominal</th>
+              <th data-sort class="text-right">MDR</th>
+              <th class="text-center">Status</th>
+            </tr>
+          </thead>
+          <tbody id="qris-riwayat">
+            <tr data-dt-empty><td colspan="7" class="py-3 text-center text-muted-2">Belum ada transaksi.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card-footer flex flex-wrap items-center justify-between gap-2">
+        <span class="fs-8 text-muted-2" data-dt-info></span>
+        <div class="flex flex-wrap gap-1" data-dt-pagination></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================ kolom samping ============================ -->
+  <div class="space-y-4">
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title"><i data-icon="shop" class="text-success"></i> Merchant</h3>
+        <div class="card-tools"><span class="badge badge-success">Aktif</span></div>
+      </div>
+      <div class="card-body space-y-3">
+        <div class="flex items-center justify-between gap-2 text-sm">
+          <span class="text-muted-2">Nama</span><b id="qris-merchant-ringkas">KOPI NUSANTARA</b>
+        </div>
+        <div class="flex items-center justify-between gap-2 text-sm">
+          <span class="text-muted-2">NMID</span><b class="font-mono" id="qris-nmid-ringkas">ID1024351287941</b>
+        </div>
+        <div class="flex items-center justify-between gap-2 text-sm">
+          <span class="text-muted-2">Kota</span><b id="qris-kota-ringkas">JAKARTA</b>
+        </div>
+        <div class="flex items-center justify-between gap-2 text-sm">
+          <span class="text-muted-2">Kriteria merchant</span><b>UMI</b>
+        </div>
+        <div class="flex items-center justify-between gap-2 text-sm">
+          <span class="text-muted-2">Acquirer</span><b>ID.CO.QRIS.WWW</b>
+        </div>
+        <div class="border-t border-slate-200 pt-3 dark:border-slate-700">
+          <p class="fs-8 text-muted-2 m-0">
+            NMID, nama, dan kota diambil dari panel kiri lalu dimasukkan ke tag 51 dan 59–61
+            pada payload QR.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title"><i data-icon="info-circle" class="text-info"></i> Cara kerja QRIS</h3>
+      </div>
+      <div class="card-body">
+        <ul class="list-feed">
+          <li>
+            <b>1. Merchant menerbitkan QR.</b> Statis (tag 01 = <code>11</code>) untuk nominal
+            bebas, dinamis (tag 01 = <code>12</code>) untuk sekali pakai + nominal pasti.
+          </li>
+          <li>
+            <b>2. Data merchant masuk tag 51.</b> Domain acquirer, NMID, dan kriteria merchant
+            (UMI/UKM/UKEA) ditulis berurutan sebagai TLV bersarang.
+          </li>
+          <li>
+            <b>3. Nominal & mata uang.</b> Tag 53 = <code>360</code> (IDR); tag 54 hanya diisi
+            pada QR dinamis.
+          </li>
+          <li>
+            <b>4. CRC16 menutup payload.</b> Empat karakter terakhir dihitung dari seluruh
+            payload — bila satu karakter berubah, CRC tidak lagi cocok.
+          </li>
+          <li>
+            <b>5. Aplikasi pembayar memindai.</b> Penerbit meneruskan ke switching, lalu
+            settlement T+1 ke rekening merchant.
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title"><i data-icon="code-slash" class="text-primary"></i> Kode inti</h3>
+      </div>
+      <div class="card-body">
+<pre class="code-block"><code>// payload: TLV (tag + panjang + nilai) ala EMVCo
+s += Qris.tlv("00", "01");          // versi payload
+s += Qris.tlv("01", "12");          // 12 = QR sekali pakai
+s += Qris.tlv("51",
+  Qris.tlv("00", "ID.CO.QRIS.WWW") +
+  Qris.tlv("02", "ID1024351287941") +
+  Qris.tlv("03", "UMI"));
+s += Qris.tlv("52", "5814");        // MCC
+s += Qris.tlv("53", "360");         // IDR
+s += Qris.tlv("54", "50000");       // nominal (dinamis)
+s += Qris.tlv("58", "ID");
+s += Qris.tlv("59", "KOPI NUSANTARA");
+s += Qris.tlv("60", "JAKARTA");
+s += "6304" + Qris.crc16(s);        // CRC16-CCITT
+
+// baca ulang isi payload (untuk audit / log)
+Qris.parse(s);   // → [{ tag: "51 · 02", arti: "NMID", … }]</code></pre>
+        <div class="callout callout-warning mt-3 mb-0">
+          <b>Catatan.</b> Nomor QR di halaman ini dibuat untuk demo antarmuka — bukan QRIS
+          terdaftar. Untuk produksi, NMID dan domain acquirer harus berasal dari PJP
+          (penyedia jasa pembayaran) yang bekerja sama.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,119 @@
+/* ============================================================================
+ * minigrid.css — penyatu tampilan MiniGrid (github.com/radianadhic/minigrid)
+ * dengan design system template.
+ *
+ * Cara kerja: MiniGrid menulis warnanya sebagai utilitas Tailwind
+ * (mis. `bg-white`, `border-slate-200`, `text-indigo-600`) yang membaca
+ * var(--color-*). Berkas ini cukup MEMETAKAN ulang variabel palet itu ke token
+ * template (--c-*), sehingga:
+ *   · grid ikut berubah saat skin perbankan / mode gelap diganti,
+ *   · modal, pager, tombol, dan badge-nya seragam dengan halaman lain,
+ *   · tidak ada CSS kedua (preflight ganda) — utilitasnya digenerate oleh
+ *     build Tailwind template sendiri (lihat @source di src/input.css).
+ * ============================================================================ */
+
+:root {
+  /* palet abu → token netral template */
+  --color-white: var(--c-card-bg);
+  --color-slate-50: var(--c-surface-2);
+  --color-slate-100: color-mix(in oklab, var(--c-border) 35%, var(--c-card-bg));
+  --color-slate-200: var(--c-border);
+  --color-slate-300: color-mix(in oklab, var(--c-border) 78%, var(--c-muted));
+  --color-slate-400: var(--c-muted);
+  --color-slate-500: var(--c-muted);
+  --color-slate-600: var(--c-fg);
+  --color-slate-700: var(--c-fg);
+  --color-slate-800: var(--c-fg);
+  --color-slate-900: var(--c-fg);
+
+  /* aksen (indigo) → warna primer template, digelapkan agar teks tetap terbaca
+     walau skinnnya terang (mis. kuning / emas) */
+  --color-indigo-50: color-mix(in oklab, var(--c-primary) 12%, var(--c-card-bg));
+  --color-indigo-100: color-mix(in oklab, var(--c-primary) 22%, var(--c-card-bg));
+  --color-indigo-500: color-mix(in oklab, var(--c-primary) 72%, #000);
+  --color-indigo-600: color-mix(in oklab, var(--c-primary) 66%, #000);
+  --color-indigo-700: color-mix(in oklab, var(--c-primary) 52%, #000);
+}
+
+/* Mode gelap: token --c-* sudah otomatis gelap (lihat input.css), jadi hanya
+   aksen & warna status yang perlu dibalik agar tetap kontras. */
+html[data-theme="dark"] {
+  --color-indigo-50: color-mix(in oklab, var(--c-primary) 26%, var(--c-card-bg));
+  --color-indigo-100: color-mix(in oklab, var(--c-primary) 40%, var(--c-card-bg));
+  --color-indigo-500: color-mix(in oklab, var(--c-primary) 82%, #fff);
+  --color-indigo-600: color-mix(in oklab, var(--c-primary) 78%, #fff);
+  --color-indigo-700: color-mix(in oklab, var(--c-primary) 92%, #fff);
+  --color-emerald-100: #062e21;
+  --color-emerald-600: #34d399;
+  --color-emerald-700: #6ee7b7;
+  --color-amber-100: #33230b;
+  --color-amber-700: #fcd34d;
+  --color-rose-100: #3d1420;
+  --color-rose-500: #fb7185;
+  --color-rose-600: #fda4af;
+  --color-rose-700: #fda4af;
+  --color-sky-100: #0b2a3d;
+  --color-sky-700: #7dd3fc;
+}
+
+/* ------------------------------------------------ komponen khas MiniGrid */
+/* (adaptasi src/app.css upstream, dibatasi pada wadah .minigrid-host agar
+   tidak menyentuh komponen template lain) */
+
+.minigrid-host .mg-head th {
+  background: var(--color-slate-100);
+  background-image: linear-gradient(to bottom, var(--color-slate-50), var(--color-slate-100));
+}
+.minigrid-host .mg-head th.frz0 { box-shadow: 2px 0 0 0 var(--c-border); }
+
+.minigrid-host .mg-body td.frz,
+.minigrid-host .mg-body td.frz0 {
+  background: var(--c-card-bg);
+  box-shadow: 2px 0 0 0 var(--c-border);
+}
+.minigrid-host .mg-body tr.alt td.frz,
+.minigrid-host .mg-body tr.alt td.frz0 { background: var(--c-surface-2); }
+
+/* hover & baris terpilih memakai aksen tema (bukan indigo bawaan) */
+.minigrid-host .mg-body tr:hover td { background: var(--color-indigo-50); }
+.minigrid-host .mg-body tr.sel td { background: var(--color-indigo-100); }
+.minigrid-host .mg-body tr.sel:hover td { background: var(--color-indigo-100); filter: brightness(0.97); }
+
+.minigrid-host .mg-spacer td { border: 0 !important; background: var(--c-card-bg); }
+
+/* transisi halus saat ganti tema / hover — terbatas di dalam grid */
+.minigrid-host .mg-body td,
+.minigrid-host .mg-head th,
+.minigrid-host .mg-body tr,
+.minigrid-host button,
+.minigrid-host input,
+.minigrid-host select,
+.minigrid-host a { transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease; }
+
+/* scrollbar halus */
+.minigrid-host [data-role="scroller"]::-webkit-scrollbar { width: 10px; height: 10px; }
+.minigrid-host [data-role="scroller"]::-webkit-scrollbar-thumb {
+  background: var(--color-slate-300);
+  border-radius: 8px;
+  border: 2px solid var(--c-card-bg);
+}
+.minigrid-host [data-role="scroller"]::-webkit-scrollbar-track { background: transparent; }
+
+/* Modal MiniGrid (dipindah ke document.body oleh pustakanya). */
+.mg-modal { z-index: 92; }                       /* di atas sidebar (60), di bawah dialog template (95) */
+.mg-modal > div { max-width: min(96vw, 64rem); }
+.mg-modal [data-drag] { cursor: move; }
+
+/* Baris tinggi (hasil pengukuran template) supaya grid menyatu dengan kartu. */
+.minigrid-host .table,
+.minigrid-host table { margin: 0; }
+
+/* Tombol & keadaan muat ulang (opsi reload → tombol refresh di toolbar). */
+.minigrid-host [data-act="reload"] svg { transition: transform 0.2s ease; }
+.minigrid-host[data-loading="1"] [data-act="reload"] svg { animation: mg-spin 0.85s linear infinite; }
+.minigrid-host[data-loading="1"] [data-role="scroller"] { opacity: 0.55; transition: opacity 0.2s ease; }
+.minigrid-host[data-loading="1"] [data-role="tools"] { cursor: progress; }
+@keyframes mg-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .minigrid-host[data-loading="1"] [data-act="reload"] svg { animation: none; }
+}

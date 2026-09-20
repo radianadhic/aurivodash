@@ -1,0 +1,334 @@
+---
+path: pages/tables.html
+title: Tabel Data
+pageTitle: Tabel & Data
+crumb: Home|index.html, Tabel & Data
+description: Contoh tabel data dengan pencarian, sortir, paginasi, pilih baris massal, dan tombol aksi.
+---
+<!--#navbar-->
+<button type="button" class="nav-icon-btn" title="Tambah data pelanggan"
+        onclick="window.toast('Form tambah pelanggan dibuka (demo).', 'info', 'Tambah data')" aria-label="Tambah data pelanggan">
+  <i data-icon="plus-lg" data-size="17"></i>
+</button>
+<button type="button" class="nav-icon-btn" title="Muat ulang tabel"
+        onclick="window.toast('Tabel dimuat ulang (demo).', 'success', 'Muat ulang')" aria-label="Muat ulang tabel">
+  <i data-icon="arrow-clockwise" data-size="17"></i>
+</button>
+<!--/#navbar-->
+
+<!--#actions-->
+<button class="btn btn-light" data-print><i data-icon="printer"></i> Cetak</button>
+<button class="btn btn-success" onclick="window.toast('Unduhan dimulai (demo).','success','Ekspor')"><i data-icon="download"></i> Ekspor CSV</button>
+<button class="btn btn-primary" onclick="window.toast('Form tambah pelanggan dibuka (demo).','info','Tambah data')"><i data-icon="plus-lg"></i> Tambah pelanggan</button>
+<!--/#actions-->
+
+<div class="alert alert-info items-start">
+  <i data-icon="info-circle-fill" class="mt-0.5"></i>
+  <div>
+    <b>Tabel pintar tanpa plugin.</b> Pencarian, sortir kolom, paginasi, dan pilih-baris semua berjalan dari
+    <code>assets/js/app.js</code> (fungsi <code>DataTable</code>) — cukup tambahkan atribut <code>data-datatable</code>,
+    <code>data-sort</code>, dan <code>data-dt-search</code>.
+  </div>
+</div>
+
+<!-- ================= TABEL DATA UTAMA ================= -->
+<div class="card" id="data-table">
+  <div class="card-header flex-wrap">
+    <h3 class="card-title"><i data-icon="table" class="text-primary"></i> Daftar Pelanggan</h3>
+    <div class="card-tools flex-wrap">
+      <div class="relative">
+        <span class="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-2"><i data-icon="search" data-size="13"></i></span>
+        <input type="search" data-dt-search class="form-control !w-56 !py-1 pl-8 text-sm" placeholder="Cari nama, kota, email…" aria-label="Cari pelanggan">
+      </div>
+      <select data-dt-length class="form-select !py-1 text-sm" aria-label="Baris per halaman">
+        <option value="5">5 baris</option>
+        <option value="10" selected>10 baris</option>
+        <option value="25">25 baris</option>
+        <option value="100">Semua</option>
+      </select>
+      <button class="btn btn-light btn-sm" data-card-tool="collapse" aria-expanded="true"><i data-icon="chevron-up" data-size="13"></i></button>
+    </div>
+  </div>
+
+  <!-- Bilah aksi massal: muncul saat ada baris tercentang -->
+  <div class="card-body !py-2" data-dt-bulkbar style="display:none">
+    <div class="flex flex-wrap items-center gap-2">
+      <span class="badge badge-soft-primary"><span data-dt-selected>0</span> baris dipilih</span>
+      <button class="btn btn-sm btn-outline-primary" onclick="window.toast('Label massal dibuka (demo).','info')"><i data-icon="tags" data-size="13"></i> Beri label</button>
+      <button class="btn btn-sm btn-outline-secondary" onclick="window.toast('Data massal diekspor (demo).','success')"><i data-icon="download" data-size="13"></i> Ekspor</button>
+      <button class="btn btn-sm btn-outline-danger" data-confirm="Hapus semua baris yang dipilih?" data-confirm-ok="Hapus"><i data-icon="trash" data-size="13"></i> Hapus</button>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table class="table table-hover table-bordered table-sortable" data-datatable>
+      <thead>
+        <tr>
+          <th style="width:42px" class="text-center"><input type="checkbox" class="form-check-input" data-dt-checkall aria-label="Pilih semua"></th>
+          <th data-sort>Nama pelanggan</th>
+          <th data-sort>Email</th>
+          <th data-sort>Kota</th>
+          <th data-sort class="text-right">Belanja</th>
+          <th data-sort class="text-right">Order</th>
+          <th data-sort>Status</th>
+          <th style="width:110px" class="text-center">Aksi</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="text-center"><input type="checkbox" class="form-check-input" data-dt-check aria-label="Pilih baris"></td>
+          <td><div class="user-cell"><span class="avatar avatar-sm bg-primary">RS</span><span class="font-semibold">Rani Setiawati</span></div></td>
+          <td>rani@toko.id</td><td>Bandung</td>
+          <td class="text-right tabular" data-order="48200000">Rp 48.200.000</td>
+          <td class="text-right tabular" data-order="128">128</td>
+          <td><span class="badge badge-soft-success"><span class="dot"></span> Aktif</span></td>
+          <td class="text-center">
+            <button class="btn btn-icon btn-light" title="Detail" onclick="window.toast('Detail pelanggan dibuka (demo).','info')"><i data-icon="eye" data-size="14"></i></button>
+            <button class="btn btn-icon btn-light" title="Ubah" onclick="window.toast('Form ubah dibuka (demo).','info')"><i data-icon="pencil-square" data-size="14"></i></button>
+          </td>
+        </tr>
+        <tr>
+          <td class="text-center"><input type="checkbox" class="form-check-input" data-dt-check aria-label="Pilih baris"></td>
+          <td><div class="user-cell"><span class="avatar avatar-sm bg-info">BP</span><span class="font-semibold">Budi Prakoso</span></div></td>
+          <td>budi@klien.id</td><td>Surabaya</td>
+          <td class="text-right tabular" data-order="31500000">Rp 31.500.000</td>
+          <td class="text-right tabular" data-order="94">94</td>
+          <td><span class="badge badge-soft-success"><span class="dot"></span> Aktif</span></td>
+          <td class="text-center">
+            <button class="btn btn-icon btn-light" title="Detail" onclick="window.toast('Detail pelanggan dibuka (demo).','info')"><i data-icon="eye" data-size="14"></i></button>
+            <button class="btn btn-icon btn-light" title="Ubah" onclick="window.toast('Form ubah dibuka (demo).','info')"><i data-icon="pencil-square" data-size="14"></i></button>
+          </td>
+        </tr>
+        <tr>
+          <td class="text-center"><input type="checkbox" class="form-check-input" data-dt-check aria-label="Pilih baris"></td>
+          <td><div class="user-cell"><span class="avatar avatar-sm bg-warning">NM</span><span class="font-semibold">Nadia Maharani</span></div></td>
+          <td>nadia@retail.id</td><td>Depok</td>
+          <td class="text-right tabular" data-order="27400000">Rp 27.400.000</td>
+          <td class="text-right tabular" data-order="76">76</td>
+          <td><span class="badge badge-soft-warning"><span class="dot"></span> Menunggu verifikasi</span></td>
+          <td class="text-center">
+            <button class="btn btn-icon btn-light" title="Detail" onclick="window.toast('Detail pelanggan dibuka (demo).','info')"><i data-icon="eye" data-size="14"></i></button>
+            <button class="btn btn-icon btn-light" title="Ubah" onclick="window.toast('Form ubah dibuka (demo).','info')"><i data-icon="pencil-square" data-size="14"></i></button>
+          </td>
+        </tr>
+        <tr>
+          <td class="text-center"><input type="checkbox" class="form-check-input" data-dt-check aria-label="Pilih baris"></td>
+          <td><div class="user-cell"><span class="avatar avatar-sm bg-danger">AD</span><span class="font-semibold">Andi Dermawan</span></div></td>
+          <td>andi@umkm.id</td><td>Makassar</td>
+          <td class="text-right tabular" data-order="19850000">Rp 19.850.000</td>
+          <td class="text-right tabular" data-order="61">61</td>
+          <td><span class="badge badge-soft-danger"><span class="dot"></span> Nonaktif</span></td>
+          <td class="text-center">
+            <button class="btn btn-icon btn-light" title="Detail" onclick="window.toast('Detail pelanggan dibuka (demo).','info')"><i data-icon="eye" data-size="14"></i></button>
+            <button class="btn btn-icon btn-light" title="Ubah" onclick="window.toast('Form ubah dibuka (demo).','info')"><i data-icon="pencil-square" data-size="14"></i></button>
+          </td>
+        </tr>
+        <tr>
+          <td class="text-center"><input type="checkbox" class="form-check-input" data-dt-check aria-label="Pilih baris"></td>
+          <td><div class="user-cell"><span class="avatar avatar-sm bg-success">LS</span><span class="font-semibold">Lina Susanti</span></div></td>
+          <td>lina@korporat.id</td><td>Jakarta</td>
+          <td class="text-right tabular" data-order="88500000">Rp 88.500.000</td>
+          <td class="text-right tabular" data-order="212">212</td>
+          <td><span class="badge badge-primary"><span class="dot"></span> Pelanggan VIP</span></td>
+          <td class="text-center">
+            <button class="btn btn-icon btn-light" title="Detail" onclick="window.toast('Detail pelanggan dibuka (demo).','info')"><i data-icon="eye" data-size="14"></i></button>
+            <button class="btn btn-icon btn-light" title="Ubah" onclick="window.toast('Form ubah dibuka (demo).','info')"><i data-icon="pencil-square" data-size="14"></i></button>
+          </td>
+        </tr>
+        <tr>
+          <td class="text-center"><input type="checkbox" class="form-check-input" data-dt-check aria-label="Pilih baris"></td>
+          <td><div class="user-cell"><span class="avatar avatar-sm bg-secondary">HW</span><span class="font-semibold">Hendra Wijaya</span></div></td>
+          <td>hendra@distributor.id</td><td>Semarang</td>
+          <td class="text-right tabular" data-order="15320000">Rp 15.320.000</td>
+          <td class="text-right tabular" data-order="48">48</td>
+          <td><span class="badge badge-soft-success"><span class="dot"></span> Aktif</span></td>
+          <td class="text-center">
+            <button class="btn btn-icon btn-light" title="Detail" onclick="window.toast('Detail pelanggan dibuka (demo).','info')"><i data-icon="eye" data-size="14"></i></button>
+            <button class="btn btn-icon btn-light" title="Ubah" onclick="window.toast('Form ubah dibuka (demo).','info')"><i data-icon="pencil-square" data-size="14"></i></button>
+          </td>
+        </tr>
+        <tr>
+          <td class="text-center"><input type="checkbox" class="form-check-input" data-dt-check aria-label="Pilih baris"></td>
+          <td><div class="user-cell"><span class="avatar avatar-sm bg-primary">MK</span><span class="font-semibold">Maya Kirana</span></div></td>
+          <td>maya@toko.id</td><td>Yogyakarta</td>
+          <td class="text-right tabular" data-order="12980000">Rp 12.980.000</td>
+          <td class="text-right tabular" data-order="39">39</td>
+          <td><span class="badge badge-soft-success"><span class="dot"></span> Aktif</span></td>
+          <td class="text-center">
+            <button class="btn btn-icon btn-light" title="Detail" onclick="window.toast('Detail pelanggan dibuka (demo).','info')"><i data-icon="eye" data-size="14"></i></button>
+            <button class="btn btn-icon btn-light" title="Ubah" onclick="window.toast('Form ubah dibuka (demo).','info')"><i data-icon="pencil-square" data-size="14"></i></button>
+          </td>
+        </tr>
+        <tr>
+          <td class="text-center"><input type="checkbox" class="form-check-input" data-dt-check aria-label="Pilih baris"></td>
+          <td><div class="user-cell"><span class="avatar avatar-sm bg-info">RZ</span><span class="font-semibold">Rizky Saputra</span></div></td>
+          <td>rizky@klien.id</td><td>Medan</td>
+          <td class="text-right tabular" data-order="9740000">Rp 9.740.000</td>
+          <td class="text-right tabular" data-order="27">27</td>
+          <td><span class="badge badge-soft-success"><span class="dot"></span> Aktif</span></td>
+          <td class="text-center">
+            <button class="btn btn-icon btn-light" title="Detail" onclick="window.toast('Detail pelanggan dibuka (demo).','info')"><i data-icon="eye" data-size="14"></i></button>
+            <button class="btn btn-icon btn-light" title="Ubah" onclick="window.toast('Form ubah dibuka (demo).','info')"><i data-icon="pencil-square" data-size="14"></i></button>
+          </td>
+        </tr>
+        <tr>
+          <td class="text-center"><input type="checkbox" class="form-check-input" data-dt-check aria-label="Pilih baris"></td>
+          <td><div class="user-cell"><span class="avatar avatar-sm bg-warning">TW</span><span class="font-semibold">Tirta Wibawa</span></div></td>
+          <td>tirta@bisnis.id</td><td>Denpasar</td>
+          <td class="text-right tabular" data-order="7860000">Rp 7.860.000</td>
+          <td class="text-right tabular" data-order="19">19</td>
+          <td><span class="badge badge-soft-danger"><span class="dot"></span> Nonaktif</span></td>
+          <td class="text-center">
+            <button class="btn btn-icon btn-light" title="Detail" onclick="window.toast('Detail pelanggan dibuka (demo).','info')"><i data-icon="eye" data-size="14"></i></button>
+            <button class="btn btn-icon btn-light" title="Ubah" onclick="window.toast('Form ubah dibuka (demo).','info')"><i data-icon="pencil-square" data-size="14"></i></button>
+          </td>
+        </tr>
+        <tr>
+          <td class="text-center"><input type="checkbox" class="form-check-input" data-dt-check aria-label="Pilih baris"></td>
+          <td><div class="user-cell"><span class="avatar avatar-sm bg-success">SA</span><span class="font-semibold">Sri Anggraeni</span></div></td>
+          <td>sri@toko.id</td><td>Malang</td>
+          <td class="text-right tabular" data-order="6150000">Rp 6.150.000</td>
+          <td class="text-right tabular" data-order="14">14</td>
+          <td><span class="badge badge-soft-warning"><span class="dot"></span> Menunggu verifikasi</span></td>
+          <td class="text-center">
+            <button class="btn btn-icon btn-light" title="Detail" onclick="window.toast('Detail pelanggan dibuka (demo).','info')"><i data-icon="eye" data-size="14"></i></button>
+            <button class="btn btn-icon btn-light" title="Ubah" onclick="window.toast('Form ubah dibuka (demo).','info')"><i data-icon="pencil-square" data-size="14"></i></button>
+          </td>
+        </tr>
+        <tr>
+          <td class="text-center"><input type="checkbox" class="form-check-input" data-dt-check aria-label="Pilih baris"></td>
+          <td><div class="user-cell"><span class="avatar avatar-sm bg-danger">GP</span><span class="font-semibold">Gita Puspita</span></div></td>
+          <td>gita@umkm.id</td><td>Palembang</td>
+          <td class="text-right tabular" data-order="5230000">Rp 5.230.000</td>
+          <td class="text-right tabular" data-order="11">11</td>
+          <td><span class="badge badge-soft-success"><span class="dot"></span> Aktif</span></td>
+          <td class="text-center">
+            <button class="btn btn-icon btn-light" title="Detail" onclick="window.toast('Detail pelanggan dibuka (demo).','info')"><i data-icon="eye" data-size="14"></i></button>
+            <button class="btn btn-icon btn-light" title="Ubah" onclick="window.toast('Form ubah dibuka (demo).','info')"><i data-icon="pencil-square" data-size="14"></i></button>
+          </td>
+        </tr>
+        <tr>
+          <td class="text-center"><input type="checkbox" class="form-check-input" data-dt-check aria-label="Pilih baris"></td>
+          <td><div class="user-cell"><span class="avatar avatar-sm bg-secondary">BS</span><span class="font-semibold">Bayu Setiadi</span></div></td>
+          <td>bayu@bisnis.id</td><td>Bekasi</td>
+          <td class="text-right tabular" data-order="4210000">Rp 4.210.000</td>
+          <td class="text-right tabular" data-order="9">9</td>
+          <td><span class="badge badge-soft-success"><span class="dot"></span> Aktif</span></td>
+          <td class="text-center">
+            <button class="btn btn-icon btn-light" title="Detail" onclick="window.toast('Detail pelanggan dibuka (demo).','info')"><i data-icon="eye" data-size="14"></i></button>
+            <button class="btn btn-icon btn-light" title="Ubah" onclick="window.toast('Form ubah dibuka (demo).','info')"><i data-icon="pencil-square" data-size="14"></i></button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card-footer flex flex-wrap items-center justify-between gap-3">
+    <span class="fs-8 text-muted-2" data-dt-info></span>
+    <div class="flex flex-wrap gap-1" data-dt-pagination></div>
+  </div>
+</div>
+
+<!-- ================= VARIASI TABEL ================= -->
+<div class="grid gap-4 lg:grid-cols-2">
+  <div class="card" id="tabel-sederhana">
+    <div class="card-header"><h3 class="card-title">Tabel sederhana (hover)</h3></div>
+    <div class="table-wrap">
+      <table class="table table-hover">
+        <thead><tr><th>#</th><th>Produk</th><th class="text-right">Harga</th><th class="text-right">Stok</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>Kopi Arabika 1kg</td><td class="text-right tabular">Rp 185.000</td><td class="text-right tabular">142</td></tr>
+          <tr><td>2</td><td>Kopi Robusta 1kg</td><td class="text-right tabular">Rp 145.000</td><td class="text-right tabular">88</td></tr>
+          <tr><td>3</td><td>Teh Melati 500g</td><td class="text-right tabular">Rp 65.000</td><td class="text-right tabular">12</td></tr>
+          <tr><td>4</td><td>Susu Kental 370g</td><td class="text-right tabular">Rp 24.500</td><td class="text-right tabular">310</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h3 class="card-title">Tabel bergaris + kepala gelap</h3></div>
+    <div class="table-wrap">
+      <table class="table table-bordered table-striped table-dark-head">
+        <thead><tr><th>Kode</th><th>Gudang</th><th class="text-right">Kapasitas</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>GD-01</td><td>Jakarta Utara</td><td class="text-right tabular">12.400 m³</td><td><span class="badge badge-success">Normal</span></td></tr>
+          <tr><td>GD-02</td><td>Surabaya Barat</td><td class="text-right tabular">8.900 m³</td><td><span class="badge badge-success">Normal</span></td></tr>
+          <tr><td>GD-03</td><td>Medan Kota</td><td class="text-right tabular">5.100 m³</td><td><span class="badge badge-warning">Hampir penuh</span></td></tr>
+          <tr><td>GD-04</td><td>Makassar</td><td class="text-right tabular">3.400 m³</td><td><span class="badge badge-danger">Perawatan</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h3 class="card-title">Tabel kepala tetap (sticky head)</h3>
+    <div class="card-tools"><span class="badge badge-light">Geser ke bawah untuk melihat efeknya</span></div>
+  </div>
+  <div class="table-wrap scrollbar-thin max-h-72 overflow-y-auto">
+    <table class="table table-hover table-striped table-head-fixed">
+      <thead><tr><th style="width:90px">ID</th><th>Log aktivitas</th><th style="width:150px">Pengguna</th><th style="width:170px">Waktu</th></tr></thead>
+      <tbody>
+        <tr><td>LOG-9001</td><td>Login berhasil dari perangkat baru</td><td>Aulia S.</td><td>18 Sep 2026, 09:41</td></tr>
+        <tr><td>LOG-9002</td><td>Mengubah harga produk <code>PRD-118</code></td><td>Rani S.</td><td>18 Sep 2026, 09:12</td></tr>
+        <tr><td>LOG-9003</td><td>Menghapus 12 baris data pelanggan</td><td>Budi P.</td><td>18 Sep 2026, 08:58</td></tr>
+        <tr><td>LOG-9004</td><td>Mengekspor laporan penjualan Q3</td><td>Hendra W.</td><td>18 Sep 2026, 08:30</td></tr>
+        <tr><td>LOG-9005</td><td>Menambahkan pengguna baru</td><td>Nadia M.</td><td>18 Sep 2026, 08:14</td></tr>
+        <tr><td>LOG-9006</td><td>Reset kata sandi pengguna</td><td>Aulia S.</td><td>17 Sep 2026, 17:42</td></tr>
+        <tr><td>LOG-9007</td><td>Backup basis data terjadwal</td><td>Sistem</td><td>17 Sep 2026, 02:00</td></tr>
+        <tr><td>LOG-9008</td><td>Memperbarui konfigurasi pajak</td><td>Hendra W.</td><td>16 Sep 2026, 15:20</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Kepala tabel menempel di bawah header halaman (scroll halaman, bukan wadah) -->
+<div class="card mt-4" id="tabel-sticky">
+  <div class="card-header">
+    <h3 class="card-title">
+      <i data-icon="layout-text-sidebar" class="text-primary"></i>
+      Kepala tabel menempel di bawah header halaman
+    </h3>
+    <div class="card-tools"><span class="badge badge-light">Gulir halaman — kepala tabel berhenti tepat di bawah header</span></div>
+  </div>
+  <div class="table-wrap table-wrap-static">
+    <table class="table table-hover table-striped table-head-fixed-viewport">
+      <thead>
+        <tr>
+          <th style="width:120px">ID</th><th>Pelanggan</th><th>Kota</th>
+          <th class="text-right" style="width:150px">Nilai</th><th style="width:120px">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>TRX-9000</td><td>Pelanggan 1</td><td>Kota 3</td><td>Rp 1.200.000</td><td><span class="badge badge-soft-success">Lunas</span></td></tr>
+        <tr><td>TRX-9001</td><td>Pelanggan 2</td><td>Kota 4</td><td>Rp 1.337.000</td><td><span class="badge badge-soft-success">Lunas</span></td></tr>
+        <tr><td>TRX-9002</td><td>Pelanggan 3</td><td>Kota 5</td><td>Rp 1.474.000</td><td><span class="badge badge-soft-success">Lunas</span></td></tr>
+        <tr><td>TRX-9003</td><td>Pelanggan 4</td><td>Kota 6</td><td>Rp 1.611.000</td><td><span class="badge badge-soft-success">Lunas</span></td></tr>
+        <tr><td>TRX-9004</td><td>Pelanggan 5</td><td>Kota 7</td><td>Rp 1.748.000</td><td><span class="badge badge-soft-success">Lunas</span></td></tr>
+        <tr><td>TRX-9005</td><td>Pelanggan 6</td><td>Kota 8</td><td>Rp 1.885.000</td><td><span class="badge badge-soft-success">Lunas</span></td></tr>
+        <tr><td>TRX-9006</td><td>Pelanggan 7</td><td>Kota 9</td><td>Rp 2.022.000</td><td><span class="badge badge-soft-success">Lunas</span></td></tr>
+        <tr><td>TRX-9007</td><td>Pelanggan 8</td><td>Kota 10</td><td>Rp 2.159.000</td><td><span class="badge badge-soft-success">Lunas</span></td></tr>
+        <tr><td>TRX-9008</td><td>Pelanggan 9</td><td>Kota 11</td><td>Rp 2.296.000</td><td><span class="badge badge-soft-success">Lunas</span></td></tr>
+        <tr><td>TRX-9009</td><td>Pelanggan 10</td><td>Kota 12</td><td>Rp 2.433.000</td><td><span class="badge badge-soft-success">Lunas</span></td></tr>
+        <tr><td>TRX-9010</td><td>Pelanggan 11</td><td>Kota 13</td><td>Rp 2.570.000</td><td><span class="badge badge-soft-success">Lunas</span></td></tr>
+        <tr><td>TRX-9011</td><td>Pelanggan 12</td><td>Kota 14</td><td>Rp 2.707.000</td><td><span class="badge badge-soft-success">Lunas</span></td></tr>
+        <tr><td>TRX-9012</td><td>Pelanggan 13</td><td>Kota 15</td><td>Rp 2.844.000</td><td><span class="badge badge-soft-success">Lunas</span></td></tr>
+        <tr><td>TRX-9013</td><td>Pelanggan 14</td><td>Kota 16</td><td>Rp 2.981.000</td><td><span class="badge badge-soft-success">Lunas</span></td></tr>
+        <tr><td>TRX-9014</td><td>Pelanggan 15</td><td>Kota 17</td><td>Rp 3.118.000</td><td><span class="badge badge-soft-success">Lunas</span></td></tr>
+        <tr><td>TRX-9015</td><td>Pelanggan 16</td><td>Kota 18</td><td>Rp 3.255.000</td><td><span class="badge badge-soft-success">Lunas</span></td></tr>
+        <tr><td>TRX-9016</td><td>Pelanggan 17</td><td>Kota 19</td><td>Rp 3.392.000</td><td><span class="badge badge-soft-success">Lunas</span></td></tr>
+        <tr><td>TRX-9017</td><td>Pelanggan 18</td><td>Kota 20</td><td>Rp 3.529.000</td><td><span class="badge badge-soft-success">Lunas</span></td></tr>
+        <tr><td>TRX-9018</td><td>Pelanggan 19</td><td>Kota 21</td><td>Rp 3.666.000</td><td><span class="badge badge-soft-success">Lunas</span></td></tr>
+        <tr><td>TRX-9019</td><td>Pelanggan 20</td><td>Kota 22</td><td>Rp 3.803.000</td><td><span class="badge badge-soft-success">Lunas</span></td></tr>
+        <tr><td>TRX-9020</td><td>Pelanggan 21</td><td>Kota 23</td><td>Rp 3.940.000</td><td><span class="badge badge-soft-success">Lunas</span></td></tr>
+        <tr><td>TRX-9021</td><td>Pelanggan 22</td><td>Kota 24</td><td>Rp 4.077.000</td><td><span class="badge badge-soft-success">Lunas</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card-footer fs-8 text-muted-2">
+    Pakai kelas <code>table-head-fixed-viewport</code> pada tabel + wadah <code>table-wrap-static</code>
+    (agar wadah tidak menjadi area gulir sendiri). Tinggi navbar + header dibaca otomatis lewat
+    variabel <code>--header-h</code>, jadi kepala tabel tidak pernah tertutup header halaman.
+  </div>
+</div>

@@ -1,0 +1,112 @@
+---
+path: pages/report-viewer.html
+title: Report Viewer
+pageTitle: Report Viewer
+subtitle: Menampilkan laporan siap cetak — dari layout tersimpan, contoh bawaan, atau file paket di server
+crumb: Home|index.html, Tools, Report Viewer
+description: Report Viewer — penampil laporan SatuReport (di-vendor lokal): buka layout dari Report Design, contoh bawaan, atau file paket .satureport.json, lalu ekspor PDF/XLSX.
+bodyClass: page-tools
+scripts: satureport-tools.js
+---
+<!--#navbar-->
+<button type="button" class="nav-icon-btn" title="Buka Report Viewer di tab baru"
+        onclick="window.SatuTools.buka('report-viewer')" aria-label="Buka Report Viewer di tab baru">
+  <i data-icon="box-arrow-up-right" data-size="17"></i>
+</button>
+<button type="button" class="nav-icon-btn" title="Muat ulang aplikasi"
+        onclick="window.SatuTools.muatUlang('sr-frame-viewer')" aria-label="Muat ulang aplikasi Report Viewer">
+  <i data-icon="arrow-clockwise" data-size="17"></i>
+</button>
+<button type="button" class="nav-icon-btn" title="Desainer laporan (Report Design)"
+        onclick="window.SatuTools.buka('report-design')" aria-label="Buka Report Design">
+  <i data-icon="brush" data-size="17"></i>
+</button>
+<!--/#navbar-->
+
+<!--#actions-->
+<button class="btn btn-light" onclick="window.SatuTools.muatUlang('sr-frame-viewer')"><i data-icon="arrow-clockwise"></i> Muat ulang</button>
+<button class="btn btn-light" onclick="window.SatuTools.layarPenuh('kartu-viewer')"><i data-icon="arrows-fullscreen"></i> Layar penuh</button>
+<button class="btn btn-light" onclick="window.SatuTools.buka('report-design')"><i data-icon="brush"></i> Desainer laporan</button>
+<button class="btn btn-primary" onclick="window.SatuTools.buka('report-viewer')"><i data-icon="box-arrow-up-right"></i> Buka tab baru</button>
+<!--/#actions-->
+
+<div class="alert alert-info items-start">
+  <i data-icon="eye" class="mt-0.5"></i>
+  <div>
+    <b>Report Viewer — penampil laporan siap cetak.</b>
+    <span>Halaman ini memuat aplikasi SatuReport Viewer yang sama dengan versi offline-nya: menampilkan layout hasil Report Design, contoh bawaan, atau file paket .satureport.json.</span>
+    <span>Lengkap dengan pratinjau per halaman, zoom fit dan 1:1, cetak/PDF, serta ekspor XLSX.</span>
+    <span>Asetnya di-vendor lokal di folder assets/satureport/ dari repositori github.com/radianadhic/satureport.</span>
+  </div>
+</div>
+
+<script>
+  /* Bahasa aplikasi mengikuti bahasa template — dijalankan sebelum iframe dibuat. */
+  (function () {
+    try {
+      var l = localStorage.getItem("app.locale");
+      localStorage.setItem("satureport.lang", l === "en" ? "en" : "id");
+    } catch (e) { /* mode privat */ }
+  })();
+</script>
+
+<div class="card sr-frame-card" id="kartu-viewer">
+  <div class="card-header flex-wrap">
+    <h3 class="card-title"><i data-icon="eye" class="text-primary"></i> Bingkai Report Viewer</h3>
+    <div class="card-tools flex-wrap">
+      <span class="badge badge-soft-info" title="Aplikasi berjalan di dalam bingkai">iframe · SatuReport</span>
+      <button type="button" class="btn btn-light btn-sm" onclick="window.SatuTools.muatUlang('sr-frame-viewer')" title="Muat ulang aplikasi">
+        <i data-icon="arrow-clockwise" data-size="13"></i>
+      </button>
+      <button type="button" class="btn btn-light btn-sm" onclick="window.SatuTools.buka('report-viewer')" title="Buka di tab baru">
+        <i data-icon="box-arrow-up-right" data-size="13"></i>
+      </button>
+      <button type="button" class="btn btn-light btn-sm" data-card-tool="fullscreen" title="Layar penuh">
+        <i data-icon="arrows-fullscreen" data-size="13"></i>
+      </button>
+    </div>
+  </div>
+  <div class="card-body !p-0">
+    <iframe id="sr-frame-viewer" class="sr-frame" data-sr
+            src="../assets/satureport/viewer.html"
+            title="Report Viewer SatuReport" loading="eager"></iframe>
+  </div>
+  <div class="card-footer flex flex-wrap items-center justify-between gap-2">
+    <span class="fs-8 text-muted-2">
+      Tombol <b>Galeri Contoh</b> di toolbar aplikasi membuka 12 laporan siap pakai — semuanya tanpa jaringan.
+    </span>
+    <span class="flex flex-wrap items-center gap-2">
+      <button class="btn btn-light btn-sm" onclick="window.SatuTools.buka('report-design')"><i data-icon="brush" data-size="13"></i> Sunting di Report Design</button>
+      <button class="btn btn-light btn-sm" onclick="window.SatuTools.buka('report-example')"><i data-icon="clipboard-data" data-size="13"></i> Galeri contoh</button>
+    </span>
+  </div>
+</div>
+
+<div class="grid gap-4 mt-4 lg:grid-cols-3">
+  <div class="card lg:col-span-2">
+    <div class="card-header">
+      <h3 class="card-title"><i data-icon="sliders" class="text-info"></i> Sumber data yang bisa dipilih</h3>
+      <div class="card-tools"><span class="badge badge-soft-primary">4 cara</span></div>
+    </div>
+    <div class="card-body">
+      <ul class="list-unstyled m-0 space-y-2 text-sm">
+        <li class="flex gap-2"><i data-icon="dash" class="text-muted-2 mt-0.5" data-size="14"></i><span>Bahasa aplikasi mengikuti tombol bahasa template — ganti bahasa di navbar, bingkai ikut berganti.</span></li>
+        <li class="flex gap-2"><i data-icon="dash" class="text-muted-2 mt-0.5" data-size="14"></i><span>Tampilan aplikasi selalu terang karena punya tema sendiri, jadi tidak ikut mode gelap template.</span></li>
+        <li class="flex gap-2"><i data-icon="dash" class="text-muted-2 mt-0.5" data-size="14"></i><span>Semua proses berjalan di peramban — tidak ada data laporan yang dikirim ke server.</span></li>
+      </ul>
+      <div class="callout callout-warning mt-3 mb-0">
+        <b>Kredit dan lisensi.</b>
+        <span>Aplikasi SatuReport karya radianadhic, disertakan apa adanya (as-is) dari repositori publiknya.</span>
+        <span>Repositori tersebut belum memuat berkas lisensi (LICENSE), jadi untuk pemakaian komersial sebaiknya konfirmasi dulu ke pemilik repo.</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .sr-frame { width: 100%; height: 74vh; min-height: 460px; border: 0; display: block; background: #fff; }
+  .page-tools .card-maximized { z-index: 79; }               /* tetap di bawah widget AI (80) */
+  .page-tools .card-maximized .card-body { padding: 0; overflow: hidden; display: flex; }
+  .page-tools .card-maximized .sr-frame { flex: 1; height: auto; min-height: 0; }
+  @media print { .sr-frame { height: auto; min-height: 0; } }
+</style>

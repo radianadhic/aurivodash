@@ -1,0 +1,14 @@
+{
+  "company": "PT Maju Bersama Sejahtera",
+  "title": "Laporan Penjualan — September 2026",
+  "docNo": "DOC-2026-0917",
+  "content": [
+    { "name": "Budi Santoso",  "city": "Jakarta",  "product": "Laptop Pro 14\"",      "qty": 2,  "price": 15500000, "total": 31000000 },
+    { "name": "Siti Rahayu",   "city": "Depok",    "product": "Mouse Wireless",       "qty": 10, "price": 125000,   "total": 1250000 },
+    { "name": "Agus Wijaya",   "city": "Bandung",  "product": "Keyboard Mechanical",  "qty": 5,  "price": 750000,   "total": 3750000 },
+    { "name": "Dewi Lestari",  "city": "Surabaya", "product": "Monitor 27\"",         "qty": 3,  "price": 2800000,  "total": 8400000 },
+    { "name": "Rizki Pratama", "city": "Bekasi",   "product": "Webcam HD",            "qty": 4,  "price": 450000,   "total": 1800000 }
+  ],
+  "footer1": "Dicetak otomatis oleh SatuReport Offline",
+  "footer2": "Dokumen ini sah tanpa tanda tangan basah"
+}

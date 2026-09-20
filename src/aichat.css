@@ -1,0 +1,371 @@
+/* ------------------------------------------------------------------
+   aichat.css — asisten AI yang selalu muncul (window.AIChat).
+   Tombol bulat melayang di kanan bawah + panel obrolan bergaya card
+   AdminLTE v3. Menempel di SETIAP halaman (dashboard, landing, login,
+   aplikasi nasabah) dan ikut token tema (--c-*) sehingga otomatis
+   berubah saat preset aksen / mode gelap diganti.
+
+   Di aplikasi nasabah widget ini duduk DI DALAM kerangka ponsel
+   (.aichat-dalam-app → position:absolute terhadap .mobile-app).
+   ------------------------------------------------------------------ */
+
+@layer components {
+  /* ------------------------------- lapisan dasar ------------------------------- */
+  .aichat {
+    position: fixed;
+    right: 1.25rem;
+    bottom: 1.25rem;
+    z-index: 80;                 /* di bawah kunci layar (100) & banner push (105) */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.6rem;
+    pointer-events: none;        /* hanya anak-anaknya yang bisa diklik */
+  }
+  .aichat > * { pointer-events: auto; }
+
+  /* Di dalam bingkai aplikasi nasabah: ikut kerangka, bukan layar peramban. */
+  .aichat-dalam-app {
+    position: absolute;
+    right: 0.9rem;
+    bottom: 5.4rem;              /* di atas navigasi bawah */
+    z-index: 44;                 /* di atas nav (40), di bawah lembar aksi (45) & kunci biometric (70) */
+  }
+
+  /* ------------------------------- tombol peluncur ------------------------------- */
+  .aichat-tombol {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 3.4rem;
+    height: 3.4rem;
+    border: 0;
+    border-radius: 999px;
+    background: linear-gradient(160deg,
+      color-mix(in oklab, var(--c-primary) 88%, white) 0%,
+      var(--c-primary) 55%,
+      color-mix(in oklab, var(--c-primary) 78%, black) 100%);
+    color: var(--c-primary-fg);
+    box-shadow: 0 12px 24px -10px color-mix(in oklab, var(--c-primary) 65%, transparent),
+                0 4px 10px rgba(2, 8, 23, 0.18);
+    transition: transform 0.16s ease, box-shadow 0.16s ease;
+  }
+  .aichat-tombol:hover { transform: translateY(-2px) scale(1.03); }
+  .aichat-tombol:active { transform: translateY(0) scale(0.98); }
+  .aichat-tombol:focus-visible { outline: 3px solid color-mix(in oklab, var(--c-primary) 45%, transparent); outline-offset: 2px; }
+  .aichat-tombol i { pointer-events: none; }
+
+  /* denyut halus supaya terlihat "hidup" */
+  .aichat-tombol::after {
+    content: "";
+    position: absolute;
+    inset: -0.35rem;
+    border-radius: 999px;
+    border: 2px solid color-mix(in oklab, var(--c-primary) 45%, transparent);
+    animation: aichat-denyut 2.6s ease-out infinite;
+  }
+  @keyframes aichat-denyut {
+    0%   { transform: scale(0.86); opacity: 0.75; }
+    70%  { transform: scale(1.12); opacity: 0; }
+    100% { transform: scale(1.12); opacity: 0; }
+  }
+
+  /* lencana pesan belum dibaca */
+  .aichat-lencana {
+    position: absolute;
+    top: -0.15rem;
+    right: -0.15rem;
+    min-width: 1.25rem;
+    height: 1.25rem;
+    padding: 0 0.3rem;
+    border-radius: 999px;
+    background: var(--c-danger);
+    color: #fff;
+    font-size: 0.68rem;
+    font-weight: 700;
+    line-height: 1.25rem;
+    text-align: center;
+    box-shadow: 0 0 0 2px var(--c-body-bg);
+  }
+  /* balon sapaan kecil di samping tombol (muncul bila belum pernah dibuka) */
+  .aichat-teaser {
+    max-width: 15rem;
+    padding: 0.5rem 0.65rem;
+    border: 1px solid var(--c-border);
+    border-radius: 0.7rem 0.7rem 0.2rem 0.7rem;
+    background: var(--c-card-bg);
+    color: var(--c-fg);
+    font-size: 0.76rem;
+    line-height: 1.35;
+    box-shadow: 0 10px 22px -14px rgba(2, 8, 23, 0.5);
+  }
+
+  /* ------------------------------- panel obrolan ------------------------------- */
+  .aichat-panel {
+    display: flex;
+    flex-direction: column;
+    width: min(23.5rem, calc(100vw - 2.5rem));
+    height: min(32rem, calc(100vh - 8rem));
+    overflow: hidden;
+    border: 1px solid var(--c-border);
+    border-radius: 0.9rem;
+    background: var(--c-card-bg);
+    color: var(--c-fg);
+    box-shadow: 0 30px 60px -30px rgba(2, 8, 23, 0.55), 0 6px 18px rgba(2, 8, 23, 0.12);
+    transform-origin: bottom right;
+    animation: aichat-masuk 0.22s ease both;
+  }
+  @keyframes aichat-masuk {
+    from { opacity: 0; transform: translateY(0.75rem) scale(0.98); }
+    to   { opacity: 1; transform: none; }
+  }
+  .aichat-panel[hidden] { display: none; }
+
+  .aichat-kepala {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.6rem 0.7rem;
+    background: linear-gradient(120deg,
+      color-mix(in oklab, var(--c-primary) 92%, black) 0%,
+      var(--c-primary) 100%);
+    color: var(--c-primary-fg);
+  }
+  .aichat-avatar {
+    display: grid;
+    place-items: center;
+    width: 2.15rem;
+    height: 2.15rem;
+    flex: none;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.18);
+    color: inherit;
+  }
+  .aichat-identitas { min-width: 0; flex: 1; }
+  .aichat-judul { display: block; font-size: 0.9rem; font-weight: 700; line-height: 1.2; }
+  .aichat-sub {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.7rem;
+    opacity: 0.85;
+  }
+  .aichat-sub .aichat-dot {
+    width: 0.4rem;
+    height: 0.4rem;
+    flex: none;
+    border-radius: 999px;
+    background: color-mix(in oklab, var(--c-success) 70%, white);
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.25);
+  }
+  .aichat-aksi-kepala { display: flex; align-items: center; gap: 0.1rem; }
+  .aichat-ikon-tombol {
+    display: grid;
+    place-items: center;
+    width: 1.85rem;
+    height: 1.85rem;
+    border: 0;
+    border-radius: 0.45rem;
+    background: transparent;
+    color: inherit;
+    opacity: 0.85;
+    transition: background 0.15s ease, opacity 0.15s ease;
+  }
+  .aichat-ikon-tombol:hover { background: rgba(255, 255, 255, 0.18); opacity: 1; }
+
+  /* ------------------------------- daftar pesan ------------------------------- */
+  .aichat-isi {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0.8rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    background:
+      linear-gradient(180deg, color-mix(in oklab, var(--c-primary) 5%, transparent), transparent 7rem),
+      var(--c-body-bg);
+    scrollbar-width: thin;
+    overscroll-behavior: contain;
+  }
+  .aichat-isi::-webkit-scrollbar { width: 6px; }
+  .aichat-isi::-webkit-scrollbar-thumb { background: var(--c-border); border-radius: 999px; }
+
+  .aichat-baris { display: flex; align-items: flex-end; gap: 0.4rem; }
+  .aichat-baris[data-dari="saya"] { flex-direction: row-reverse; }
+  .aichat-muka {
+    display: grid;
+    place-items: center;
+    width: 1.7rem;
+    height: 1.7rem;
+    flex: none;
+    border-radius: 999px;
+    background: color-mix(in oklab, var(--c-primary) 14%, transparent);
+    color: var(--c-primary);
+  }
+  .aichat-baris[data-dari="saya"] .aichat-muka {
+    background: color-mix(in oklab, var(--c-secondary) 16%, transparent);
+    color: var(--c-secondary);
+  }
+  .aichat-balon {
+    max-width: 84%;
+    padding: 0.5rem 0.65rem;
+    border: 1px solid var(--c-border);
+    border-radius: 0.7rem 0.7rem 0.7rem 0.2rem;
+    background: var(--c-card-bg);
+    font-size: 0.8rem;
+    line-height: 1.45;
+    box-shadow: 0 1px 2px rgba(2, 8, 23, 0.04);
+  }
+  .aichat-baris[data-dari="saya"] .aichat-balon {
+    border-color: transparent;
+    border-radius: 0.7rem 0.7rem 0.2rem 0.7rem;
+    background: var(--c-primary);
+    color: var(--c-primary-fg);
+  }
+  .aichat-balon strong { font-weight: 700; }
+  .aichat-balon code {
+    padding: 0.05rem 0.3rem;
+    border-radius: 0.3rem;
+    background: color-mix(in oklab, var(--c-fg) 10%, transparent);
+    font-size: 0.74rem;
+  }
+  .aichat-jam { display: block; margin-top: 0.25rem; font-size: 0.65rem; opacity: 0.6; }
+
+  /* tautan aksi di dalam balon */
+  .aichat-tautan {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    margin: 0.35rem 0.3rem 0 0;
+    padding: 0.25rem 0.55rem;
+    border: 1px solid var(--c-border);
+    border-radius: 999px;
+    background: var(--c-card-bg);
+    color: var(--c-primary);
+    font-size: 0.74rem;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .aichat-tautan:hover { background: color-mix(in oklab, var(--c-primary) 10%, transparent); }
+
+  /* indikator "mengetik" */
+  .aichat-mengetik { display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.15rem 0; }
+  .aichat-mengetik span {
+    width: 0.36rem;
+    height: 0.36rem;
+    border-radius: 999px;
+    background: var(--c-muted);
+    animation: aichat-titik 1s ease-in-out infinite;
+  }
+  .aichat-mengetik span:nth-child(2) { animation-delay: 0.15s; }
+  .aichat-mengetik span:nth-child(3) { animation-delay: 0.3s; }
+  @keyframes aichat-titik {
+    0%, 60%, 100% { transform: translateY(0); opacity: 0.45; }
+    30%           { transform: translateY(-0.22rem); opacity: 1; }
+  }
+
+  /* ------------------------------- saran cepat ------------------------------- */
+  .aichat-saran {
+    display: flex;
+    gap: 0.35rem;
+    padding: 0.5rem 0.7rem 0.1rem;
+    overflow-x: auto;
+    border-top: 1px solid var(--c-border);
+    background: var(--c-card-bg);
+    scrollbar-width: none;
+  }
+  .aichat-saran::-webkit-scrollbar { display: none; }
+  .aichat-saran button {
+    flex: none;
+    padding: 0.28rem 0.6rem;
+    border: 1px solid color-mix(in oklab, var(--c-primary) 35%, var(--c-border));
+    border-radius: 999px;
+    background: color-mix(in oklab, var(--c-primary) 8%, transparent);
+    color: var(--c-primary);
+    font-size: 0.73rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .aichat-saran button:hover { background: color-mix(in oklab, var(--c-primary) 16%, transparent); }
+
+  /* ------------------------------- kaki / input ------------------------------- */
+  .aichat-kaki {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.55rem 0.7rem 0.15rem;
+    background: var(--c-card-bg);
+  }
+  .aichat-input {
+    flex: 1;
+    min-width: 0;
+    padding: 0.5rem 0.7rem;
+    border: 1px solid var(--c-border);
+    border-radius: 999px;
+    background: var(--c-surface-2);
+    color: var(--c-fg);
+    font-size: 0.8rem;
+    font-family: inherit;
+  }
+  .aichat-input:focus {
+    outline: 0;
+    border-color: var(--c-primary);
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--c-primary) 18%, transparent);
+  }
+  .aichat-kirim {
+    display: grid;
+    place-items: center;
+    width: 2.15rem;
+    height: 2.15rem;
+    flex: none;
+    border: 0;
+    border-radius: 999px;
+    background: var(--c-primary);
+    color: var(--c-primary-fg);
+    transition: filter 0.15s ease, transform 0.12s ease;
+  }
+  .aichat-kirim:hover { filter: brightness(1.08); }
+  .aichat-kirim:active { transform: scale(0.95); }
+  .aichat-kirim:disabled { opacity: 0.5; }
+  .aichat-catatan {
+    margin: 0;
+    padding: 0.35rem 0.8rem 0.6rem;
+    background: var(--c-card-bg);
+    color: var(--c-muted);
+    font-size: 0.66rem;
+    line-height: 1.35;
+  }
+  .aichat-catatan code { font-size: 0.64rem; }
+
+  /* ------------------------------- varian ponsel ------------------------------- */
+  .aichat-dalam-app .aichat-tombol { width: 3rem; height: 3rem; }
+  .aichat-dalam-app .aichat-panel {
+    width: min(23rem, calc(100vw - 1.6rem));
+    height: min(26rem, 62vh);
+    border-radius: 1rem;
+  }
+  .aichat-dalam-app .aichat-teaser { max-width: 12rem; }
+
+  /* ------------------------------- cetak & gerak minimal ------------------------------- */
+  @media print {
+    .aichat { display: none !important; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .aichat-panel { animation: none; }
+    .aichat-tombol::after { animation: none; opacity: 0; }
+    .aichat-mengetik span { animation: none; }
+  }
+}
+
+/* kelas kecil di luar layer agar tidak dipangkas Tailwind saat memindai */
+.aichat-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

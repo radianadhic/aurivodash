@@ -1,0 +1,44 @@
+---
+path: 404.html
+title: Halaman Tidak Ditemukan
+layout: auth
+description: Contoh halaman error 404 dengan pencarian cepat dan tautan ke halaman penting.
+---
+<main class="auth-card !max-w-[34rem] text-center">
+  <div class="relative">
+    <div class="select-none text-[6rem] font-bold leading-none text-primary/20">404</div>
+    <div class="absolute inset-0 grid place-items-center">
+      <span class="grid h-16 w-16 place-items-center rounded-full bg-primary/10 text-primary">
+        <i data-icon="compass" data-size="30"></i>
+      </span>
+    </div>
+  </div>
+
+  <h1 class="mb-1 mt-2 text-xl font-semibold">Halaman tidak ditemukan</h1>
+  <p class="mb-4 text-sm text-muted-2">
+    Alamat yang Anda tuju mungkin sudah dipindahkan atau tidak pernah ada.
+    Coba periksa kembali URL, atau gunakan pencarian di bawah.
+  </p>
+
+  <form class="input-group" onsubmit="event.preventDefault(); window.toast('Mencari “' + this.q.value + '” (demo).', 'info', 'Pencarian');">
+    <span class="input-group-text"><i data-icon="search" data-size="14"></i></span>
+    <input name="q" class="form-control" placeholder="Cari halaman, mis. invoice, tabel, profil…" aria-label="Cari halaman">
+    <button class="btn btn-primary" type="submit">Cari</button>
+  </form>
+
+  <div class="mt-4 grid gap-2 sm:grid-cols-2">
+    <a href="pages/index.html" class="btn btn-primary"><i data-icon="speedometer2"></i> Ke dashboard</a>
+    <a href="login.html" class="btn btn-light"><i data-icon="box-arrow-in-left"></i> Ke halaman masuk</a>
+    <a href="pages/tables.html" class="btn btn-light"><i data-icon="table"></i> Tabel data</a>
+    <a href="pages/forms.html" class="btn btn-light"><i data-icon="pencil-square"></i> Formulir</a>
+  </div>
+
+  <div class="alert alert-warning items-start mt-4 mb-0 text-left">
+    <i data-icon="exclamation-triangle-fill" class="mt-0.5"></i>
+    <div class="fs-8">
+      <b>Tips:</b> seluruh halaman demo berada di dalam folder <code>pages/</code>, sedangkan
+      halaman autentikasi (<code>login.html</code>, <code>register.html</code>, <code>404.html</code>)
+      ada di akar folder template.
+    </div>
+  </div>
+</main>

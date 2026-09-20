@@ -1,0 +1,22 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="{{DESCRIPTION}}">
+<title>{{TITLE}} · Aurivo Dash</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%23007bff'/%3E%3Cpath d='M8 3.2a4.8 4.8 0 1 0 0 9.6 4.8 4.8 0 0 0 0-9.6Zm0 1.4 2.4 3.6H8V4.6Z' fill='white'/%3E%3C/svg%3E">
+
+<!-- ================= ASET LOKAL (tanpa internet) =================
+     tailwind di-compile ke satu file, ikon & font ikut dibundel. -->
+<link rel="stylesheet" href="{{ASSETS}}assets/css/app.css?v={{VERSION}}">
+<script src="{{ASSETS}}assets/js/theme-boot.js?v={{VERSION}}"></script>
+
+<!-- Urutan penting: ikon → bahasa (i18n) → app (daftarkan komponen Alpine) → charts → Alpine -->
+<script defer src="{{ASSETS}}assets/js/icons.js?v={{VERSION}}"></script>
+<script defer src="{{ASSETS}}assets/js/i18n.js?v={{VERSION}}"></script>
+<script defer src="{{ASSETS}}assets/js/app.js?v={{VERSION}}"></script>
+<script defer src="{{ASSETS}}assets/js/lock.js?v={{VERSION}}"></script>
+<script defer src="{{ASSETS}}assets/js/notify.js?v={{VERSION}}"></script>
+<script defer src="{{ASSETS}}assets/js/aichat.js?v={{VERSION}}"></script>
+<script defer src="{{ASSETS}}assets/js/charts.js?v={{VERSION}}"></script>
+<script defer src="{{ASSETS}}assets/js/alpine.min.js?v={{VERSION}}"></script>
+{{EXTRA_SCRIPTS}}

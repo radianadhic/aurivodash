@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light" data-skin="blue">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="Halaman pendaftaran akun dengan validasi kekuatan kata sandi dan persetujuan syarat layanan.">
+<title>Daftar Akun · Aurivo Dash</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%23007bff'/%3E%3Cpath d='M8 3.2a4.8 4.8 0 1 0 0 9.6 4.8 4.8 0 0 0 0-9.6Zm0 1.4 2.4 3.6H8V4.6Z' fill='white'/%3E%3C/svg%3E">
+
+<!-- ================= ASET LOKAL (tanpa internet) =================
+     tailwind di-compile ke satu file, ikon & font ikut dibundel. -->
+<link rel="stylesheet" href="assets/css/app.css?v=19681127">
+<script src="assets/js/theme-boot.js?v=19681127"></script>
+
+<!-- Urutan penting: ikon → bahasa (i18n) → app (daftarkan komponen Alpine) → charts → Alpine -->
+<script defer src="assets/js/icons.js?v=19681127"></script>
+<script defer src="assets/js/i18n.js?v=19681127"></script>
+<script defer src="assets/js/app.js?v=19681127"></script>
+<script defer src="assets/js/lock.js?v=19681127"></script>
+<script defer src="assets/js/notify.js?v=19681127"></script>
+<script defer src="assets/js/aichat.js?v=19681127"></script>
+<script defer src="assets/js/charts.js?v=19681127"></script>
+<script defer src="assets/js/alpine.min.js?v=19681127"></script>
+
+
+</head>
+<body x-data class="auth-page ">
+
+  <!-- Tombol tema di sudut kanan atas -->
+  <div class="fixed right-4 top-4 z-20">
+    <button type="button" class="btn btn-light shadow" @click="$store.ui.toggleTheme()">
+      <span x-show="$store.ui.theme === 'light'"><i data-icon="moon-stars"></i> Mode gelap</span>
+      <span x-show="$store.ui.theme === 'dark'" x-cloak><i data-icon="sun"></i> Mode terang</span>
+    </button>
+  </div>
+
+<main class="auth-card !max-w-[30rem]">
+  <div class="auth-logo">
+    <span class="inline-grid h-12 w-12 place-items-center rounded-lg bg-primary text-white align-middle"><i data-icon="person-plus" data-size="24"></i></span>
+    <div class="mt-2">Buat <b>akun baru</b></div>
+  </div>
+
+  <p class="mb-4 text-center text-sm text-muted-2">Gratis 30 hari, tanpa kartu kredit</p>
+
+  <form x-data="registerForm()" @submit.prevent="submit()" novalidate :class="validated && 'was-validated'">
+    <div class="form-row">
+      <div>
+        <label class="form-label" for="namaDepan">Nama depan</label>
+        <input id="namaDepan" class="form-control" placeholder="Rani" required>
+        <div class="invalid-feedback">Nama depan wajib diisi.</div>
+      </div>
+      <div>
+        <label class="form-label" for="namaBelakang">Nama belakang</label>
+        <input id="namaBelakang" class="form-control" placeholder="Setiawati" required>
+        <div class="invalid-feedback">Nama belakang wajib diisi.</div>
+      </div>
+    </div>
+
+    <div class="mt-3">
+      <label class="form-label" for="emailDaftar">Email kerja</label>
+      <div class="input-group">
+        <span class="input-group-text">@</span>
+        <input id="emailDaftar" type="email" class="form-control" placeholder="nama@perusahaan.id" required>
+      </div>
+      <div class="invalid-feedback">Email belum valid atau sudah dipakai.</div>
+    </div>
+
+    <div class="mt-3">
+      <label class="form-label" for="sandi">Kata sandi</label>
+      <input id="sandi" type="password" class="form-control" placeholder="Minimal 8 karakter" x-model="password" required minlength="8"
+             @input="score = strength($event.target.value)">
+      <div class="mt-2">
+        <div class="progress progress-sm"><div class="progress-bar" :class="barClass" :style="'width:' + (score * 25) + '%'"></div></div>
+        <div class="mt-1 flex items-center gap-2 fs-8 text-muted-2">
+          <span>Kekuatan:</span><b :class="textClass" x-text="$store.i18n.t(label)"></b>
+        </div>
+      </div>
+      <div class="invalid-feedback">Kata sandi minimal 8 karakter.</div>
+    </div>
+
+    <div class="mt-3">
+      <label class="form-label" for="sandi2">Ulangi kata sandi</label>
+      <input id="sandi2" type="password" class="form-control" placeholder="Ketik ulang kata sandi" required>
+    </div>
+
+    <div class="mt-3">
+      <label class="form-label" for="perusahaanDaftar">Nama perusahaan / toko</label>
+      <input id="perusahaanDaftar" class="form-control" placeholder="Toko Ritel Mandiri">
+    </div>
+
+    <div class="mt-3">
+      <label class="form-label" for="ukuranTim">Ukuran tim</label>
+      <select id="ukuranTim" class="form-select">
+        <option>Hanya saya</option>
+        <option>2–10 orang</option>
+        <option>11–50 orang</option>
+        <option>Lebih dari 50 orang</option>
+      </select>
+    </div>
+
+    <div class="mt-4">
+      <label class="form-check items-start">
+        <input type="checkbox" class="form-check-input mt-0.5" required>
+        <span class="text-sm">Saya setuju dengan <a href="#">syarat layanan</a> dan <a href="#">kebijakan privasi</a>.</span>
+      </label>
+      <label class="form-check items-start">
+        <input type="checkbox" class="form-check-input mt-0.5" x-model="newsletter">
+        <span class="text-sm">Kirimi saya tips produk &amp; penawaran (opsional).</span>
+      </label>
+    </div>
+
+    <button class="btn btn-primary btn-block btn-lg mt-3" type="submit" :disabled="loading">
+      <span x-show="!loading"><i data-icon="check2"></i> Daftar sekarang</span>
+      <span x-show="loading" x-cloak class="flex items-center gap-2"><span class="spinner !h-4 !w-4 !border-2"></span> Membuat akun…</span>
+    </button>
+  </form>
+
+  <div class="mt-3 grid grid-cols-3 gap-2">
+    <button class="btn btn-light btn-sm" onclick="window.toast('Daftar dengan Google (demo).','info')"><i data-icon="google"></i> Google</button>
+    <button class="btn btn-light btn-sm" onclick="window.toast('Daftar dengan GitHub (demo).','info')"><i data-icon="github"></i> GitHub</button>
+    <button class="btn btn-light btn-sm" onclick="window.toast('Daftar dengan LinkedIn (demo).','info')"><i data-icon="linkedin"></i> LinkedIn</button>
+  </div>
+
+  <p class="mb-0 mt-4 text-center text-sm text-muted-2">
+    Sudah punya akun? <a href="login.html" class="font-semibold">Masuk di sini</a>
+  </p>
+</main>
+
+<script>
+  document.addEventListener("alpine:init", function () {
+    Alpine.data("registerForm", function () {
+      return {
+        password: "",
+        score: 0,
+        newsletter: true,
+        validated: false,
+        loading: false,
+        get label() { return ["Sangat lemah", "Lemah", "Cukup", "Kuat", "Sangat kuat"][this.score] || "—"; },
+        get barClass() {
+          return ["bg-danger", "bg-danger", "bg-warning", "bg-info", "bg-success"][this.score] || "bg-danger";
+        },
+        get textClass() {
+          return ["text-danger", "text-danger", "text-warning", "text-info", "text-success"][this.score] || "text-danger";
+        },
+        strength: function (v) {
+          var s = 0;
+          if (!v) return 0;
+          if (v.length >= 8) s++;
+          if (/[A-Z]/.test(v) && /[a-z]/.test(v)) s++;
+          if (/\d/.test(v)) s++;
+          if (/[^A-Za-z0-9]/.test(v) && v.length >= 12) s++;
+          return s;
+        },
+        submit: function () {
+          var form = this.$el;
+          this.validated = true;
+          var pw = form.querySelector("#sandi").value;
+          var pw2 = form.querySelector("#sandi2").value;
+          if (!form.checkValidity()) {
+            window.toast("Lengkapi dulu kolom yang ditandai.", "danger", "Validasi gagal");
+            return;
+          }
+          if (pw !== pw2) {
+            window.toast("Kata sandi dan konfirmasinya tidak sama.", "danger", "Tidak cocok");
+            return;
+          }
+          var self = this;
+          this.loading = true;
+          setTimeout(function () {
+            self.loading = false;
+            window.toast("Akun demo dibuat. Silakan masuk.", "success", "Berhasil");
+            setTimeout(function () { window.location.href = "login.html"; }, 800);
+          }, 1000);
+        }
+      };
+    });
+  });
+</script>
+
+  <!-- ===================== TOAST ===================== -->
+<div class="pointer-events-none fixed right-4 top-20 z-[100] flex w-[22rem] max-w-[92vw] flex-col gap-2 no-print"
+     aria-live="polite" aria-atomic="true">
+  <template x-for="t in $store.toasts.items" :key="t.id">
+    <div class="toast pointer-events-auto"
+         :class="'toast-' + t.type"
+         x-transition:enter="transition ease-out duration-200"
+         x-transition:enter-start="opacity-0 translate-x-6"
+         x-transition:leave="transition ease-in duration-150"
+         x-transition:leave-end="opacity-0 translate-x-6">
+      <span class="mt-0.5 flex-none"
+            :class="{
+              'text-success': t.type === 'success',
+              'text-danger': t.type === 'danger',
+              'text-warning': t.type === 'warning',
+              'text-info': t.type === 'info',
+              'text-primary': !['success','danger','warning','info'].includes(t.type)
+            }">
+        <i data-icon="check-circle-fill" x-show="t.type === 'success'"></i>
+        <i data-icon="exclamation-triangle-fill" x-show="t.type === 'danger' || t.type === 'warning'" x-cloak></i>
+        <i data-icon="info-circle-fill" x-show="!['success','danger','warning'].includes(t.type)" x-cloak></i>
+      </span>
+      <div class="min-w-0 flex-1">
+        <strong class="block text-sm" x-text="t.title" x-show="t.title"></strong>
+        <span class="block text-sm" x-text="t.message"></span>
+      </div>
+      <button class="link-muted flex-none" @click="$store.toasts.remove(t.id)" aria-label="Tutup notifikasi">
+        <i data-icon="x-lg" data-size="13"></i>
+      </button>
+    </div>
+  </template>
+</div>
+
+<!-- ===================== DIALOG KONFIRMASI ===================== -->
+<div class="no-print">
+  <template x-if="$store.dialog.open">
+    <div class="modal-backdrop" @keydown.escape.window="$store.dialog.cancel()">
+      <div class="modal-panel" role="dialog" aria-modal="true">
+        <div class="modal-header">
+          <span class="grid h-9 w-9 flex-none place-items-center rounded-full"
+                :class="$store.dialog.tone === 'danger' ? 'bg-danger/15 text-danger' : 'bg-primary/15 text-primary'">
+            <i data-icon="exclamation-triangle-fill" data-size="18" x-show="$store.dialog.tone === 'danger'"></i>
+            <i data-icon="question-circle" data-size="18" x-show="$store.dialog.tone !== 'danger'" x-cloak></i>
+          </span>
+          <h3 class="m-0 text-lg font-semibold" x-text="$store.dialog.title"></h3>
+        </div>
+        <div class="modal-body">
+          <p class="m-0 text-muted-2" x-text="$store.dialog.message"></p>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-light" @click="$store.dialog.cancel()" x-text="$store.dialog.cancelText"></button>
+          <button class="btn" :class="$store.dialog.tone === 'danger' ? 'btn-danger' : 'btn-primary'"
+                  @click="$store.dialog.confirm()" x-text="$store.dialog.confirmText"></button>
+        </div>
+      </div>
+    </div>
+  </template>
+</div>
+
+<!-- ===================== TOMBOL ATAS ===================== -->
+<button class="no-print fixed bottom-[5.8rem] right-5 z-[70] grid h-11 w-11 place-items-center rounded-full bg-primary text-primary-fg shadow-lg transition hover:brightness-110"
+        data-back-to-top aria-label="Kembali ke atas"
+        x-data="{ show:false }" x-init="window.addEventListener('scroll', () => show = window.scrollY > 320)"
+        x-show="show" x-cloak x-transition.opacity>
+  <i data-icon="arrow-up-short" data-size="22"></i>
+</button>
+
+</body>
+</html>

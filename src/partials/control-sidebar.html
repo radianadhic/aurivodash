@@ -1,0 +1,143 @@
+<!-- ===================== PANEL KONTROL (tema & tampilan) ===================== -->
+<div class="no-print">
+  <!-- backdrop klik untuk menutup -->
+  <div class="fixed inset-0 z-[94] bg-black/40" x-show="$store.ui.controlPanel" x-cloak
+       x-transition.opacity.duration.200ms @click="$store.ui.toggleControl()"></div>
+
+  <aside class="control-sidebar" :data-open="$store.ui.controlPanel" x-cloak x-show="$store.ui.controlPanel"
+         aria-label="Pengaturan tampilan">
+    <div class="flex items-center justify-between border-b border-line px-4 py-3">
+      <h3 class="m-0 text-base font-semibold">Pengaturan tampilan</h3>
+      <button class="nav-icon-btn !h-8 !w-8" @click="$store.ui.toggleControl()" aria-label="Tutup panel">
+        <i data-icon="x-lg" data-size="15"></i>
+      </button>
+    </div>
+
+    <div class="scrollbar-thin flex-1 overflow-y-auto p-4">
+      <!-- Tema terang/gelap -->
+      <section class="mb-6">
+        <h4 class="mb-2 text-sm font-semibold uppercase tracking-wide text-muted-2">Mode warna</h4>
+        <div class="grid grid-cols-2 gap-2">
+          <button class="btn btn-light" :class="$store.ui.theme === 'light' && '!border-primary !text-primary'" @click="$store.ui.setTheme('light')">
+            <i data-icon="sun"></i> Terang
+          </button>
+          <button class="btn btn-light" :class="$store.ui.theme === 'dark' && '!border-primary !text-primary'" @click="$store.ui.setTheme('dark')">
+            <i data-icon="moon-stars"></i> Gelap
+          </button>
+        </div>
+      </section>
+
+      <!-- Preset perbankan (kombinasi tema + skin + sidebar) -->
+      <section class="mb-6">
+        <h4 class="mb-2 text-sm font-semibold uppercase tracking-wide text-muted-2">Preset bank</h4>
+        <div class="grid gap-2">
+          <template x-for="p in $store.ui.presets" :key="p.id">
+            <button type="button" class="preset-card" @click="$store.ui.applyPreset(p)"
+                    :data-active="$store.ui.theme === p.theme && $store.ui.skin === p.skin && $store.ui.sidebarMode === p.sidebar">
+              <span class="preset-dot" :style="'background:' + ({blue:'#007bff',navy:'#16385c',midnight:'#0e2a47',emerald:'#0f6b4a',burgundy:'#8a1f3d',graphite:'#334155',gold:'#a8842c',teal:'#0f6f7a',royal:'#3f3fb0',green:'#28a745',purple:'#6f42c1',red:'#dc3545',yellow:'#ffc107',black:'#343a40'})[p.skin]"></span>
+              <span class="min-w-0 text-left">
+                <b class="block truncate text-sm" x-text="$store.i18n.t(p.label)"></b>
+                <span class="block truncate fs-8 text-muted-2" x-text="$store.i18n.t(p.desc)"></span>
+              </span>
+              <i data-icon="check2-circle" data-size="15" class="ml-auto text-primary" x-show="$store.ui.theme === p.theme && $store.ui.skin === p.skin && $store.ui.sidebarMode === p.sidebar" x-cloak></i>
+            </button>
+          </template>
+        </div>
+      </section>
+
+      <!-- Skin warna -->
+      <section class="mb-6">
+        <h4 class="mb-2 text-sm font-semibold uppercase tracking-wide text-muted-2">Warna aksen</h4>
+        <div class="flex flex-wrap gap-2">
+          <template x-for="skin in [
+              {id:'blue',     c:'#007bff', label:'Biru'},
+              {id:'navy',     c:'#16385c', label:'Navy perbankan'},
+              {id:'midnight', c:'#0e2a47', label:'Navy tengah malam'},
+              {id:'emerald',  c:'#0f6b4a', label:'Zamrud'},
+              {id:'teal',     c:'#0f6f7a', label:'Toska'},
+              {id:'burgundy', c:'#8a1f3d', label:'Marun'},
+              {id:'gold',     c:'#a8842c', label:'Emas'},
+              {id:'graphite', c:'#334155', label:'Grafit'},
+              {id:'royal',    c:'#3f3fb0', label:'Indigo royal'},
+              {id:'green',    c:'#28a745', label:'Hijau'},
+              {id:'purple',   c:'#6f42c1', label:'Ungu'},
+              {id:'red',      c:'#dc3545', label:'Merah'},
+              {id:'yellow',   c:'#ffc107', label:'Kuning'},
+              {id:'black',    c:'#343a40', label:'Hitam'}
+            ]" :key="skin.id">
+            <button type="button" class="skin-swatch" :style="'background:' + skin.c"
+                    :data-active="$store.ui.skin === skin.id" :title="$store.i18n.t(skin.label)"
+                    :aria-label="'Warna aksen ' + skin.label"
+                    @click="$store.ui.setSkin(skin.id)"></button>
+          </template>
+        </div>
+        <p class="fs-8 text-muted-2 mt-2 mb-0">Warna aksen dipakai untuk tombol, grafik, tautan, dan menu aktif. Palet navy, zamrud, marun, emas, dan grafit dirancang untuk kebutuhan perbankan.</p>
+      </section>
+
+      <!-- Sidebar terang / gelap -->
+      <section class="mb-6">
+        <h4 class="mb-2 text-sm font-semibold uppercase tracking-wide text-muted-2">Gaya sidebar</h4>
+        <div class="grid grid-cols-2 gap-2">
+          <button class="btn btn-light" :class="$store.ui.sidebarMode === 'dark' && '!border-primary !text-primary'" @click="$store.ui.setSidebar('dark')">
+            <i data-icon="moon" data-size="15"></i> Gelap
+          </button>
+          <button class="btn btn-light" :class="$store.ui.sidebarMode === 'light' && '!border-primary !text-primary'" @click="$store.ui.setSidebar('light')">
+            <i data-icon="sun" data-size="15"></i> Terang
+          </button>
+        </div>
+      </section>
+
+      <!-- Bahasa -->
+      <section class="mb-6">
+        <h4 class="mb-2 text-sm font-semibold uppercase tracking-wide text-muted-2">Bahasa / Language</h4>
+        <div class="grid grid-cols-2 gap-2">
+          <button class="btn btn-light" :class="$store.i18n.locale === 'id' && '!border-primary !text-primary'" @click="$store.i18n.set('id')">
+            <i data-icon="flag" data-size="15"></i> Indonesia
+          </button>
+          <button class="btn btn-light" :class="$store.i18n.locale === 'en' && '!border-primary !text-primary'" @click="$store.i18n.set('en')">
+            <i data-icon="translate" data-size="15"></i> English
+          </button>
+        </div>
+        <p class="fs-8 text-muted-2 mt-2 mb-0">Seluruh antarmuka, menu, dan judul halaman berganti bahasa secara langsung. Pilihan tersimpan di peramban.</p>
+      </section>
+
+      <!-- Layout -->
+      <section class="mb-6">
+        <h4 class="mb-2 text-sm font-semibold uppercase tracking-wide text-muted-2">Layout</h4>
+        <label class="form-check form-switch justify-between">
+          <span class="text-sm">Sidebar mengecil (mini)</span>
+          <input type="checkbox" class="form-check-input" :checked="$store.ui.collapsed" @change="$store.ui.toggleCollapsed()">
+        </label>
+        <label class="form-check form-switch justify-between">
+          <span class="text-sm">Panel kontrol otomatis terbuka</span>
+          <input type="checkbox" class="form-check-input" :checked="$store.ui.controlPanel" @change="$store.ui.toggleControl()">
+        </label>
+        <div class="mt-3">
+          <span class="form-label">Lebar konten</span>
+          <div class="nav-pills">
+            <button class="nav-link" :class="$store.ui.container === 'fluid' && 'active'" @click="$store.ui.setContainer('fluid')">
+              <i data-icon="arrows-angle-expand" data-size="13"></i> Fluid
+            </button>
+            <button class="nav-link" :class="$store.ui.container === 'boxed' && 'active'" @click="$store.ui.setContainer('boxed')">
+              <i data-icon="bounding-box-circles" data-size="13"></i> Boxed
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Info offline -->
+      <section>
+        <div class="alert alert-success items-start">
+          <i data-icon="wifi-off" class="mt-0.5"></i>
+          <div class="text-sm">
+            <b>100% offline.</b> Tailwind di-compile ke <code>assets/css/app.css</code>, Alpine.js, ikon,
+            dan font semuanya tersimpan lokal — tidak ada permintaan ke internet.
+          </div>
+        </div>
+        <button class="btn btn-outline-danger w-full" @click="window.confirmDialog({ title:'Reset tampilan?', message:'Tema, skin, dan tata letak kembali ke pengaturan awal.', confirmText:'Reset', onConfirm(){ $store.ui.reset(); window.toast('Tampilan direset ke default.', 'info'); } })">
+          <i data-icon="arrow-counterclockwise"></i> Reset ke default
+        </button>
+      </section>
+    </div>
+  </aside>
+</div>

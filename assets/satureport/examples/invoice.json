@@ -1,0 +1,1019 @@
+{
+  "title": "Invoice / Faktur Penjualan",
+  "description": "Faktur MULTI-HALAMAN gaya ActiveReports: Page Header/Footer berulang per halaman, paginasi A4, nomor 'Halaman X dari Y', barcode, subtotal, PPN 11%, dan terbilang.",
+  "layout": {
+    "version": 2,
+    "width": 700,
+    "page": {
+      "paper": "A4",
+      "orientation": "portrait",
+      "margins": {
+        "top": 47,
+        "right": 47,
+        "bottom": 47,
+        "left": 47
+      },
+      "pagination": true
+    },
+    "pageHeaderSection": {
+      "height": 30,
+      "visible": true,
+      "style": {},
+      "items": [
+        {
+          "id": "it_mu53ki42_12",
+          "type": "text",
+          "name": "",
+          "text": "PT SATU SEJAHTERA — Faktur Penjualan",
+          "binding": "",
+          "x": 0,
+          "y": 6,
+          "width": 340,
+          "height": 14,
+          "src": "",
+          "style": {
+            "fontSize": 9,
+            "color": "#94a3b8"
+          }
+        },
+        {
+          "id": "it_mu53ki42_13",
+          "type": "text",
+          "name": "",
+          "text": "No. Invoice",
+          "binding": "invoice.no",
+          "x": 460,
+          "y": 6,
+          "width": 240,
+          "height": 14,
+          "src": "",
+          "style": {
+            "fontSize": 9,
+            "color": "#94a3b8",
+            "textAlign": "right"
+          }
+        },
+        {
+          "id": "it_mu53ki42_14",
+          "type": "line",
+          "name": "",
+          "text": "",
+          "binding": "",
+          "x": 0,
+          "y": 26,
+          "width": 700,
+          "height": 2,
+          "src": "",
+          "style": {
+            "borderColor": "#e2e8f0",
+            "borderWidth": 1
+          }
+        }
+      ]
+    },
+    "headerSection": {
+      "height": 164,
+      "visible": true,
+      "style": {
+        "backgroundColor": "#1e293b"
+      },
+      "items": [
+        {
+          "id": "it_mu53ki42_0",
+          "type": "image",
+          "name": "",
+          "text": "",
+          "binding": "",
+          "x": 16,
+          "y": 16,
+          "width": 60,
+          "height": 60,
+          "src": "data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23ffffff' fill-opacity='0.15'/%3E%3Crect x='4' y='4' width='56' height='56' rx='12' fill='%23ffffff'/%3E%3Ctext x='32' y='41' font-family='Arial,sans-serif' font-size='24' font-weight='bold' text-anchor='middle' fill='%231e293b'%3EAS%3C/text%3E%3C/svg%3E",
+          "style": {}
+        },
+        {
+          "id": "it_mu53ki42_1",
+          "type": "text",
+          "name": "",
+          "text": "PT SATU SEJAHTERA",
+          "binding": "company.name",
+          "x": 92,
+          "y": 18,
+          "width": 300,
+          "height": 22,
+          "src": "",
+          "style": {
+            "color": "#ffffff",
+            "fontSize": 15,
+            "fontWeight": "bold"
+          }
+        },
+        {
+          "id": "it_mu53ki42_2",
+          "type": "text",
+          "name": "",
+          "text": "Alamat",
+          "binding": "company.address",
+          "x": 92,
+          "y": 44,
+          "width": 300,
+          "height": 15,
+          "src": "",
+          "style": {
+            "color": "#94a3b8",
+            "fontSize": 10
+          }
+        },
+        {
+          "id": "it_mu53ki42_3",
+          "type": "text",
+          "name": "",
+          "text": "Kontak",
+          "binding": "company.contact",
+          "x": 92,
+          "y": 60,
+          "width": 300,
+          "height": 15,
+          "src": "",
+          "style": {
+            "color": "#94a3b8",
+            "fontSize": 10
+          }
+        },
+        {
+          "id": "it_mu53ki42_4",
+          "type": "text",
+          "name": "",
+          "text": "INVOICE",
+          "binding": "",
+          "x": 460,
+          "y": 16,
+          "width": 224,
+          "height": 30,
+          "src": "",
+          "style": {
+            "color": "#ffffff",
+            "fontSize": 24,
+            "fontWeight": "bold",
+            "textAlign": "right"
+          }
+        },
+        {
+          "id": "it_mu53ki42_5",
+          "type": "text",
+          "name": "",
+          "text": "No. Invoice",
+          "binding": "invoice.no",
+          "x": 460,
+          "y": 48,
+          "width": 224,
+          "height": 15,
+          "src": "",
+          "style": {
+            "color": "#cbd5e1",
+            "fontSize": 11,
+            "textAlign": "right"
+          }
+        },
+        {
+          "id": "it_mu53ki42_6",
+          "type": "text",
+          "name": "",
+          "text": "Tanggal",
+          "binding": "invoice.date",
+          "x": 460,
+          "y": 64,
+          "width": 224,
+          "height": 14,
+          "src": "",
+          "style": {
+            "color": "#94a3b8",
+            "fontSize": 10,
+            "textAlign": "right"
+          }
+        },
+        {
+          "id": "it_mu53ki42_7",
+          "type": "barcode",
+          "name": "",
+          "text": "INV/2026/09/0042",
+          "binding": "invoice.no",
+          "x": 520,
+          "y": 84,
+          "width": 164,
+          "height": 30,
+          "src": "",
+          "style": {
+            "color": "#ffffff"
+          },
+          "showText": false
+        },
+        {
+          "id": "it_mu53ki42_8",
+          "type": "text",
+          "name": "",
+          "text": "Kepada Yth.",
+          "binding": "",
+          "x": 16,
+          "y": 90,
+          "width": 100,
+          "height": 13,
+          "src": "",
+          "style": {
+            "color": "#94a3b8",
+            "fontSize": 9
+          }
+        },
+        {
+          "id": "it_mu53ki42_9",
+          "type": "text",
+          "name": "",
+          "text": "Pelanggan",
+          "binding": "customer.name",
+          "x": 16,
+          "y": 104,
+          "width": 260,
+          "height": 18,
+          "src": "",
+          "style": {
+            "color": "#ffffff",
+            "fontSize": 12,
+            "fontWeight": "bold"
+          }
+        },
+        {
+          "id": "it_mu53ki42_a",
+          "type": "text",
+          "name": "",
+          "text": "Alamat pelanggan",
+          "binding": "customer.address",
+          "x": 16,
+          "y": 122,
+          "width": 260,
+          "height": 14,
+          "src": "",
+          "style": {
+            "color": "#94a3b8",
+            "fontSize": 10
+          }
+        },
+        {
+          "id": "it_mu53ki42_b",
+          "type": "text",
+          "name": "",
+          "text": "",
+          "binding": "",
+          "x": 0,
+          "y": 138,
+          "width": 700,
+          "height": 26,
+          "src": "",
+          "style": {
+            "backgroundColor": "#0f172a"
+          }
+        },
+        {
+          "id": "it_mu53ki42_c",
+          "type": "text",
+          "name": "",
+          "text": "No",
+          "binding": "",
+          "x": 8,
+          "y": 144,
+          "width": 24,
+          "height": 14,
+          "src": "",
+          "style": {
+            "color": "#cbd5e1",
+            "fontSize": 9,
+            "textAlign": "center"
+          }
+        },
+        {
+          "id": "it_mu53ki42_d",
+          "type": "text",
+          "name": "",
+          "text": "DESKRIPSI",
+          "binding": "",
+          "x": 40,
+          "y": 144,
+          "width": 290,
+          "height": 14,
+          "src": "",
+          "style": {
+            "color": "#cbd5e1",
+            "fontSize": 9
+          }
+        },
+        {
+          "id": "it_mu53ki42_e",
+          "type": "text",
+          "name": "",
+          "text": "QTY",
+          "binding": "",
+          "x": 335,
+          "y": 144,
+          "width": 44,
+          "height": 14,
+          "src": "",
+          "style": {
+            "color": "#cbd5e1",
+            "fontSize": 9,
+            "textAlign": "right"
+          }
+        },
+        {
+          "id": "it_mu53ki42_f",
+          "type": "text",
+          "name": "",
+          "text": "SATUAN",
+          "binding": "",
+          "x": 385,
+          "y": 144,
+          "width": 52,
+          "height": 14,
+          "src": "",
+          "style": {
+            "color": "#cbd5e1",
+            "fontSize": 9,
+            "textAlign": "center"
+          }
+        },
+        {
+          "id": "it_mu53ki42_g",
+          "type": "text",
+          "name": "",
+          "text": "HARGA (RP)",
+          "binding": "",
+          "x": 443,
+          "y": 144,
+          "width": 110,
+          "height": 14,
+          "src": "",
+          "style": {
+            "color": "#cbd5e1",
+            "fontSize": 9,
+            "textAlign": "right"
+          }
+        },
+        {
+          "id": "it_mu53ki42_h",
+          "type": "text",
+          "name": "",
+          "text": "JUMLAH (RP)",
+          "binding": "",
+          "x": 560,
+          "y": 144,
+          "width": 124,
+          "height": 14,
+          "src": "",
+          "style": {
+            "color": "#cbd5e1",
+            "fontSize": 9,
+            "textAlign": "right"
+          }
+        }
+      ]
+    },
+    "contentSection": {
+      "height": 30,
+      "visible": true,
+      "style": {},
+      "items": [
+        {
+          "id": "it_mu53ki42_i",
+          "type": "text",
+          "name": "",
+          "text": "1",
+          "binding": "__row",
+          "x": 8,
+          "y": 7,
+          "width": 24,
+          "height": 16,
+          "src": "",
+          "style": {
+            "fontSize": 10,
+            "textAlign": "center",
+            "color": "#64748b"
+          }
+        },
+        {
+          "id": "it_mu53ki42_j",
+          "type": "text",
+          "name": "",
+          "text": "Deskripsi",
+          "binding": "description",
+          "x": 40,
+          "y": 7,
+          "width": 290,
+          "height": 16,
+          "src": "",
+          "style": {
+            "fontSize": 10
+          }
+        },
+        {
+          "id": "it_mu53ki42_k",
+          "type": "text",
+          "name": "",
+          "text": "Qty",
+          "binding": "qty",
+          "x": 335,
+          "y": 7,
+          "width": 44,
+          "height": 16,
+          "src": "",
+          "style": {
+            "fontSize": 10,
+            "textAlign": "right"
+          }
+        },
+        {
+          "id": "it_mu53ki42_l",
+          "type": "text",
+          "name": "",
+          "text": "Satuan",
+          "binding": "unit",
+          "x": 385,
+          "y": 7,
+          "width": 52,
+          "height": 16,
+          "src": "",
+          "style": {
+            "fontSize": 10,
+            "textAlign": "center",
+            "color": "#64748b"
+          }
+        },
+        {
+          "id": "it_mu53ki42_m",
+          "type": "text",
+          "name": "",
+          "text": "Harga",
+          "binding": "price",
+          "x": 443,
+          "y": 7,
+          "width": 110,
+          "height": 16,
+          "src": "",
+          "style": {
+            "fontSize": 10,
+            "textAlign": "right"
+          }
+        },
+        {
+          "id": "it_mu53ki42_n",
+          "type": "text",
+          "name": "",
+          "text": "Jumlah",
+          "binding": "amount",
+          "x": 560,
+          "y": 7,
+          "width": 124,
+          "height": 16,
+          "src": "",
+          "style": {
+            "fontSize": 10,
+            "textAlign": "right",
+            "fontWeight": "bold"
+          }
+        },
+        {
+          "id": "it_mu53ki42_o",
+          "type": "line",
+          "name": "",
+          "text": "",
+          "binding": "",
+          "x": 0,
+          "y": 29,
+          "width": 700,
+          "height": 2,
+          "src": "",
+          "style": {
+            "borderColor": "#e2e8f0",
+            "borderWidth": 1
+          }
+        }
+      ],
+      "binding": "items",
+      "groups": []
+    },
+    "footerSection": {
+      "height": 170,
+      "visible": true,
+      "style": {},
+      "items": [
+        {
+          "id": "it_mu53ki42_p",
+          "type": "text",
+          "name": "",
+          "text": "Pembayaran:\nBCA 1234-5678-90\na.n. PT Satu Sejahtera",
+          "binding": "",
+          "x": 16,
+          "y": 14,
+          "width": 320,
+          "height": 78,
+          "src": "",
+          "style": {
+            "backgroundColor": "#f8fafc",
+            "borderRadius": 8,
+            "padding": 8,
+            "fontSize": 10,
+            "color": "#475569",
+            "lineHeight": 20
+          }
+        },
+        {
+          "id": "it_mu53ki42_q",
+          "type": "text",
+          "name": "",
+          "text": "Terbilang:",
+          "binding": "",
+          "x": 16,
+          "y": 100,
+          "width": 80,
+          "height": 13,
+          "src": "",
+          "style": {
+            "fontSize": 9,
+            "color": "#94a3b8"
+          }
+        },
+        {
+          "id": "it_mu53ki42_r",
+          "type": "text",
+          "name": "",
+          "text": "Terbilang",
+          "binding": "terbilang",
+          "x": 16,
+          "y": 114,
+          "width": 392,
+          "height": 36,
+          "src": "",
+          "style": {
+            "fontSize": 10,
+            "fontStyle": "italic",
+            "color": "#334155"
+          }
+        },
+        {
+          "id": "it_mu53ki42_s",
+          "type": "text",
+          "name": "",
+          "text": "Subtotal",
+          "binding": "",
+          "x": 428,
+          "y": 14,
+          "width": 116,
+          "height": 16,
+          "src": "",
+          "style": {
+            "fontSize": 10,
+            "color": "#64748b",
+            "textAlign": "right"
+          }
+        },
+        {
+          "id": "it_mu53ki42_t",
+          "type": "text",
+          "name": "",
+          "text": "Subtotal",
+          "binding": "totals.subtotal",
+          "x": 548,
+          "y": 14,
+          "width": 136,
+          "height": 16,
+          "src": "",
+          "style": {
+            "fontSize": 10,
+            "textAlign": "right"
+          }
+        },
+        {
+          "id": "it_mu53ki42_u",
+          "type": "text",
+          "name": "",
+          "text": "PPN 11%",
+          "binding": "",
+          "x": 428,
+          "y": 34,
+          "width": 116,
+          "height": 16,
+          "src": "",
+          "style": {
+            "fontSize": 10,
+            "color": "#64748b",
+            "textAlign": "right"
+          }
+        },
+        {
+          "id": "it_mu53ki42_v",
+          "type": "text",
+          "name": "",
+          "text": "PPN",
+          "binding": "totals.tax",
+          "x": 548,
+          "y": 34,
+          "width": 136,
+          "height": 16,
+          "src": "",
+          "style": {
+            "fontSize": 10,
+            "textAlign": "right"
+          }
+        },
+        {
+          "id": "it_mu53ki42_w",
+          "type": "line",
+          "name": "",
+          "text": "",
+          "binding": "",
+          "x": 428,
+          "y": 56,
+          "width": 256,
+          "height": 2,
+          "src": "",
+          "style": {
+            "borderColor": "#cbd5e1",
+            "borderWidth": 1
+          }
+        },
+        {
+          "id": "it_mu53ki42_x",
+          "type": "text",
+          "name": "",
+          "text": "TOTAL",
+          "binding": "",
+          "x": 428,
+          "y": 64,
+          "width": 116,
+          "height": 20,
+          "src": "",
+          "style": {
+            "fontSize": 12,
+            "fontWeight": "bold",
+            "textAlign": "right"
+          }
+        },
+        {
+          "id": "it_mu53ki42_y",
+          "type": "text",
+          "name": "",
+          "text": "Grand Total",
+          "binding": "totals.grand",
+          "x": 548,
+          "y": 62,
+          "width": 136,
+          "height": 22,
+          "src": "",
+          "style": {
+            "fontSize": 14,
+            "fontWeight": "bold",
+            "textAlign": "right",
+            "color": "#1e293b"
+          }
+        },
+        {
+          "id": "it_mu53ki42_z",
+          "type": "text",
+          "name": "",
+          "text": "Hormat kami,",
+          "binding": "",
+          "x": 512,
+          "y": 104,
+          "width": 172,
+          "height": 14,
+          "src": "",
+          "style": {
+            "fontSize": 10,
+            "color": "#475569",
+            "textAlign": "center"
+          }
+        },
+        {
+          "id": "it_mu53ki42_10",
+          "type": "line",
+          "name": "",
+          "text": "",
+          "binding": "",
+          "x": 538,
+          "y": 148,
+          "width": 120,
+          "height": 2,
+          "src": "",
+          "style": {
+            "borderColor": "#94a3b8",
+            "borderWidth": 1
+          }
+        },
+        {
+          "id": "it_mu53ki42_11",
+          "type": "text",
+          "name": "",
+          "text": "( Sales Admin )",
+          "binding": "",
+          "x": 512,
+          "y": 152,
+          "width": 172,
+          "height": 14,
+          "src": "",
+          "style": {
+            "fontSize": 10,
+            "color": "#475569",
+            "textAlign": "center"
+          }
+        }
+      ]
+    },
+    "pageFooterSection": {
+      "height": 30,
+      "visible": true,
+      "style": {},
+      "items": [
+        {
+          "id": "it_mu53ki42_15",
+          "type": "text",
+          "name": "",
+          "text": "Dicetak oleh SatuReport Offline",
+          "binding": "",
+          "x": 0,
+          "y": 6,
+          "width": 240,
+          "height": 13,
+          "src": "",
+          "style": {
+            "fontSize": 8,
+            "color": "#94a3b8"
+          }
+        },
+        {
+          "id": "it_mu53ki42_16",
+          "type": "text",
+          "name": "",
+          "text": "Halaman {PageNo} dari {PageCount}",
+          "binding": "",
+          "x": 250,
+          "y": 6,
+          "width": 200,
+          "height": 13,
+          "src": "",
+          "style": {
+            "fontSize": 9,
+            "color": "#64748b",
+            "textAlign": "center"
+          }
+        },
+        {
+          "id": "it_mu53ki42_17",
+          "type": "text",
+          "name": "",
+          "text": "{Now}",
+          "binding": "",
+          "x": 460,
+          "y": 6,
+          "width": 240,
+          "height": 13,
+          "src": "",
+          "style": {
+            "fontSize": 8,
+            "color": "#94a3b8",
+            "textAlign": "right"
+          }
+        }
+      ]
+    }
+  },
+  "data": {
+    "company": {
+      "name": "PT SATU SEJAHTERA",
+      "address": "Jl. Margonda Raya No. 88, Depok 16431",
+      "contact": "Telp: (021) 7788-9900 • satu@example.co.id"
+    },
+    "invoice": {
+      "no": "INV/2026/09/0042",
+      "date": "17 September 2026"
+    },
+    "customer": {
+      "name": "CV. Mitra Bangun Persada",
+      "address": "Jl. Sudirman Kav. 21, Jakarta Selatan"
+    },
+    "items": [
+      {
+        "description": "Jasa Desain Logo & Branding",
+        "qty": 1,
+        "unit": "paket",
+        "price": "2.500.000",
+        "amount": "2.500.000"
+      },
+      {
+        "description": "Pembuatan Website Company Profile",
+        "qty": 2,
+        "unit": "paket",
+        "price": "7.500.000",
+        "amount": "15.000.000"
+      },
+      {
+        "description": "Maintenance Server (per bulan)",
+        "qty": 3,
+        "unit": "bulan",
+        "price": "850.000",
+        "amount": "2.550.000"
+      },
+      {
+        "description": "Domain .co.id (1 tahun)",
+        "qty": 1,
+        "unit": "domain",
+        "price": "350.000",
+        "amount": "350.000"
+      },
+      {
+        "description": "SSL Certificate (1 tahun)",
+        "qty": 2,
+        "unit": "tahun",
+        "price": "1.200.000",
+        "amount": "2.400.000"
+      },
+      {
+        "description": "Training Penggunaan Sistem",
+        "qty": 3,
+        "unit": "sesi",
+        "price": "500.000",
+        "amount": "1.500.000"
+      },
+      {
+        "description": "Jasa Desain Logo & Branding — Tahap 2",
+        "qty": 1,
+        "unit": "paket",
+        "price": "2.500.000",
+        "amount": "2.500.000"
+      },
+      {
+        "description": "Pembuatan Website Company Profile — Tahap 2",
+        "qty": 2,
+        "unit": "paket",
+        "price": "7.500.000",
+        "amount": "15.000.000"
+      },
+      {
+        "description": "Maintenance Server (per bulan) — Tahap 2",
+        "qty": 3,
+        "unit": "bulan",
+        "price": "850.000",
+        "amount": "2.550.000"
+      },
+      {
+        "description": "Domain .co.id (1 tahun) — Tahap 2",
+        "qty": 1,
+        "unit": "domain",
+        "price": "350.000",
+        "amount": "350.000"
+      },
+      {
+        "description": "SSL Certificate (1 tahun) — Tahap 2",
+        "qty": 2,
+        "unit": "tahun",
+        "price": "1.200.000",
+        "amount": "2.400.000"
+      },
+      {
+        "description": "Training Penggunaan Sistem — Tahap 2",
+        "qty": 3,
+        "unit": "sesi",
+        "price": "500.000",
+        "amount": "1.500.000"
+      },
+      {
+        "description": "Jasa Desain Logo & Branding — Tahap 3",
+        "qty": 1,
+        "unit": "paket",
+        "price": "2.500.000",
+        "amount": "2.500.000"
+      },
+      {
+        "description": "Pembuatan Website Company Profile — Tahap 3",
+        "qty": 2,
+        "unit": "paket",
+        "price": "7.500.000",
+        "amount": "15.000.000"
+      },
+      {
+        "description": "Maintenance Server (per bulan) — Tahap 3",
+        "qty": 3,
+        "unit": "bulan",
+        "price": "850.000",
+        "amount": "2.550.000"
+      },
+      {
+        "description": "Domain .co.id (1 tahun) — Tahap 3",
+        "qty": 1,
+        "unit": "domain",
+        "price": "350.000",
+        "amount": "350.000"
+      },
+      {
+        "description": "SSL Certificate (1 tahun) — Tahap 3",
+        "qty": 2,
+        "unit": "tahun",
+        "price": "1.200.000",
+        "amount": "2.400.000"
+      },
+      {
+        "description": "Training Penggunaan Sistem — Tahap 3",
+        "qty": 3,
+        "unit": "sesi",
+        "price": "500.000",
+        "amount": "1.500.000"
+      },
+      {
+        "description": "Jasa Desain Logo & Branding — Tahap 4",
+        "qty": 1,
+        "unit": "paket",
+        "price": "2.500.000",
+        "amount": "2.500.000"
+      },
+      {
+        "description": "Pembuatan Website Company Profile — Tahap 4",
+        "qty": 2,
+        "unit": "paket",
+        "price": "7.500.000",
+        "amount": "15.000.000"
+      },
+      {
+        "description": "Maintenance Server (per bulan) — Tahap 4",
+        "qty": 3,
+        "unit": "bulan",
+        "price": "850.000",
+        "amount": "2.550.000"
+      },
+      {
+        "description": "Domain .co.id (1 tahun) — Tahap 4",
+        "qty": 1,
+        "unit": "domain",
+        "price": "350.000",
+        "amount": "350.000"
+      },
+      {
+        "description": "SSL Certificate (1 tahun) — Tahap 4",
+        "qty": 2,
+        "unit": "tahun",
+        "price": "1.200.000",
+        "amount": "2.400.000"
+      },
+      {
+        "description": "Training Penggunaan Sistem — Tahap 4",
+        "qty": 3,
+        "unit": "sesi",
+        "price": "500.000",
+        "amount": "1.500.000"
+      },
+      {
+        "description": "Jasa Desain Logo & Branding — Tahap 5",
+        "qty": 1,
+        "unit": "paket",
+        "price": "2.500.000",
+        "amount": "2.500.000"
+      },
+      {
+        "description": "Pembuatan Website Company Profile — Tahap 5",
+        "qty": 2,
+        "unit": "paket",
+        "price": "7.500.000",
+        "amount": "15.000.000"
+      },
+      {
+        "description": "Maintenance Server (per bulan) — Tahap 5",
+        "qty": 3,
+        "unit": "bulan",
+        "price": "850.000",
+        "amount": "2.550.000"
+      },
+      {
+        "description": "Domain .co.id (1 tahun) — Tahap 5",
+        "qty": 1,
+        "unit": "domain",
+        "price": "350.000",
+        "amount": "350.000"
+      },
+      {
+        "description": "SSL Certificate (1 tahun) — Tahap 5",
+        "qty": 2,
+        "unit": "tahun",
+        "price": "1.200.000",
+        "amount": "2.400.000"
+      },
+      {
+        "description": "Training Penggunaan Sistem — Tahap 5",
+        "qty": 3,
+        "unit": "sesi",
+        "price": "500.000",
+        "amount": "1.500.000"
+      }
+    ],
+    "totals": {
+      "subtotal": "121.500.000",
+      "tax": "13.365.000",
+      "grand": "Rp 134.865.000"
+    },
+    "terbilang": "== Seratus tiga puluh empat juta delapan ratus enam puluh lima ribu rupiah =="
+  }
+}

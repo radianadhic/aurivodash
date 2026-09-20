@@ -1,0 +1,334 @@
+---
+path: pages/notifications.html
+title: Pusat Notifikasi
+crumb: Notifikasi
+description: Pusat notifikasi admin — daftar notifikasi push (tiruan) dengan penyaring kategori, tandai dibaca, hapus massal, dan tombol kirim notifikasi uji.
+scripts: notify.js
+---
+<!--#navbar-->
+<button type="button" class="nav-icon-btn" title="Kirim notifikasi uji" aria-label="Kirim notifikasi uji"
+        onclick="notifUjiAdmin()">
+  <i data-icon="send" data-size="17"></i>
+</button>
+<button type="button" class="nav-icon-btn" title="Tandai semua dibaca" aria-label="Tandai semua dibaca"
+        onclick="notifBacaSemua()">
+  <i data-icon="check2-all" data-size="17"></i>
+</button>
+<!--/#navbar-->
+
+<!--#actions-->
+<button class="btn btn-light" onclick="notifUjiAdmin()">
+  <i data-icon="send"></i> Kirim notifikasi uji
+</button>
+<button class="btn btn-light" onclick="notifBacaSemua()">
+  <i data-icon="check2-all"></i> Tandai semua dibaca
+</button>
+<button class="btn btn-outline-danger" onclick="hapusTerbacaNotif()">
+  <i data-icon="trash"></i> Hapus yang terbaca
+</button>
+<!--/#actions-->
+<!--#content-->
+
+<div x-data="pusatNotifikasi()">
+<div class="callout callout-info">
+  <b>Notifikasi tiruan (tanpa server).</b> Notifikasi di halaman ini disimpan di
+  <code>localStorage</code> peramban Anda dan ditampilkan sebagai banner yang meluncur dari kanan atas —
+  persis seperti push notification. Tekan <b>Kirim notifikasi uji</b> untuk melihat banner-nya,
+  atau panggil <code>Notify.push({ judul, pesan, tone, kategori })</code> dari mana saja.
+  Lonceng di navbar dan menu sidebar ikut menampilkan jumlah belum dibaca secara langsung.
+</div>
+
+<!-- small box ringkasan -->
+<div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+  <div class="small-box">
+    <div class="small-box-body">
+      <span class="small-box-ikon bg-primary"><i data-icon="bell-fill" data-size="22"></i></span>
+      <div class="small-box-teks">
+        <span class="description-header" x-text="$store.notif.lingkup('admin').length">0</span>
+        <span class="description-text">Total notifikasi</span>
+      </div>
+    </div>
+    <a href="#" class="small-box-footer" @click.prevent="filterBaca = 'Belum dibaca'">
+      Lihat yang belum dibaca <i data-icon="chevron-right" data-size="13"></i>
+    </a>
+  </div>
+  <div class="small-box">
+    <div class="small-box-body">
+      <span class="small-box-ikon bg-danger"><i data-icon="envelope" data-size="22"></i></span>
+      <div class="small-box-teks">
+        <span class="description-header" x-text="$store.notif.belum('admin')">0</span>
+        <span class="description-text">Belum dibaca</span>
+      </div>
+    </div>
+    <a href="#" class="small-box-footer" @click.prevent="$store.notif.bacaSemua('admin')">
+      Tandai semua dibaca <i data-icon="chevron-right" data-size="13"></i>
+    </a>
+  </div>
+  <div class="small-box">
+    <div class="small-box-body">
+      <span class="small-box-ikon bg-warning"><i data-icon="exclamation-triangle-fill" data-size="22"></i></span>
+      <div class="small-box-teks">
+        <span class="description-header" x-text="hitungPenting()">0</span>
+        <span class="description-text">Penting</span>
+      </div>
+    </div>
+    <a href="#" class="small-box-footer" @click.prevent="filterKategori = 'Peringatan'">
+      Lihat peringatan <i data-icon="chevron-right" data-size="13"></i>
+    </a>
+  </div>
+  <div class="small-box">
+    <div class="small-box-body">
+      <span class="small-box-ikon bg-success"><i data-icon="clock-history" data-size="22"></i></span>
+      <div class="small-box-teks">
+        <span class="description-header" x-text="hitungHariIni()">0</span>
+        <span class="description-text">Masuk hari ini</span>
+      </div>
+    </div>
+    <a href="#" class="small-box-footer" @click.prevent="bersihkanFilter()">
+      Reset penyaring <i data-icon="chevron-right" data-size="13"></i>
+    </a>
+  </div>
+</div>
+
+<div class="card mt-4">
+  <div class="card-header cu-flex-wrap">
+    <div class="min-w-0">
+      <h2 class="card-title">Daftar notifikasi</h2>
+      <p class="card-subtitle" x-text="T(tampil().length + ' dari ' + $store.notif.lingkup('admin').length + ' notifikasi ditampilkan')"></p>
+    </div>
+    <div class="card-tools cu-flex-wrap">
+      <div class="input-group input-group-sm">
+        <span class="input-group-text"><i data-icon="search" data-size="13"></i></span>
+        <input class="form-control" type="search" placeholder="Cari judul/pesan…" x-model="cari" aria-label="Cari notifikasi">
+      </div>
+      <label class="form-check mb-0">
+        <input type="checkbox" class="form-check-input" x-model="hanyaPenting">
+        <span class="text-sm">Penting saja</span>
+      </label>
+    </div>
+  </div>
+
+  <div class="card-body border-b">
+    <div class="flex flex-wrap items-center gap-1.5">
+      <span class="fs-8 text-muted-2 mr-1">Kategori:</span>
+      <template x-for="k in kategori" :key="k">
+        <button type="button" class="btn btn-sm" data-peran="kategori" :class="filterKategori === k ? 'btn-primary' : 'btn-light'"
+                @click="filterKategori = k" x-text="$store.i18n.t(k)"></button>
+      </template>
+      <span class="fs-8 text-muted-2 ml-2 mr-1">Status:</span>
+      <template x-for="s in ['Semua','Belum dibaca','Sudah dibaca']" :key="s">
+        <button type="button" class="btn btn-sm" data-peran="status" :class="filterBaca === s ? 'btn-primary' : 'btn-light'"
+                @click="filterBaca = s" x-text="$store.i18n.t(s)"></button>
+      </template>
+    </div>
+  </div>
+
+  <div class="card-body p-0">
+    <div class="table-wrap">
+      <table class="table table-hover align-middle mb-0">
+        <thead>
+          <tr>
+            <th class="w-10">
+              <input type="checkbox" class="form-check-input" :checked="semuaTerpilih()" @change="pilihSemua($event)"
+                     aria-label="Pilih semua baris">
+            </th>
+            <th>Notifikasi</th>
+            <th class="hidden md:table-cell">Kategori</th>
+            <th class="hidden lg:table-cell">Waktu</th>
+            <th class="w-28 text-right">Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          <template x-for="n in tampil()" :key="n.id">
+            <tr :data-baca="n.baca ? '1' : '0'">
+              <td>
+                <input type="checkbox" class="form-check-input" :checked="terpilih.indexOf(n.id) > -1"
+                       @change="pilihBaris(n.id, $event.target.checked)"
+                       :aria-label="'Pilih ' + n.judul">
+              </td>
+              <td>
+                <div class="flex items-start gap-3">
+                  <span class="notif-ikon" :data-tone="n.tone"><i :data-icon="n.ikon" data-size="15"></i></span>
+                  <span class="min-w-0">
+                    <b class="block text-sm" x-text="n.judul"></b>
+                    <span class="block fs-8 text-muted-2" x-text="n.pesan"></span>
+                    <span class="badge badge-soft-danger mt-1" x-show="n.penting" x-cloak>Penting</span>
+                    <span class="badge badge-soft-primary mt-1" x-show="!n.baca" x-cloak>Baru</span>
+                  </span>
+                </div>
+              </td>
+              <td class="hidden md:table-cell"><span class="badge badge-soft-secondary" x-text="$store.i18n.t(n.kategori)"></span></td>
+              <td class="hidden lg:table-cell fs-8 text-muted-2" x-text="T($store.notif.waktu(n.waktu))"></td>
+              <td class="text-right">
+                <div class="flex items-center justify-end gap-1">
+                  <button type="button" class="table-act" :title="n.baca ? 'Tandai belum dibaca' : 'Tandai dibaca'"
+                          @click="$store.notif.belumBacaToggle(n.id, 'admin')">
+                    <i :data-icon="n.baca ? 'envelope' : 'check2'" data-size="14"></i>
+                  </button>
+                  <button type="button" class="table-act" title="Kirim ulang (banner)"
+                          @click="$store.notif.tambah('admin', Object.assign({}, n, { id: n.id + '-c', baca: false })), Notify.banner(Object.assign({}, n, { sekarang: true }))">
+                    <i data-icon="send" data-size="14"></i>
+                  </button>
+                  <button type="button" class="table-act text-danger" title="Hapus"
+                          @click="$store.notif.hapus(n.id, 'admin')">
+                    <i data-icon="trash" data-size="14"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+    </div>
+    <div class="p-4 text-center text-muted-2 text-sm" x-show="!tampil().length">
+      Tidak ada notifikasi yang cocok dengan penyaring.
+    </div>
+  </div>
+
+  <div class="card-footer cu-flex-wrap">
+    <div class="flex flex-wrap items-center gap-2">
+      <span class="fs-8 text-muted-2" x-text="T(terpilih.length + ' dipilih')"></span>
+      <button type="button" class="btn btn-light btn-sm" :disabled="!terpilih.length" @click="tandaiTerpilih()">
+        <i data-icon="check2-all" data-size="13"></i> Tandai dibaca
+      </button>
+      <button type="button" class="btn btn-light btn-sm" :disabled="!terpilih.length" @click="hapusTerpilih()">
+        <i data-icon="trash" data-size="13"></i> Hapus terpilih
+      </button>
+      <button type="button" class="btn btn-outline-danger btn-sm" @click="hapusSemua()">
+        <i data-icon="exclamation-triangle-fill" data-size="13"></i> Kosongkan
+      </button>
+    </div>
+    <div class="fs-8 text-muted-2">
+      Total belum dibaca: <b x-text="$store.notif.belum('admin')"></b> · tersimpan di localStorage
+    </div>
+  </div>
+</div>
+
+<div class="grid gap-4 lg:grid-cols-2 mt-4">
+  <div class="card">
+    <div class="card-header">
+      <h2 class="card-title">Contoh pemakaian</h2>
+      <p class="card-subtitle">Panggil dari kode mana pun — tanpa server</p>
+    </div>
+    <div class="card-body">
+      <div class="code-block"><code>Notify.push({
+  lingkup: "admin",              // "admin" (dashboard) atau "mobile" (aplikasi nasabah)
+  judul: "Pesanan #INV-2041 sudah dibayar",
+  pesan: "Rp 198.100 masuk ke rekening operasional.",
+  ikon: "cart-check", tone: "success", kategori: "Transaksi"
+});
+
+Notify.uji("admin");             // notifikasi contoh acak
+Notify.banner({ judul: "Halo" }); // hanya banner, tanpa disimpan</code></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h2 class="card-title">Integrasi</h2>
+      <p class="card-subtitle">Siapa yang membaca notifikasi ini</p>
+    </div>
+    <div class="card-body grid gap-2">
+      <div class="widget-row">
+        <span class="widget-row-ikon bg-primary"><i data-icon="bell" data-size="15"></i></span>
+        <span class="widget-row-teks"><b>Lonceng navbar</b><span>dropdown 6 notifikasi terakhir + lencana jumlah belum dibaca</span></span>
+      </div>
+      <div class="widget-row">
+        <span class="widget-row-ikon bg-success"><i data-icon="list" data-size="15"></i></span>
+        <span class="widget-row-teks"><b>Menu sidebar “Notifikasi”</b><span>lencana menyala mengikuti jumlah belum dibaca</span></span>
+      </div>
+      <div class="widget-row">
+        <span class="widget-row-ikon bg-info"><i data-icon="phone" data-size="15"></i></span>
+        <span class="widget-row-teks"><b>Aplikasi nasabah</b><span>lingkup <code>mobile</code>: banner + pusat notifikasi di dalam aplikasi</span></span>
+      </div>
+      <div class="widget-row">
+        <span class="widget-row-ikon bg-warning"><i data-icon="calendar-check" data-size="15"></i></span>
+        <span class="widget-row-teks"><b>Halaman Scheduler</b><span>setiap job yang dieksekusi mengirim notifikasi ke sini</span></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /x-data -->
+
+<script>
+  function pusatNotifikasi() {
+    return {
+      cari: "",
+      filterKategori: "Semua",
+      filterBaca: "Semua",
+      hanyaPenting: false,
+      terpilih: [],
+      kategori: ["Semua", "Transaksi", "Tagihan", "Peringatan", "Pengguna", "Sistem", "Jadwal", "Keamanan"],
+      tampil: function () {
+        var t = this;
+        return this.$store.notif.lingkup("admin").filter(function (n) {
+          if (t.filterKategori !== "Semua" && n.kategori !== t.filterKategori) return false;
+          if (t.filterBaca === "Belum dibaca" && n.baca) return false;
+          if (t.filterBaca === "Sudah dibaca" && !n.baca) return false;
+          if (t.hanyaPenting && !n.penting) return false;
+          if (t.cari && (n.judul + " " + n.pesan).toLowerCase().indexOf(t.cari.toLowerCase()) === -1) return false;
+          return true;
+        });
+      },
+      hitungPenting: function () { return this.$store.notif.lingkup("admin").filter(function (n) { return n.penting; }).length; },
+      hitungHariIni: function () {
+        var batas = Date.now() - 864e5;
+        return this.$store.notif.lingkup("admin").filter(function (n) { return new Date(n.waktu).getTime() > batas; }).length;
+      },
+      bersihkanFilter: function () { this.cari = ""; this.filterKategori = "Semua"; this.filterBaca = "Semua"; this.hanyaPenting = false; },
+      semuaTerpilih: function () {
+        var baris = this.tampil();
+        var dipilih = this.terpilih;
+        return baris.length > 0 && baris.every(function (n) { return dipilih.indexOf(n.id) > -1; });
+      },
+      pilihBaris: function (id, aktif) {
+        var i = this.terpilih.indexOf(id);
+        if (aktif && i === -1) this.terpilih.push(id);
+        else if (!aktif && i > -1) this.terpilih.splice(i, 1);
+      },
+      pilihSemua: function (ev) {
+        this.terpilih = ev.target.checked ? this.tampil().map(function (n) { return n.id; }) : [];
+      },
+      tandaiTerpilih: function () {
+        var s = this.$store.notif;
+        this.terpilih.forEach(function (id) { s.baca(id, "admin"); });
+        window.toast(window.I18n.t(this.terpilih.length + " notifikasi ditandai dibaca."), "success", "Notifikasi");
+        this.terpilih = [];
+      },
+      hapusTerpilih: function () {
+        var s = this.$store.notif;
+        var n = this.terpilih.length;
+        this.terpilih.forEach(function (id) { s.hapus(id, "admin"); });
+        window.toast(window.I18n.t(n + " notifikasi dihapus."), "danger", "Notifikasi");
+        this.terpilih = [];
+      },
+      hapusSemua: function () {
+        var self = this;
+        this.$store.dialog.ask({
+          title: "Kosongkan pusat notifikasi?",
+          message: "Semua notifikasi (termasuk yang belum dibaca) akan dihapus dari peramban ini.",
+          tone: "danger", confirmText: "Kosongkan",
+          onConfirm: function () {
+            self.$store.notif.hapusSemua("admin");
+            window.toast("Pusat notifikasi dikosongkan.", "danger", "Notifikasi");
+          }
+        });
+      }
+    };
+  }
+
+  /* dipakai tombol di header halaman & navbar (di luar cakupan x-data) */
+  function notifUjiAdmin() {
+    if (window.Notify && window.Notify.uji) window.Notify.uji("admin");
+  }
+  function notifBacaSemua() {
+    if (window.Alpine && window.Alpine.store("notif")) window.Alpine.store("notif").bacaSemua("admin");
+  }
+  function hapusTerbacaNotif() {
+    var st = Alpine.store("notif");
+    var n = st.lingkup("admin").filter(function (i) { return i.baca; }).length;
+    st.hapusTerbaca("admin");
+    window.toast(window.I18n.t(n + " notifikasi terbaca dihapus."), "danger", "Notifikasi");
+  }
+</script>

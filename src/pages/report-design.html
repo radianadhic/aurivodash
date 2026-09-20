@@ -1,0 +1,153 @@
+---
+path: pages/report-design.html
+title: Report Design
+pageTitle: Report Design
+subtitle: Desainer laporan visual — susun header, konten, dan footer di kanvas berukuran mm
+crumb: Home|index.html, Tools, Report Design
+description: Report Design — desainer laporan visual SatuReport (di-vendor lokal, tanpa CDN) untuk merancang header, konten berulang, dan footer, lalu mengekspor PDF/XLSX.
+bodyClass: page-tools
+scripts: satureport-tools.js
+---
+<!--#navbar-->
+<button type="button" class="nav-icon-btn" title="Buka Report Design di tab baru"
+        onclick="window.SatuTools.buka('report-design')" aria-label="Buka Report Design di tab baru">
+  <i data-icon="box-arrow-up-right" data-size="17"></i>
+</button>
+<button type="button" class="nav-icon-btn" title="Muat ulang aplikasi"
+        onclick="window.SatuTools.muatUlang('sr-frame-design')" aria-label="Muat ulang aplikasi Report Design">
+  <i data-icon="arrow-clockwise" data-size="17"></i>
+</button>
+<button type="button" class="nav-icon-btn" title="Tampilkan galeri contoh laporan"
+        onclick="window.SatuTools.buka('report-example')" aria-label="Buka galeri contoh laporan">
+  <i data-icon="clipboard-data" data-size="17"></i>
+</button>
+<!--/#navbar-->
+
+<!--#actions-->
+<button class="btn btn-light" onclick="window.SatuTools.muatUlang('sr-frame-design')"><i data-icon="arrow-clockwise"></i> Muat ulang</button>
+<button class="btn btn-light" onclick="window.SatuTools.layarPenuh('kartu-design')"><i data-icon="arrows-fullscreen"></i> Layar penuh</button>
+<button class="btn btn-light" onclick="window.SatuTools.buka('report-example')"><i data-icon="clipboard-data"></i> Galeri contoh</button>
+<button class="btn btn-primary" onclick="window.SatuTools.buka('report-design')"><i data-icon="box-arrow-up-right"></i> Buka tab baru</button>
+<!--/#actions-->
+
+<div class="alert alert-info items-start">
+  <i data-icon="brush" class="mt-0.5"></i>
+  <div>
+    <b>Report Design — desainer laporan visual.</b>
+    <span>Susun Report Header, Content berulang, Sub Group, dan Report Footer langsung di kanvas berukuran halaman (mm), lalu ekspor hasilnya ke PDF atau XLSX.</span>
+    <span>Aplikasi SatuReport di-vendor lokal di folder assets/satureport/ (github.com/radianadhic/satureport) dan berjalan di dalam bingkai di bawah ini — seluruh asetnya ikut di halaman aplikasi, jadi tetap 100% offline.</span>
+  </div>
+</div>
+
+<script>
+  /* Bahasa aplikasi mengikuti bahasa template: SatuReport membaca
+     localStorage "satureport.lang", template menyimpan pilihan di "app.locale".
+     Skrip ini dijalankan SEBELUM iframe dibuat agar bingkai memuat bahasa yang benar. */
+  (function () {
+    try {
+      var l = localStorage.getItem("app.locale");
+      localStorage.setItem("satureport.lang", l === "en" ? "en" : "id");
+    } catch (e) { /* mode privat */ }
+  })();
+</script>
+
+<div class="card sr-frame-card" id="kartu-design">
+  <div class="card-header flex-wrap">
+    <h3 class="card-title"><i data-icon="brush" class="text-primary"></i> Kanvas Report Designer</h3>
+    <div class="card-tools flex-wrap">
+      <span class="badge badge-soft-info" title="Aplikasi berjalan di dalam bingkai">iframe · SatuReport</span>
+      <button type="button" class="btn btn-light btn-sm" onclick="window.SatuTools.muatUlang('sr-frame-design')" title="Muat ulang aplikasi">
+        <i data-icon="arrow-clockwise" data-size="13"></i>
+      </button>
+      <button type="button" class="btn btn-light btn-sm" onclick="window.SatuTools.buka('report-design')" title="Buka di tab baru">
+        <i data-icon="box-arrow-up-right" data-size="13"></i>
+      </button>
+      <button type="button" class="btn btn-light btn-sm" data-card-tool="fullscreen" title="Layar penuh">
+        <i data-icon="arrows-fullscreen" data-size="13"></i>
+      </button>
+    </div>
+  </div>
+  <div class="card-body !p-0">
+    <iframe id="sr-frame-design" class="sr-frame" data-sr
+            src="../assets/satureport/designer.html"
+            title="Report Designer SatuReport" loading="eager"></iframe>
+  </div>
+  <div class="card-footer flex flex-wrap items-center justify-between gap-2">
+    <span class="fs-8 text-muted-2">
+      Layout disimpan di <b>IndexedDB</b> peramban Anda (bukan server) — aman untuk uji coba.
+    </span>
+    <span class="flex flex-wrap items-center gap-2">
+      <button class="btn btn-light btn-sm" onclick="window.SatuTools.buka('report-viewer')"><i data-icon="eye" data-size="13"></i> Lihat di Report Viewer</button>
+      <button class="btn btn-light btn-sm" onclick="window.SatuTools.buka('report-example')"><i data-icon="clipboard-data" data-size="13"></i> Galeri contoh</button>
+    </span>
+  </div>
+</div>
+
+<div class="grid gap-4 mt-4 lg:grid-cols-3">
+  <div class="card lg:col-span-2">
+    <div class="card-header">
+      <h3 class="card-title"><i data-icon="sliders" class="text-info"></i> Yang bisa dikerjakan di halaman ini</h3>
+      <div class="card-tools"><span class="badge badge-soft-primary">SatuReport</span></div>
+    </div>
+    <div class="card-body">
+      <ul class="list-unstyled m-0 space-y-2 text-sm">
+        <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span>Kanvas halaman berukuran mm dengan grid dan snap — atur lebar halaman serta margin lewat panel kanan</span></li>
+        <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span>Tiga band utama: Report Header, Content yang berulang per baris data, dan Report Footer — ditambah Sub Group</span></li>
+        <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span>Elemen siap pakai: teks, gambar, barcode, grafik, garis, dan pivot table</span></li>
+        <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span>Seret field dari panel Data Source ke kanvas untuk membuat item ter-binding</span></li>
+        <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span>Sumber data tiga macam: JSON manual, endpoint API, atau query kustom yang mendukung parameter</span></li>
+        <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span>Field sistem: nomor halaman, nomor baris, jumlah baris, dan tanggal cetak</span></li>
+        <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span>Undo/redo, duplikat dengan Ctrl+D, geser dengan tombol panah, zoom dengan Ctrl+scroll, dan auto layout dari data</span></li>
+        <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span>Simpan layout ke IndexedDB peramban, ekspor paket .satureport.json, cetak/PDF, dan ekspor XLSX</span></li>
+        <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span>Test preview mengambil data dari sumber (API atau query) lalu merendernya langsung di kanvas</span></li>
+      </ul>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title"><i data-icon="info-circle" class="text-warning"></i> Catatan</h3>
+    </div>
+    <div class="card-body">
+      <ol class="mb-3 space-y-2 text-sm pl-4 list-decimal">
+        <li>Mulai dari nol dengan tombol Report Baru, atau muat contoh lewat tombol Sample di toolbar aplikasi.</li>
+        <li>Seret field dari panel kiri ke kanvas, lalu atur gaya teksnya di panel kanan.</li>
+        <li>Buka Galeri Contoh untuk melihat 12 template siap pakai, termasuk contoh yang bisa dimuat ke viewer.</li>
+      </ol>
+      <div class="callout callout-warning mb-0">
+        <b>Kredit dan lisensi.</b>
+        <span>Aplikasi SatuReport dibuat oleh radianadhic dan disertakan apa adanya (as-is) dari repositori publiknya.</span>
+        <span>Repositori tersebut belum memuat berkas lisensi (LICENSE), jadi untuk pemakaian komersial sebaiknya konfirmasi dulu lisensinya ke pemilik repo.</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card mt-4">
+  <div class="card-header">
+    <h3 class="card-title"><i data-icon="code-slash" class="text-primary"></i> Cara memasang di proyek Anda</h3>
+  </div>
+  <div class="card-body">
+<pre class="code-block"><code>&lt;!-- berkas aplikasi sudah mandiri (Tailwind &amp; Alpine ikut di dalamnya) --&gt;
+&lt;iframe src="assets/satureport/designer.html" style="width:100%;height:74vh;border:0"
+        title="Report Designer"&gt;&lt;/iframe&gt;
+
+&lt;!-- jalur lain: viewer.html (menampilkan laporan) dan examples.html (galeri contoh)
+     tautan antar halaman di dalam aplikasi memakai nama berkas relatif,
+     jadi ketiganya harus berada di folder yang sama. --&gt;</code></pre>
+    <p class="fs-8 text-muted-2 mb-0">
+      Kalau Anda memakai build Tailwind sendiri, jangan menaruh tiga berkas ini di dalam proses bundel:
+      halaman SatuReport sudah memuat Tailwind &amp; Alpine-nya sendiri. Cukup tautkan apa adanya.
+    </p>
+  </div>
+</div>
+
+<style>
+  /* Bingkai aplikasi SatuReport */
+  .sr-frame { width: 100%; height: 74vh; min-height: 460px; border: 0; display: block; background: #fff; }
+  .page-tools .card-maximized { z-index: 79; }               /* tetap di bawah widget AI (80) */
+  .page-tools .card-maximized .card-body { padding: 0; overflow: hidden; display: flex; }
+  .page-tools .card-maximized .sr-frame { flex: 1; height: auto; min-height: 0; }
+  @media print { .sr-frame { height: auto; min-height: 0; } }
+</style>

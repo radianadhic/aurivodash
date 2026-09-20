@@ -1,0 +1,265 @@
+/* ------------------------------------------------------------------
+   lock.css — kunci layar & animasi memuat (window.Lock di assets/js/lock.js)
+   Dipakai saat formulir dikirim atau data dimuat: gembok berdenyut,
+   cincin berputar, bilah progres tak tentu, dan titik-titik langkah.
+   Warna mengikuti token tema (--c-*) → ikut preset perbankan & mode gelap.
+   ------------------------------------------------------------------ */
+
+@layer components {
+  .lock-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 100;                 /* di atas segalanya (dialog template 95) */
+    display: grid;
+    place-items: center;
+    padding: 1.25rem;
+    background: color-mix(in oklab, var(--c-body-bg) 82%, transparent);
+    backdrop-filter: blur(6px) saturate(120%);
+    -webkit-backdrop-filter: blur(6px) saturate(120%);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.22s ease, visibility 0.22s ease;
+  }
+  .lock-overlay[data-open="1"] {
+    opacity: 1;
+    visibility: visible;
+  }
+  .lock-box {
+    width: 100%;
+    max-width: 20rem;
+    text-align: center;
+    padding: 1.5rem 1.35rem 1.35rem;
+    border-radius: 1rem;
+    background: var(--c-card-bg);
+    box-shadow: var(--shadow-elev), inset 0 0 0 1px var(--c-border);
+    color: var(--c-fg);
+    transform: translateY(8px) scale(0.98);
+    transition: transform 0.24s cubic-bezier(0.2, 0.8, 0.3, 1);
+  }
+  .lock-overlay[data-open="1"] .lock-box { transform: none; }
+
+  /* ---------- cincin + gembok ---------- */
+  .lock-ring {
+    position: relative;
+    width: 6.5rem;
+    height: 6.5rem;
+    margin: 0 auto 0.85rem;
+    display: grid;
+    place-items: center;
+  }
+  .lock-ring-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    fill: none;
+    stroke: color-mix(in oklab, var(--c-primary) 30%, transparent);
+    stroke-width: 4;
+    stroke-linecap: round;
+    stroke-dasharray: 42 260;
+    animation: lock-spin 2.4s linear infinite;
+  }
+  .lock-ring::before {
+    content: "";
+    position: absolute;
+    inset: 0.6rem;
+    border-radius: 999px;
+    background: color-mix(in oklab, var(--c-primary) 12%, transparent);
+    animation: lock-pulse 1.9s ease-in-out infinite;
+  }
+  .lock-gembok {
+    position: relative;
+    width: 3.1rem;
+    height: 3.1rem;
+    display: grid;
+    place-items: center;
+    border-radius: 0.9rem;
+    background: color-mix(in oklab, var(--c-primary) 16%, var(--c-card-bg));
+    color: var(--c-primary);
+  }
+  .lock-gembok svg { width: 1.85rem; height: 1.85rem; }
+  /* gembok bergoyang halus saat mode formulir/unggah */
+  .lock-overlay[data-mode="form"] .lock-gembok svg { animation: lock-rock 1.5s ease-in-out infinite; }
+  /* mode kunci layar: gembok besar, cincin lebih lambat */
+  .lock-overlay[data-mode="screen"] .lock-box { max-width: 21.5rem; }
+  .lock-overlay[data-mode="screen"] .lock-gembok { width: 3.6rem; height: 3.6rem; }
+  .lock-overlay[data-mode="screen"] .lock-ring-svg { animation-duration: 4.2s; }
+  .lock-overlay[data-tanpa-gembok="1"] .lock-gembok { display: none; }
+
+  .lock-judul {
+    font-size: 0.98rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    margin-bottom: 0.25rem;
+  }
+  .lock-pesan {
+    margin: 0 0 0.9rem;
+    font-size: 0.82rem;
+    color: var(--c-muted);
+    min-height: 2.4em;
+  }
+
+  /* ---------- bilah progres tak tentu ---------- */
+  .lock-bar {
+    position: relative;
+    height: 0.3rem;
+    border-radius: 999px;
+    overflow: hidden;
+    background: color-mix(in oklab, var(--c-primary) 14%, transparent);
+  }
+  .lock-bar i {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 40%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, transparent, var(--c-primary), transparent);
+    animation: lock-slide 1.25s ease-in-out infinite;
+  }
+
+  /* ---------- jejak langkah / angka hitung mundur ---------- */
+  .lock-jejak {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.45rem;
+    margin-top: 0.85rem;
+    height: 1.1rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--c-primary);
+    font-variant-numeric: tabular-nums;
+  }
+  .lock-jejak i {
+    width: 0.4rem;
+    height: 0.4rem;
+    border-radius: 999px;
+    background: color-mix(in oklab, var(--c-primary) 45%, transparent);
+    animation: lock-dot 1.1s ease-in-out infinite;
+  }
+  .lock-jejak i:nth-child(2) { animation-delay: 0.15s; }
+  .lock-jejak i:nth-child(3) { animation-delay: 0.3s; }
+  .lock-overlay[data-progress="count"] .lock-jejak i { display: none; }
+
+  /* ---------- varian warna ---------- */
+  .lock-overlay[data-tone="success"] .lock-ring-svg { stroke: color-mix(in oklab, var(--c-success) 40%, transparent); }
+  .lock-overlay[data-tone="success"] .lock-gembok { background: color-mix(in oklab, var(--c-success) 16%, var(--c-card-bg)); color: var(--c-success); }
+  .lock-overlay[data-tone="success"] .lock-bar i { background: linear-gradient(90deg, transparent, var(--c-success), transparent); }
+  .lock-overlay[data-tone="danger"] .lock-ring-svg { stroke: color-mix(in oklab, var(--c-danger) 40%, transparent); }
+  .lock-overlay[data-tone="danger"] .lock-gembok { background: color-mix(in oklab, var(--c-danger) 16%, var(--c-card-bg)); color: var(--c-danger); }
+  .lock-overlay[data-tone="danger"] .lock-bar i { background: linear-gradient(90deg, transparent, var(--c-danger), transparent); }
+
+  /* ---------- animasi ---------- */
+  @keyframes lock-spin { to { transform: rotate(360deg); } }
+  @keyframes lock-pulse { 0%, 100% { transform: scale(0.86); opacity: 0.55; } 50% { transform: scale(1.06); opacity: 0.95; } }
+  @keyframes lock-slide { 0% { left: -42%; } 100% { left: 102%; } }
+  @keyframes lock-dot { 0%, 100% { transform: translateY(0); opacity: 0.5; } 50% { transform: translateY(-3px); opacity: 1; } }
+  @keyframes lock-rock {
+    0%, 100% { transform: rotate(0); }
+    25% { transform: rotate(-7deg); }
+    75% { transform: rotate(7deg); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .lock-ring-svg, .lock-bar i, .lock-jejak i, .lock-gembok svg, .lock-ring::before { animation: none !important; }
+    .lock-bar i { width: 100%; opacity: 0.5; }
+  }
+
+  /* ------------------------------------------------------------------
+     Splash screen (dipakai halaman login/register: body.has-splash)
+     ------------------------------------------------------------------ */
+  .splash {
+    position: fixed;
+    inset: 0;
+    z-index: 110;
+    display: grid;
+    place-items: center;
+    gap: 0.5rem;
+    background:
+      radial-gradient(60% 42% at 50% 34%, color-mix(in oklab, var(--c-primary) 55%, transparent) 0%, transparent 72%),
+      linear-gradient(158deg,
+        color-mix(in oklab, var(--c-primary) 88%, #04101f) 0%,
+        color-mix(in oklab, var(--c-primary) 46%, #061426) 62%,
+        #061426 100%);
+    color: #fff;
+    transition: opacity 0.45s ease, visibility 0.45s ease;
+  }
+  .splash[data-open="0"] { opacity: 0; visibility: hidden; pointer-events: none; }
+  .splash-inner { display: grid; justify-items: center; gap: 0.65rem; text-align: center; padding: 1.5rem; }
+  .splash-logo {
+    width: 4.25rem;
+    height: 4.25rem;
+    display: grid;
+    place-items: center;
+    border-radius: 1.15rem;
+    background: rgba(255, 255, 255, 0.14);
+    box-shadow: 0 16px 40px -18px rgba(0, 0, 0, 0.7), inset 0 0 0 1px rgba(255, 255, 255, 0.22);
+    animation: splash-in 0.7s cubic-bezier(0.2, 0.9, 0.25, 1) both;
+  }
+  .splash-logo svg { width: 2.1rem; height: 2.1rem; }
+  .splash-nama { font-size: 1.35rem; font-weight: 300; letter-spacing: 0.02em; }
+  .splash-nama b { font-weight: 700; }
+  .splash-sub { font-size: 0.78rem; letter-spacing: 0.16em; text-transform: uppercase; opacity: 0.72; }
+  .splash-bar {
+    margin-top: 0.9rem;
+    width: 11rem;
+    height: 0.22rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.22);
+    overflow: hidden;
+  }
+  .splash-bar i {
+    display: block;
+    height: 100%;
+    width: 40%;
+    border-radius: 999px;
+    background: #fff;
+    animation: lock-slide 1.1s ease-in-out infinite;
+  }
+  .splash-status { font-size: 0.76rem; opacity: 0.85; min-height: 1.2em; }
+  @keyframes splash-in {
+    from { opacity: 0; transform: translateY(14px) scale(0.9); }
+    to { opacity: 1; transform: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .splash-bar i { animation: none; width: 100%; opacity: 0.6; }
+    .splash-logo { animation: none; }
+  }
+
+  /* Kartu OTP di halaman login */
+  .otp-baris { display: flex; gap: 0.45rem; justify-content: space-between; }
+  .otp-digit {
+    width: 100%;
+    height: 3rem;
+    text-align: center;
+    font-size: 1.35rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    border-radius: 0.5rem;
+    border: 1px solid var(--c-border);
+    background: var(--c-card-bg);
+    color: var(--c-fg);
+    outline: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;
+  }
+  .otp-digit:focus {
+    border-color: var(--c-primary);
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--c-primary) 22%, transparent);
+    transform: translateY(-1px);
+  }
+  .otp-digit[data-salah="1"] {
+    border-color: var(--c-danger);
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--c-danger) 22%, transparent);
+    animation: otp-getar 0.35s ease;
+  }
+  .otp-bar-bawah { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: space-between; align-items: center; }
+  .otp-demo {
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+    letter-spacing: 0.3em;
+    font-weight: 700;
+  }
+  @keyframes otp-getar {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-4px); }
+    75% { transform: translateX(4px); }
+  }
+}

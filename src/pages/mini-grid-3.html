@@ -1,0 +1,106 @@
+---
+path: pages/mini-grid-3.html
+title: Mini Grid 3 — Alur Persetujuan
+pageTitle: Mini Grid 3
+subtitle: Aksi kustom Approve/Reject · form filter terpusat · bantuan · formulir 2 kolom
+crumb: Home|index.html, Tables, Mini Grid, Mini Grid 3
+description: Contoh MiniGrid 3: alur persetujuan pengajuan cuti dengan aksi kustom Approve/Reject, form filter terpusat, panel bantuan, dan formulir 2 kolom.
+scripts: minigrid/grid.js, minigrid/export.js, minigrid-demo.js
+bodyClass: page-mini-grid
+---
+<!--#navbar-->
+<button type="button" class="nav-icon-btn" title="Muat ulang data (refresh)"
+        onclick="window.MiniGridDemo.muatUlang(3)" aria-label="Muat ulang data Mini Grid 3">
+  <i data-icon="arrow-repeat" data-size="17"></i>
+</button>
+<button type="button" class="nav-icon-btn" title="Setujui baris terpilih"
+        onclick="window.MiniGridDemo.setujuiTerpilih()" aria-label="Setujui pengajuan terpilih">
+  <i data-icon="check2-circle" data-size="17"></i>
+</button>
+<button type="button" class="nav-icon-btn" title="Ekspor PDF (MiniGrid)"
+        onclick="window.MiniGridDemo.eksporPdf(3)" aria-label="Ekspor PDF Mini Grid 3">
+  <i data-icon="filetype-pdf" data-size="17"></i>
+</button>
+<!--/#navbar-->
+
+<!--#actions-->
+<button class="btn btn-light" onclick="window.MiniGridDemo.muatUlang(3)"><i data-icon="arrow-repeat"></i> Muat ulang</button>
+<button class="btn btn-light" onclick="window.print()"><i data-icon="printer"></i> Cetak</button>
+<button class="btn btn-light" onclick="window.MiniGridDemo.eksporPdf(3)"><i data-icon="filetype-pdf"></i> Ekspor PDF</button>
+<button class="btn btn-success" onclick="window.MiniGridDemo.setujuiTerpilih()"><i data-icon="check2-circle"></i> Setujui terpilih</button>
+<button class="btn btn-danger" onclick="window.MiniGridDemo.tolakTerpilih()"><i data-icon="x-circle"></i> Tolak terpilih</button>
+<!--/#actions-->
+
+<div class="alert alert-info items-start">
+  <i data-icon="list-check" class="mt-0.5"></i>
+  <div>
+    <b>Mini Grid 3 — alur persetujuan.</b> Baris filter di bawah judul dimatikan
+    (<code>filter: false</code>) dan digantikan satu <b>form Filter</b> terpusat
+    (<code>filterForm: true</code>). Dua aksi kustom <b>Approve</b> / <b>Reject</b> muncul di
+    toolbar grid dan bekerja pada baris terpilih (<code>need: 'some'</code>), plus tombol
+    <b>Bantuan</b> berisi panduan singkat.
+  </div>
+</div>
+
+<div id="minigrid-page-3">
+  <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+    <div>
+      <h3 class="card-title m-0"><i data-icon="clipboard-check" class="text-primary"></i> Pengajuan Cuti</h3>
+      <p class="fs-8 text-muted-2 m-0">Pilih baris lalu klik <b>Approve</b>/<b>Reject</b> di toolbar grid · tombol Filter untuk menyaring banyak kolom sekaligus</p>
+    </div>
+    <span class="flex items-center gap-2">
+      <span class="badge badge-soft-primary"><span data-mg-count>0</span> baris</span>
+      <span class="badge badge-soft-warning">aksi kustom</span>
+    </span>
+  </div>
+  <div id="minigrid-3" class="minigrid-host"></div>
+  <p class="fs-8 text-muted-2 mt-2 m-0" id="mg-log">MiniGrid siap.</p>
+</div>
+
+<div class="grid gap-4 mt-4 lg:grid-cols-2">
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title"><i data-icon="check2-circle" class="text-success"></i> Fitur contoh ini</h3>
+    </div>
+    <div class="card-body">
+      <ul class="list-unstyled m-0 space-y-2 text-sm">
+        <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span>Aksi kustom di toolbar: <b>Approve</b>, <b>Reject</b> (mengubah kolom Status)</span></li>
+        <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span><code>need: 'some'</code> — aktif hanya bila ada baris terpilih</span></li>
+        <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span>Form Filter terpusat: field + operator + nilai, gabungan AND/OR</span></li>
+        <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span>Badge jumlah kondisi aktif + <b>Reset</b></span></li>
+        <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span>Tombol <b>Bantuan</b> berisi panduan pemakaian grid</span></li>
+        <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span>Formulir 2 kolom (<code>formCols: 2</code>) untuk Tambah/Edit</span></li>
+        <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span>Status berwarna otomatis (<code>render</code> kustom)</span></li>
+        <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span>Ekspor PDF lanskap otomatis + CSV/XLSX dari menu grid</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title"><i data-icon="code-slash" class="text-primary"></i> Kode inti</h3>
+    </div>
+    <div class="card-body">
+<pre class="code-block"><code>MiniGrid({
+  el: "#minigrid-3",
+  columns: kolomPengajuan,
+  data: rows(40),
+  height: 360, pageSize: 10,
+  crud: true, edit: true,
+  filter: false,        // tanpa baris filter di bawah judul
+  filterForm: true,     // …dituangkan ke satu form lewat tombol Filter
+  help: true, formCols: 2,
+  actions: [
+    { id: "approve", label: "Approve", icon: "ok", need: "some",
+      fn: function (rows, g) { rows.forEach(r =&gt; r.status = "Approved"); g.render(); } },
+    { id: "reject",  label: "Reject",  icon: "no", need: "some",
+      fn: function (rows, g) { rows.forEach(r =&gt; r.status = "Rejected"); g.render(); } }
+  ]
+});</code></pre>
+      <div class="callout callout-warning mt-3 mb-0">
+        <b>Catatan.</b> Contoh ini tidak menyimpan perubahan ke server —
+        semuanya berjalan di sisi peramban (data contoh deterministik).
+      </div>
+    </div>
+  </div>
+</div>

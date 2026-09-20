@@ -1,0 +1,109 @@
+---
+path: pages/mini-grid-1.html
+title: Mini Grid 1 — Skala Besar
+pageTitle: Mini Grid 1
+subtitle: Virtual scroll 50.000 baris · kolom beku · multi-sort · filter beroperator
+crumb: Home|index.html, Tables, Mini Grid, Mini Grid 1
+description: Contoh MiniGrid 1: grid 50.000 baris dengan virtual scroll, dua kolom beku, sortir multi-kolom, filter beroperator, dan ekspor CSV/XLSX/PDF — semuanya offline.
+scripts: minigrid/grid.js, minigrid/export.js, minigrid-demo.js
+bodyClass: page-mini-grid
+---
+<!--#navbar-->
+<button type="button" class="nav-icon-btn" title="Muat ulang data (refresh)"
+        onclick="window.MiniGridDemo.muatUlang(1)" aria-label="Muat ulang data Mini Grid 1">
+  <i data-icon="arrow-repeat" data-size="17"></i>
+</button>
+<button type="button" class="nav-icon-btn" title="Ekspor CSV (MiniGrid)"
+        onclick="window.MiniGridDemo.eksporCsv(1)" aria-label="Ekspor CSV Mini Grid 1">
+  <i data-icon="file-earmark-spreadsheet" data-size="17"></i>
+</button>
+<button type="button" class="nav-icon-btn" title="Pilih semua baris halaman ini"
+        onclick="window.MiniGridDemo.pilihSemua(1)" aria-label="Pilih semua baris Mini Grid 1">
+  <i data-icon="list-check" data-size="17"></i>
+</button>
+<!--/#navbar-->
+
+<!--#actions-->
+<button class="btn btn-light" onclick="window.MiniGridDemo.muatUlang(1)"><i data-icon="arrow-repeat"></i> Muat ulang</button>
+<button class="btn btn-light" onclick="window.print()"><i data-icon="printer"></i> Cetak</button>
+<button class="btn btn-light" onclick="window.MiniGridDemo.bersihkanPilihan(1)"><i data-icon="x-circle"></i> Bersihkan pilihan</button>
+<button class="btn btn-success" onclick="window.MiniGridDemo.eksporCsv(1)"><i data-icon="download"></i> Ekspor CSV</button>
+<!--/#actions-->
+
+<div class="alert alert-info items-start">
+  <i data-icon="lightning-charge" class="mt-0.5"></i>
+  <div>
+    <b>Mini Grid 1 — data besar.</b> 50.000 baris tetap ringan karena <i>virtual scroll</i>:
+    hanya ±20 baris yang ada di DOM pada satu waktu. Kolom <b>ID</b> dan <b>Nama Karyawan</b>
+    dibekukan (<code>frozen: 2</code>) sehingga tetap terlihat saat digeser ke samping.
+    Pustaka <b>MiniGrid</b> (github.com/radianadhic/minigrid) di-vendor lokal di
+    <code>assets/js/minigrid/</code>, jadi tetap 100% offline.
+  </div>
+</div>
+
+<div id="minigrid-page-1">
+  <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+    <div>
+      <h3 class="card-title m-0"><i data-icon="database" class="text-primary"></i> Data Karyawan</h3>
+      <p class="fs-8 text-muted-2 m-0">Klik judul kolom untuk sortir · <b>Shift</b>+klik untuk menambah kunci urut · klik ganda sel untuk edit inline</p>
+    </div>
+    <span class="flex items-center gap-2">
+      <span class="badge badge-soft-primary"><span data-mg-count>0</span> baris</span>
+      <span class="badge badge-soft-info">virtual scroll</span>
+    </span>
+  </div>
+  <div id="minigrid-1" class="minigrid-host"></div>
+  <p class="fs-8 text-muted-2 mt-2 m-0" id="mg-log">MiniGrid siap.</p>
+</div>
+
+<div class="grid gap-4 mt-4 lg:grid-cols-2">
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title"><i data-icon="sliders" class="text-info"></i> Fitur contoh ini</h3>
+    </div>
+    <div class="card-body">
+      <ul class="list-unstyled m-0 space-y-2 text-sm">
+        <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span>Virtual scroll: 50.000 baris, DOM tetap ringan</span></li>
+        <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span>Dua kolom beku (ID &amp; Nama Karyawan)</span></li>
+        <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span>Sortir multi-kolom dengan badge urutan</span></li>
+        <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span>Filter per kolom beroperator (= ≠ ∋ ^ $ &gt; ≥ &lt; ≤ ada kosong)</span></li>
+        <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span>Pencarian global lintas kolom (Enter)</span></li>
+        <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span>Pager 100 – 50.000 baris per halaman</span></li>
+        <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span>Pilih baris (halaman ini atau seluruh hasil)</span></li>
+        <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span>Tarik tepi judul kolom untuk mengubah lebar</span></li>
+        <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span>Ekspor CSV, XLSX, dan PDF dari menu grid</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title"><i data-icon="code-slash" class="text-primary"></i> Kode inti</h3>
+    </div>
+    <div class="card-body">
+<pre class="code-block"><code>&lt;!-- 1) pustaka lokal (vanilla JS, tanpa dependency) --&gt;
+&lt;script defer src="assets/js/minigrid/grid.js"&gt;&lt;/script&gt;
+&lt;script defer src="assets/js/minigrid/export.js"&gt;&lt;/script&gt;  &lt;!-- XLSX &amp; PDF --&gt;
+
+&lt;!-- 2) wadah --&gt;
+&lt;div id="minigrid-1" class="minigrid-host"&gt;&lt;/div&gt;
+
+&lt;script&gt;
+  MiniGrid({
+    el: "#minigrid-1",
+    columns: kolom,
+    data: rows(50000),
+    frozen: 2,          // 2 kolom beku
+    height: 460,
+    pageSize: 500,
+    pageSizes: [100, 500, 1000, 5000, 50000]
+  });
+&lt;/script&gt;</code></pre>
+      <div class="callout callout-info mt-3 mb-0">
+        <b>Integrasi tema.</b> Grid tidak memakai warnanya sendiri: <code>src/minigrid.css</code>
+        memetakan palet Tailwind MiniGrid ke token template (<code>--c-*</code>), sehingga grid
+        ikut berubah saat skin perbankan atau mode gelap diganti — tanpa menyentuh kode pustakanya.
+      </div>
+    </div>
+  </div>
+</div>

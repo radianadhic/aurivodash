@@ -1,0 +1,506 @@
+---
+path: pages/scheduler.html
+title: Scheduler
+crumb: Scheduler
+description: Halaman penjadwal (scheduler) — job terjadwal mingguan, autodebet, laporan, dan rekonsiliasi dengan agenda pekan, aksi Jalankan/Jeda, serta riwayat eksekusi.
+scripts: notify.js
+---
+<!--#navbar-->
+<button type="button" class="nav-icon-btn" title="Jalankan semua job yang jatuh tempo" aria-label="Jalankan job jatuh tempo"
+        onclick="schedAksi('tempo')">
+  <i data-icon="play-circle" data-size="17"></i>
+</button>
+<button type="button" class="nav-icon-btn" title="Tambah job" aria-label="Tambah job" onclick="schedAksi('tambah')">
+  <i data-icon="plus-lg" data-size="17"></i>
+</button>
+<!--/#navbar-->
+
+<!--#actions-->
+<button class="btn btn-light" onclick="schedAksi('tempo')">
+  <i data-icon="play-circle"></i> Jalankan yang jatuh tempo
+</button>
+<button class="btn btn-primary" onclick="schedAksi('tambah')">
+  <i data-icon="plus-lg"></i> Tambah job
+</button>
+<!--/#actions-->
+<!--#content-->
+
+<div x-data="schedulerApp()">
+<div class="callout callout-info">
+  <b>Penjadwal tiruan (tanpa server).</b> Semua job di halaman ini berjalan di peramban —
+  “menjalankan” sebuah job menambah entri pada riwayat eksekusi, mengirim notifikasi ke lonceng navbar,
+  dan memperbarui kartu ringkasan. Di produksi, bagian ini digantikan cron/queue di sisi server
+  (mis. <code>crontab</code>, Laravel Scheduler, atau Airflow) dan halaman ini hanya menampilkan statusnya.
+</div>
+
+<div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+  <div class="small-box">
+    <div class="small-box-body">
+      <span class="small-box-ikon bg-primary"><i data-icon="calendar-check" data-size="22"></i></span>
+      <div class="small-box-teks">
+        <span class="description-header" x-text="jobAktif().length">0</span>
+        <span class="description-text">Job aktif</span>
+      </div>
+    </div>
+    <a href="#" class="small-box-footer" @click.prevent="filterStatus = 'Aktif'">
+      Lihat yang aktif <i data-icon="chevron-right" data-size="13"></i>
+    </a>
+  </div>
+  <div class="small-box">
+    <div class="small-box-body">
+      <span class="small-box-ikon bg-info"><i data-icon="clock" data-size="22"></i></span>
+      <div class="small-box-teks">
+        <span class="description-header" x-text="jatuhTempoHariIni().length">0</span>
+        <span class="description-text">Jatuh tempo hari ini</span>
+      </div>
+    </div>
+    <a href="#" class="small-box-footer" @click.prevent="jalankanJatuhTempo()">
+      Jalankan sekarang <i data-icon="chevron-right" data-size="13"></i>
+    </a>
+  </div>
+  <div class="small-box">
+    <div class="small-box-body">
+      <span class="small-box-ikon bg-success"><i data-icon="check2-circle" data-size="22"></i></span>
+      <div class="small-box-teks">
+        <span class="description-header" x-text="hitungLog('Berhasil')">0</span>
+        <span class="description-text">Eksekusi berhasil</span>
+      </div>
+    </div>
+    <a href="#" class="small-box-footer" @click.prevent="filterStatus = 'Semua'">
+      Lihat riwayat <i data-icon="chevron-right" data-size="13"></i>
+    </a>
+  </div>
+  <div class="small-box">
+    <div class="small-box-body">
+      <span class="small-box-ikon bg-danger"><i data-icon="exclamation-triangle-fill" data-size="22"></i></span>
+      <div class="small-box-teks">
+        <span class="description-header" x-text="hitungLog('Gagal')">0</span>
+        <span class="description-text">Eksekusi gagal</span>
+      </div>
+    </div>
+    <a href="#" class="small-box-footer" @click.prevent="jalankanSemua()">
+      Uji jalankan semua <i data-icon="chevron-right" data-size="13"></i>
+    </a>
+  </div>
+</div>
+
+<div class="grid gap-4 lg:grid-cols-3 mt-4">
+  <!-- agenda pekan -->
+  <div class="card lg:col-span-2">
+    <div class="card-header">
+      <div>
+        <h2 class="card-title">Agenda pekan ini</h2>
+        <p class="card-subtitle" x-text="T('Hari ini ' + hariIniTeks() + ' · ' + jadwalHariIni() + ' job dijadwalkan')"></p>
+      </div>
+      <div class="card-tools">
+        <button class="btn btn-light btn-sm" @click="pekanSebelumnya()" aria-label="Pekan sebelumnya">
+          <i data-icon="chevron-left" data-size="13"></i> Pekan lalu
+        </button>
+        <button class="btn btn-light btn-sm" @click="pekan = 0">Minggu ini</button>
+        <button class="btn btn-light btn-sm" @click="pekanBerikutnya()" aria-label="Pekan berikutnya">
+          Pekan depan <i data-icon="chevron-right" data-size="13"></i>
+        </button>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="agenda">
+        <template x-for="(hari, i) in agenda()" :key="'d' + i">
+          <div class="agenda-hari" :class="hari.kini && 'kini'">
+            <div class="agenda-kepala">
+              <b x-text="T(hari.nama)"></b>
+              <span x-text="hari.tanggal"></span>
+            </div>
+            <div class="grid gap-1.5">
+              <template x-for="j in hari.job" :key="j.id">
+                <button type="button" class="agenda-job" :data-status="j.status"
+                        @click="bukaJob(j)" :title="j.nama + ' · ' + j.waktu">
+                  <i :data-icon="j.ikon" data-size="12"></i>
+                  <span x-text="j.nama"></span>
+                  <b x-text="j.waktu"></b>
+                </button>
+              </template>
+              <span class="fs-8 text-muted-2" x-show="!hari.job.length">Tidak ada job</span>
+            </div>
+          </div>
+        </template>
+      </div>
+    </div>
+  </div>
+
+  <!-- ringkasan status -->
+  <div class="card">
+    <div class="card-header">
+      <h2 class="card-title">Status penjadwal</h2>
+      <p class="card-subtitle">Ringkasan cepat</p>
+    </div>
+    <div class="card-body grid gap-3">
+      <div>
+        <div class="flex items-center justify-between text-sm mb-1">
+          <span>Tingkat keberhasilan</span><b x-text="tingkatBerhasil() + '%'"></b>
+        </div>
+        <div class="progress"><div class="progress-bar bg-success" :style="'width:' + tingkatBerhasil() + '%'"></div></div>
+      </div>
+      <div class="widget-row">
+        <span class="widget-row-ikon bg-primary"><i data-icon="clock-history" data-size="15"></i></span>
+        <span class="widget-row-teks"><b>Job berikutnya</b><span x-text="berikutnya()"></span></span>
+      </div>
+      <div class="widget-row">
+        <span class="widget-row-ikon bg-warning"><i data-icon="hourglass-split" data-size="15"></i></span>
+        <span class="widget-row-teks"><b>Terakhir dieksekusi</b><span x-text="riwayat[0] ? (riwayat[0].nama + ' · ' + riwayat[0].waktu) : 'belum ada'"></span></span>
+      </div>
+      <div class="widget-row">
+        <span class="widget-row-ikon bg-info"><i data-icon="bell" data-size="15"></i></span>
+        <span class="widget-row-teks"><b>Notifikasi terkirim</b><span x-text="T($store.notif.lingkup('admin').filter(function (n) { return n.kategori === 'Jadwal'; }).length + ' notifikasi jadwal')"></span></span>
+      </div>
+      <button class="btn btn-light btn-block btn-sm" @click="jalankanSemua()">
+        <i data-icon="play-circle" data-size="13"></i> Uji jalankan semua job
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- daftar job -->
+<div class="card mt-4">
+  <div class="card-header cu-flex-wrap">
+    <div>
+      <h2 class="card-title">Daftar job</h2>
+      <p class="card-subtitle" x-text="T(tampil().length + ' job ditampilkan')"></p>
+    </div>
+    <div class="card-tools cu-flex-wrap">
+      <div class="input-group input-group-sm">
+        <span class="input-group-text"><i data-icon="search" data-size="13"></i></span>
+        <input class="form-control" type="search" placeholder="Cari job…" x-model="cari" aria-label="Cari job">
+      </div>
+      <template x-for="s in ['Semua','Aktif','Dijeda']" :key="s">
+        <button type="button" class="btn btn-sm" :class="filterStatus === s ? 'btn-primary' : 'btn-light'"
+                @click="filterStatus = s" x-text="$store.i18n.t(s)"></button>
+      </template>
+    </div>
+  </div>
+
+  <div class="card-body p-0">
+    <div class="table-wrap">
+      <table class="table table-hover align-middle mb-0">
+        <thead>
+          <tr>
+            <th>Job</th>
+            <th class="hidden md:table-cell">Jadwal</th>
+            <th class="hidden lg:table-cell">Berikutnya</th>
+            <th>Status</th>
+            <th class="w-40 text-right">Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          <template x-for="j in tampil()" :key="j.id">
+            <tr>
+              <td>
+                <div class="flex items-start gap-3">
+                  <span class="job-ikon" :data-jenis="j.jenis"><i :data-icon="j.ikon" data-size="15"></i></span>
+                  <span class="min-w-0">
+                    <b class="block text-sm" x-text="j.nama"></b>
+                    <span class="block fs-8 text-muted-2" x-text="j.target + ' · ' + $store.i18n.t(j.jenis)"></span>
+                    <span class="block fs-8 text-muted-2" x-text="T('Terakhir: ' + j.terakhir)"></span>
+                  </span>
+                </div>
+              </td>
+              <td class="hidden md:table-cell">
+                <code class="fs-8" x-text="j.cron"></code>
+                <span class="block fs-8 text-muted-2" x-text="T(j.jadwalTeks)"></span>
+              </td>
+              <td class="hidden lg:table-cell text-sm" x-text="T(j.berikutnya)"></td>
+              <td>
+                <span class="badge" :class="j.status === 'Aktif' ? 'badge-soft-success' : 'badge-soft-secondary'"
+                      x-text="$store.i18n.t(j.status)"></span>
+              </td>
+              <td class="text-right">
+                <div class="flex items-center justify-end gap-1">
+                  <button type="button" class="table-act" title="Jalankan sekarang" @click="jalankan(j)">
+                    <i data-icon="play-circle" data-size="14"></i>
+                  </button>
+                  <button type="button" class="table-act" :title="j.status === 'Aktif' ? 'Jeda' : 'Aktifkan'"
+                          @click="toggle(j)">
+                    <i :data-icon="j.status === 'Aktif' ? 'pause-circle' : 'play-circle'" data-size="14"></i>
+                  </button>
+                  <button type="button" class="table-act text-danger" title="Hapus job" @click="hapus(j)">
+                    <i data-icon="trash" data-size="14"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+    </div>
+    <div class="p-4 text-center text-muted-2 text-sm" x-show="!tampil().length">Tidak ada job yang cocok.</div>
+  </div>
+</div>
+
+<!-- riwayat eksekusi + detail -->
+<div class="grid gap-4 lg:grid-cols-2 mt-4">
+  <div class="card">
+    <div class="card-header">
+      <h2 class="card-title">Riwayat eksekusi</h2>
+      <div class="card-tools">
+        <span class="badge badge-soft-primary" x-text="riwayat.length + ' entri'"></span>
+        <button class="btn btn-light btn-sm" @click="bersihkanRiwayat()">
+          <i data-icon="trash" data-size="12"></i> Bersihkan
+        </button>
+      </div>
+    </div>
+    <div class="card-body p-0">
+      <ul class="timeline p-4">
+        <template x-for="r in riwayat.slice(0, 8)" :key="r.id">
+          <li>
+            <span class="timeline-marker" :class="r.status === 'Berhasil' ? 'bg-success' : 'bg-danger'">
+              <i :data-icon="r.status === 'Berhasil' ? 'check-lg' : 'x-lg'" data-size="12"></i>
+            </span>
+            <div class="timeline-panel">
+              <b x-text="r.nama"></b>
+              <div class="fs-8 text-muted-2" x-text="T(r.status) + ' · ' + T('durasi ' + r.durasi)"></div>
+              <div class="timeline-time mt-1"><i data-icon="clock" data-size="11"></i> <span x-text="T(r.waktu)"></span></div>
+            </div>
+          </li>
+        </template>
+        <li x-show="!riwayat.length">
+          <span class="timeline-marker bg-secondary"><i data-icon="dash" data-size="12"></i></span>
+          <div class="timeline-panel">Belum ada eksekusi.</div>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h2 class="card-title" x-text="terpilih ? terpilih.nama : 'Detail job'"></h2>
+      <p class="card-subtitle">Klik job pada agenda atau tabel untuk melihat rinciannya</p>
+    </div>
+    <div class="card-body" x-show="terpilih" x-cloak>
+      <template x-if="terpilih">
+        <div>
+      <dl class="detail-list">
+        <div><dt>Jenis</dt><dd x-text="$store.i18n.t(terpilih.jenis)"></dd></div>
+        <div><dt>Target</dt><dd x-text="terpilih.target"></dd></div>
+        <div><dt>Jadwal</dt><dd><code x-text="terpilih.cron"></code> · <span x-text="T(terpilih.jadwalTeks)"></span></dd></div>
+        <div><dt>Berikutnya</dt><dd x-text="terpilih.berikutnya"></dd></div>
+        <div><dt>Terakhir</dt><dd x-text="terpilih.terakhir"></dd></div>
+        <div><dt>Status</dt><dd><span class="badge" :class="terpilih.status === 'Aktif' ? 'badge-soft-success' : 'badge-soft-secondary'" x-text="$store.i18n.t(terpilih.status)"></span></dd></div>
+      </dl>
+      <div class="flex flex-wrap gap-2 mt-3">
+        <button class="btn btn-primary btn-sm" @click="jalankan(terpilih)"><i data-icon="play-circle" data-size="13"></i> Jalankan sekarang</button>
+        <button class="btn btn-light btn-sm" @click="toggle(terpilih)"><i data-icon="pause-circle" data-size="13"></i> Jeda / aktifkan</button>
+        <button class="btn btn-light btn-sm" @click="terpilih = null">Tutup detail</button>
+      </div>
+        </div>
+      </template>
+    </div>
+    <div class="card-body text-muted-2 text-sm" x-show="!terpilih">
+      Pilih job untuk melihat detailnya di sini.
+    </div>
+  </div>
+</div>
+
+</div><!-- /x-data -->
+
+<script>
+  /* tombol di header halaman & navbar berada di luar cakupan x-data,
+     jadi dipanggil lewat fungsi global yang meneruskan ke komponen Alpine */
+  function schedAksi(apa) {
+    var el = document.querySelector('[x-data^="schedulerApp"]');
+    if (!el || !window.Alpine) return;
+    var d = window.Alpine.$data(el);
+    if (apa === "tempo") d.jalankanJatuhTempo();
+    else if (apa === "tambah") d.bukaTambah();
+  }
+
+  function schedulerApp() {
+    var JOB = [
+      { id: "JB-1", nama: "Rekonsiliasi transaksi pagi", jenis: "Sistem", target: "Semua kanal · 12.480 transaksi",
+        cron: "0 6 * * *", jadwalTeks: "Setiap hari 06.00", hari: 1, waktu: "06:00", ikon: "arrow-repeat",
+        status: "Aktif", berikutnya: "Besok 06.00", terakhir: "Hari ini 06.00 · 42 detik" },
+      { id: "JB-2", nama: "Autodebet tagihan nasabah", jenis: "Tagihan", target: "1.284 nasabah terdaftar",
+        cron: "0 7 * * 1", jadwalTeks: "Setiap Senin 07.00", hari: 1, waktu: "07:00", ikon: "receipt",
+        status: "Aktif", berikutnya: "Senin 07.00", terakhir: "Senin lalu 07.00 · 1 mnt 12 dtk" },
+      { id: "JB-3", nama: "Laporan harian bank", jenis: "Laporan", target: "PDF ke direksi@perusahaan.id",
+        cron: "30 7 * * *", jadwalTeks: "Setiap hari 07.30", hari: 1, waktu: "07:30", ikon: "file-earmark-pdf",
+        status: "Aktif", berikutnya: "Besok 07.30", terakhir: "Hari ini 07.30 · 18 detik" },
+      { id: "JB-4", nama: "Sinkronisasi kurs & limit", jenis: "Sistem", target: "BI JISDOR + kata sandi limit",
+        cron: "*/30 * * * *", jadwalTeks: "Setiap 30 menit", hari: 0, waktu: "08:15", ikon: "arrow-repeat",
+        status: "Aktif", berikutnya: "45 menit lagi", terakhir: "30 menit lalu · 3 detik" },
+      { id: "JB-5", nama: "Cadangkan basis data", jenis: "Sistem", target: "Snapshot ke penyimpanan dingin",
+        cron: "0 2 * * *", jadwalTeks: "Setiap hari 02.00", hari: 1, waktu: "02:00", ikon: "hdd-stack",
+        status: "Aktif", berikutnya: "Besok 02.00", terakhir: "Hari ini 02.00 · 4 mnt 08 dtk" },
+      { id: "JB-6", nama: "Kirim promosi QRIS", jenis: "Pemasaran", target: "Segmen nasabah Gold (3.120)",
+        cron: "0 10 * * 5", jadwalTeks: "Setiap Jumat 10.00", hari: 5, waktu: "10:00", ikon: "gift",
+        status: "Dijeda", berikutnya: "—", terakhir: "Jumat lalu 10.00 · dibatalkan" },
+      { id: "JB-7", nama: "Pembersihan sesi kedaluwarsa", jenis: "Keamanan", target: "Token > 30 hari",
+        cron: "0 1 * * *", jadwalTeks: "Setiap hari 01.00", hari: 1, waktu: "01:00", ikon: "shield-check",
+        status: "Aktif", berikutnya: "Besok 01.00", terakhir: "Hari ini 01.00 · 11 detik" }
+    ];
+    var RIWAYAT = [
+      { id: "RH-1", nama: "Rekonsiliasi transaksi pagi", status: "Berhasil", waktu: "Hari ini 06:00", durasi: "42 detik" },
+      { id: "RH-2", nama: "Laporan harian bank", status: "Berhasil", waktu: "Hari ini 07:30", durasi: "18 detik" },
+      { id: "RH-3", nama: "Cadangkan basis data", status: "Berhasil", waktu: "Hari ini 02:00", durasi: "4 mnt 08 dtk" },
+      { id: "RH-4", nama: "Autodebet tagihan nasabah", status: "Gagal", waktu: "Kemarin 07:00", durasi: "— · 12 nasabah saldo kurang" },
+      { id: "RH-5", nama: "Kirim promosi QRIS", status: "Gagal", waktu: "Jumat lalu 10:00", durasi: "— · dibatalkan operator" }
+    ];
+    return {
+      job: JOB,
+      riwayat: RIWAYAT,
+      cari: "",
+      filterStatus: "Semua",
+      pekan: 0,
+      mulai: 0,
+      terpilih: null,
+
+      jobAktif: function () { return this.job.filter(function (j) { return j.status === "Aktif"; }); },
+      jatuhTempoHariIni: function () {
+        var t = this;
+        return this.jobAktif().filter(function (j) { return j.hari === 1 || j.cron.indexOf("*/30") === 0; });
+      },
+      hitungLog: function (kata) { return this.riwayat.filter(function (r) { return r.status === kata; }).length; },
+      tingkatBerhasil: function () {
+        if (!this.riwayat.length) return 100;
+        return Math.round(this.hitungLog("Berhasil") / this.riwayat.length * 100);
+      },
+      berikutnya: function () {
+        var a = this.jobAktif();
+        return a.length ? (a[0].nama + " · " + a[0].berikutnya) : "tidak ada job aktif";
+      },
+      hariIniTeks: function () {
+        var d = new Date();
+        return ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"][d.getDay()] + ", " +
+          d.getDate() + " " + ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"][d.getMonth()];
+      },
+      jadwalHariIni: function () { return this.jatuhTempoHariIni().length; },
+      pekanSebelumnya: function () { this.pekan -= 1; },
+      pekanBerikutnya: function () { this.pekan += 1; },
+      agenda: function () {
+        var nama = ["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"];
+        var kini = new Date();
+        var awal = new Date(kini.getTime() - ((kini.getDay() + 6) % 7) * 864e5 + this.pekan * 7 * 864e5);
+        var out = [];
+        for (var i = 0; i < 7; i++) {
+          var tgl = new Date(awal.getTime() + i * 864e5);
+          var indeks = tgl.getDay();                       // 0=Min … 6=Sab
+          var kolom = (indeks + 6) % 7;                    // Sen=0 … Min=6
+          var t = this;
+          var daftar = this.job.filter(function (j) {
+            if (j.cron.indexOf("*/30") === 0) return true;
+            if (j.hari === 0) return true;                 // harian
+            if (i === 0 && t.pekan === 0 && j.cron.indexOf("* 1") > -1) return true; // Senin mingguan
+            return kolom === 0 && j.cron.indexOf("* 1") > -1;
+          }).map(function (j) {
+            return { id: j.id, nama: j.nama, waktu: j.waktu, ikon: j.ikon,
+              status: j.status === "Dijeda" ? "Dijeda" : (t.riwayat.some(function (r) { return r.nama === j.nama && r.status === "Gagal"; }) ? "Gagal" : "Berhasil") };
+          });
+          if (this.pekan !== 0) {
+            /* pekan lain: tampilkan pola bulanan/mingguan sederhana */
+            daftar = this.job.map(function (j) {
+              return { id: j.id, nama: j.nama, waktu: j.waktu, ikon: j.ikon, status: j.status === "Dijeda" ? "Dijeda" : "Berhasil" };
+            }).slice(0, 3 + (i % 3));
+          }
+          out.push({
+            nama: nama[i], tanggal: tgl.getDate() + "/" + (tgl.getMonth() + 1),
+            kini: i === ((kini.getDay() + 6) % 7) && this.pekan === 0, job: daftar
+          });
+        }
+        return out;
+      },
+      tampil: function () {
+        var t = this;
+        return this.job.filter(function (j) {
+          if (t.filterStatus !== "Semua" && j.status !== t.filterStatus) return false;
+          if (t.cari && (j.nama + " " + j.target).toLowerCase().indexOf(t.cari.toLowerCase()) === -1) return false;
+          return true;
+        });
+      },
+      bukaJob: function (j) { this.terpilih = this.job.filter(function (x) { return x.id === j.id; })[0] || this.job[0]; },
+      toggle: function (j) {
+        j.status = j.status === "Aktif" ? "Dijeda" : "Aktif";
+        window.toast(window.I18n.t((j.status === "Aktif" ? "Job diaktifkan: " : "Job dijeda: ") + j.nama), "info", "Scheduler");
+      },
+      hapus: function (j) {
+        var self = this;
+        this.$store.dialog.ask({
+          title: "Hapus job ini?",
+          message: j.nama + " (" + j.cron + ") akan dihapus dari penjadwal.",
+          tone: "danger", confirmText: "Hapus",
+          onConfirm: function () {
+            self.job = self.job.filter(function (x) { return x.id !== j.id; });
+            if (self.terpilih && self.terpilih.id === j.id) self.terpilih = null;
+            window.toast(window.I18n.t("Job dihapus."), "danger", "Scheduler");
+          }
+        });
+      },
+      catat: function (j, gagal) {
+        var d = new Date();
+        var p = function (n) { return String(n).padStart(2, "0"); };
+        this.riwayat.unshift({
+          id: "RH-" + Math.floor(1000 + Math.random() * 8999), nama: j.nama,
+          status: gagal ? "Gagal" : "Berhasil",
+          waktu: p(d.getHours()) + ":" + p(d.getMinutes()) + " (uji)",
+          durasi: gagal ? "— · kesalahan sumber data" : Math.floor(1 + Math.random() * 60) + " detik"
+        });
+        j.terakhir = "Baru saja (uji)";
+      },
+      jalankan: function (j) {
+        var self = this;
+        if (window.Lock) {
+          window.Lock.show({ mode: "load", title: "Menjalankan job", message: j.nama + " · " + j.cron });
+        }
+        setTimeout(function () {
+          if (window.Lock) window.Lock.hide();
+          var gagal = Math.random() < 0.15;
+          self.catat(j, gagal);
+          if (window.Notify) {
+            window.Notify.push({
+              lingkup: "admin",
+              judul: gagal ? "Job gagal dieksekusi" : "Job dieksekusi",
+              pesan: j.nama + " · " + j.jadwalTeks + (gagal ? " · periksa log" : ""),
+              ikon: gagal ? "exclamation-triangle-fill" : "calendar-check",
+              tone: gagal ? "danger" : "success", kategori: "Jadwal", penting: gagal
+            });
+          }
+          window.toast(window.I18n.t((gagal ? "Job gagal: " : "Job selesai: ") + j.nama), gagal ? "danger" : "success", "Scheduler");
+        }, 900);
+      },
+      jalankanJatuhTempo: function () {
+        var self = this;
+        var daftar = this.jatuhTempoHariIni();
+        if (!daftar.length) { window.toast(window.I18n.t("Tidak ada job yang jatuh tempo."), "info", "Scheduler"); return; }
+        this.riwayat = [];
+        daftar.forEach(function (j, i) { setTimeout(function () { self.jalankan(j); }, i * 260); });
+        window.toast(window.I18n.t(daftar.length + " job jatuh tempo dijalankan."), "info", "Scheduler");
+      },
+      jalankanSemua: function () {
+        var self = this;
+        this.jobAktif().forEach(function (j, i) { setTimeout(function () { self.jalankan(j); }, i * 260); });
+      },
+      bersihkanRiwayat: function () { this.riwayat = []; window.toast(window.I18n.t("Riwayat eksekusi dibersihkan."), "info", "Scheduler"); },
+      bukaTambah: function () {
+        var self = this;
+        this.$store.dialog.ask({
+          title: "Tambah job terjadwal",
+          message: "Contoh interaktif: job “Uji laporan mingguan” (Setiap Senin 09.00) akan ditambahkan ke daftar job.",
+          confirmText: "Tambahkan",
+          onConfirm: function () {
+            self.job.unshift({
+              id: "JB-" + Math.floor(100 + Math.random() * 899), nama: "Uji laporan mingguan",
+              jenis: "Laporan", target: "PDF ke manajemen@perusahaan.id", cron: "0 9 * * 1",
+              jadwalTeks: "Setiap Senin 09.00", hari: 1, waktu: "09:00", ikon: "file-earmark-text",
+              status: "Aktif", berikutnya: "Senin 09.00", terakhir: "belum pernah"
+            });
+            window.toast(window.I18n.t("Job baru ditambahkan."), "success", "Scheduler");
+            if (window.Notify) {
+              window.Notify.push({
+                lingkup: "admin", judul: "Job baru dijadwalkan",
+                pesan: "Uji laporan mingguan · Setiap Senin 09.00", ikon: "calendar-plus",
+                tone: "info", kategori: "Jadwal"
+              });
+            }
+          }
+        });
+      }
+    };
+  }
+</script>

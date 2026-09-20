@@ -1,0 +1,454 @@
+{
+  "title": "Kwitansi Pembayaran",
+  "description": "Kwitansi klasik dengan kotak terbilang, kotak total gelap, area materai, dan tanda tangan penerima.",
+  "layout": {
+    "version": 1,
+    "width": 700,
+    "headerSection": {
+      "height": 102,
+      "visible": true,
+      "style": {},
+      "items": [
+        {
+          "id": "it_mu53kial_0",
+          "type": "text",
+          "name": "",
+          "text": "🧾",
+          "binding": "",
+          "x": 16,
+          "y": 14,
+          "width": 40,
+          "height": 40,
+          "src": "",
+          "style": {
+            "fontSize": 30
+          }
+        },
+        {
+          "id": "it_mu53kial_1",
+          "type": "text",
+          "name": "",
+          "text": "PT SATU SEJAHTERA",
+          "binding": "company",
+          "x": 64,
+          "y": 16,
+          "width": 280,
+          "height": 20,
+          "src": "",
+          "style": {
+            "fontSize": 13,
+            "fontWeight": "bold",
+            "color": "#111827"
+          }
+        },
+        {
+          "id": "it_mu53kial_2",
+          "type": "text",
+          "name": "",
+          "text": "Alamat",
+          "binding": "companyAddr",
+          "x": 64,
+          "y": 38,
+          "width": 280,
+          "height": 14,
+          "src": "",
+          "style": {
+            "fontSize": 9,
+            "color": "#6b7280"
+          }
+        },
+        {
+          "id": "it_mu53kial_3",
+          "type": "text",
+          "name": "",
+          "text": "No.",
+          "binding": "no",
+          "x": 440,
+          "y": 16,
+          "width": 244,
+          "height": 18,
+          "src": "",
+          "style": {
+            "fontSize": 12,
+            "fontWeight": "bold",
+            "textAlign": "right",
+            "fontFamily": "ui-monospace,monospace"
+          }
+        },
+        {
+          "id": "it_mu53kial_4",
+          "type": "text",
+          "name": "",
+          "text": "Tanggal",
+          "binding": "date",
+          "x": 440,
+          "y": 38,
+          "width": 244,
+          "height": 14,
+          "src": "",
+          "style": {
+            "fontSize": 9,
+            "color": "#6b7280",
+            "textAlign": "right"
+          }
+        },
+        {
+          "id": "it_mu53kial_5",
+          "type": "text",
+          "name": "",
+          "text": "KWITANSI",
+          "binding": "",
+          "x": 0,
+          "y": 60,
+          "width": 700,
+          "height": 28,
+          "src": "",
+          "style": {
+            "fontSize": 22,
+            "fontWeight": "bold",
+            "textAlign": "center",
+            "color": "#111827"
+          }
+        },
+        {
+          "id": "it_mu53kial_6",
+          "type": "text",
+          "name": "",
+          "text": "— BUKTI PEMBAYARAN RESMI —",
+          "binding": "",
+          "x": 0,
+          "y": 88,
+          "width": 700,
+          "height": 12,
+          "src": "",
+          "style": {
+            "fontSize": 8,
+            "textAlign": "center",
+            "color": "#6b7280"
+          }
+        },
+        {
+          "id": "it_mu53kial_7",
+          "type": "line",
+          "name": "",
+          "text": "",
+          "binding": "",
+          "x": 0,
+          "y": 8,
+          "width": 700,
+          "height": 2,
+          "src": "",
+          "style": {
+            "borderColor": "#111827",
+            "borderWidth": 2
+          }
+        }
+      ]
+    },
+    "contentSection": {
+      "height": 30,
+      "visible": true,
+      "style": {},
+      "items": [
+        {
+          "id": "it_mu53kial_8",
+          "type": "text",
+          "name": "",
+          "text": "1.",
+          "binding": "__row",
+          "x": 24,
+          "y": 7,
+          "width": 26,
+          "height": 16,
+          "src": "",
+          "style": {
+            "fontSize": 11,
+            "color": "#9ca3af"
+          }
+        },
+        {
+          "id": "it_mu53kial_9",
+          "type": "text",
+          "name": "",
+          "text": "Uraian",
+          "binding": "description",
+          "x": 54,
+          "y": 7,
+          "width": 440,
+          "height": 16,
+          "src": "",
+          "style": {
+            "fontSize": 11
+          }
+        },
+        {
+          "id": "it_mu53kial_a",
+          "type": "text",
+          "name": "",
+          "text": "Jumlah",
+          "binding": "amount",
+          "x": 520,
+          "y": 7,
+          "width": 156,
+          "height": 16,
+          "src": "",
+          "style": {
+            "fontSize": 11,
+            "fontWeight": "bold",
+            "textAlign": "right"
+          }
+        },
+        {
+          "id": "it_mu53kial_b",
+          "type": "line",
+          "name": "",
+          "text": "",
+          "binding": "",
+          "x": 24,
+          "y": 28,
+          "width": 652,
+          "height": 2,
+          "src": "",
+          "style": {
+            "borderColor": "#e5e7eb",
+            "borderWidth": 1
+          }
+        }
+      ],
+      "binding": "payments",
+      "groups": []
+    },
+    "footerSection": {
+      "height": 186,
+      "visible": true,
+      "style": {},
+      "items": [
+        {
+          "id": "it_mu53kial_c",
+          "type": "text",
+          "name": "",
+          "text": "Terbilang:",
+          "binding": "",
+          "x": 24,
+          "y": 4,
+          "width": 100,
+          "height": 12,
+          "src": "",
+          "style": {
+            "fontSize": 8,
+            "color": "#6b7280"
+          }
+        },
+        {
+          "id": "it_mu53kial_d",
+          "type": "text",
+          "name": "",
+          "text": "Terbilang",
+          "binding": "terbilang",
+          "x": 24,
+          "y": 18,
+          "width": 420,
+          "height": 64,
+          "src": "",
+          "style": {
+            "fontSize": 11,
+            "fontStyle": "italic",
+            "backgroundColor": "#f9fafb",
+            "borderWidth": 1,
+            "borderColor": "#e5e7eb",
+            "borderRadius": 8,
+            "padding": 8,
+            "lineHeight": 18
+          }
+        },
+        {
+          "id": "it_mu53kial_e",
+          "type": "text",
+          "name": "",
+          "text": "",
+          "binding": "",
+          "x": 476,
+          "y": 18,
+          "width": 200,
+          "height": 64,
+          "src": "",
+          "style": {
+            "backgroundColor": "#111827",
+            "borderRadius": 8
+          }
+        },
+        {
+          "id": "it_mu53kial_f",
+          "type": "text",
+          "name": "",
+          "text": "TOTAL",
+          "binding": "",
+          "x": 476,
+          "y": 26,
+          "width": 200,
+          "height": 13,
+          "src": "",
+          "style": {
+            "fontSize": 9,
+            "color": "#9ca3af",
+            "textAlign": "center"
+          }
+        },
+        {
+          "id": "it_mu53kial_g",
+          "type": "text",
+          "name": "",
+          "text": "Grand",
+          "binding": "totals.grand",
+          "x": 476,
+          "y": 42,
+          "width": 200,
+          "height": 24,
+          "src": "",
+          "style": {
+            "fontSize": 16,
+            "fontWeight": "bold",
+            "color": "#ffffff",
+            "textAlign": "center"
+          }
+        },
+        {
+          "id": "it_mu53kial_h",
+          "type": "text",
+          "name": "",
+          "text": "Materai\n10.000",
+          "binding": "",
+          "x": 40,
+          "y": 104,
+          "width": 76,
+          "height": 62,
+          "src": "",
+          "style": {
+            "fontSize": 8,
+            "color": "#9ca3af",
+            "textAlign": "center",
+            "borderWidth": 1,
+            "borderColor": "#d1d5db",
+            "borderRadius": 4,
+            "padding": 6
+          }
+        },
+        {
+          "id": "it_mu53kial_i",
+          "type": "text",
+          "name": "",
+          "text": "Depok",
+          "binding": "placeDate",
+          "x": 480,
+          "y": 100,
+          "width": 196,
+          "height": 14,
+          "src": "",
+          "style": {
+            "fontSize": 10,
+            "color": "#374151",
+            "textAlign": "center"
+          }
+        },
+        {
+          "id": "it_mu53kial_j",
+          "type": "text",
+          "name": "",
+          "text": "Yang menerima,",
+          "binding": "",
+          "x": 480,
+          "y": 116,
+          "width": 196,
+          "height": 14,
+          "src": "",
+          "style": {
+            "fontSize": 10,
+            "color": "#374151",
+            "textAlign": "center"
+          }
+        },
+        {
+          "id": "it_mu53kial_k",
+          "type": "line",
+          "name": "",
+          "text": "",
+          "binding": "",
+          "x": 508,
+          "y": 158,
+          "width": 140,
+          "height": 2,
+          "src": "",
+          "style": {
+            "borderColor": "#9ca3af",
+            "borderWidth": 1
+          }
+        },
+        {
+          "id": "it_mu53kial_l",
+          "type": "text",
+          "name": "",
+          "text": "( Jane Doe, SE )",
+          "binding": "",
+          "x": 480,
+          "y": 162,
+          "width": 196,
+          "height": 14,
+          "src": "",
+          "style": {
+            "fontSize": 10,
+            "color": "#374151",
+            "textAlign": "center"
+          }
+        }
+      ]
+    },
+    "page": {
+      "paper": "A4",
+      "orientation": "portrait",
+      "margins": {
+        "top": 47,
+        "right": 47,
+        "bottom": 47,
+        "left": 47
+      },
+      "pagination": false
+    },
+    "pageHeaderSection": {
+      "height": 34,
+      "visible": false,
+      "style": {},
+      "items": []
+    },
+    "pageFooterSection": {
+      "height": 30,
+      "visible": false,
+      "style": {},
+      "items": []
+    }
+  },
+  "data": {
+    "company": "PT SATU SEJAHTERA",
+    "companyAddr": "Jl. Margonda Raya No. 88, Depok 16431",
+    "no": "KWT/2026/0917",
+    "date": "17 September 2026",
+    "payments": [
+      {
+        "description": "DP Proyek Renovasi Kantor Tahap 1",
+        "amount": "12.500.000"
+      },
+      {
+        "description": "Termin 2 — Pekerjaan Interior & Partisi",
+        "amount": "18.750.000"
+      },
+      {
+        "description": "Biaya Material Tambahan (sesuai RAB rev. 2)",
+        "amount": "3.250.000"
+      }
+    ],
+    "totals": {
+      "grand": "Rp 34.500.000"
+    },
+    "terbilang": "== Tiga puluh empat juta lima ratus ribu rupiah ==",
+    "placeDate": "Depok, 17 September 2026"
+  }
+}

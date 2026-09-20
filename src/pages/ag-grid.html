@@ -1,0 +1,190 @@
+---
+path: pages/ag-grid.html
+title: AG Grid Community
+pageTitle: AG Grid Community
+crumb: Home|index.html, Tables, AG Grid Community
+description: Contoh integrasi AG Grid Community (MIT) — sortir, filter kolom, floating filter, penyaring cabang, paginasi, pilih baris, dan ekspor CSV, semuanya offline tanpa CDN.
+scripts: ag-grid-community.min.js, ag-grid-demo.js
+bodyClass: page-ag-grid
+---
+<!--#navbar-->
+<button type="button" class="nav-icon-btn" title="Ekspor CSV dari grid"
+        onclick="window.AgGridDemo.eksporCsv()" aria-label="Ekspor CSV dari grid">
+  <i data-icon="file-earmark-spreadsheet" data-size="17"></i>
+</button>
+<button type="button" class="nav-icon-btn" title="Sesuaikan lebar kolom"
+        onclick="window.AgGridDemo.autoSize()" aria-label="Sesuaikan lebar kolom">
+  <i data-icon="arrows-angle-expand" data-size="17"></i>
+</button>
+<!--/#navbar-->
+
+<!--#actions-->
+<button class="btn btn-light" onclick="window.print()"><i data-icon="printer"></i> Cetak</button>
+<button class="btn btn-light" onclick="window.AgGridDemo.tambahBaris()"><i data-icon="plus-lg"></i> Tambah baris</button>
+<button class="btn btn-success" onclick="window.AgGridDemo.eksporCsv()"><i data-icon="download"></i> Ekspor CSV</button>
+<!--/#actions-->
+
+<div class="alert alert-info items-start">
+  <i data-icon="grid-1x2" class="mt-0.5"></i>
+  <div>
+    <b>AG Grid Community v36 — di-vendor lokal, jadi tetap 100% offline.</b>
+    Berkasnya ada di <code>assets/js/ag-grid-community.min.js</code> (MIT, 2 MB). Grid memakai
+    <b>Theming API</b> (<code>themeQuartz</code>) sehingga warnanya otomatis mengikuti tema & skin
+    yang dipilih di panel kanan — termasuk <b>dark mode</b> dan preset perbankan.
+    Coba ganti tema lewat ikon ⚙ di navbar, grid langsung ikut berubah.
+  </div>
+</div>
+
+<!-- ================= GRID UTAMA ================= -->
+<div class="card" id="grid-nasabah">
+  <div class="card-header flex-wrap">
+    <h3 class="card-title"><i data-icon="table" class="text-primary"></i> Portofolio Nasabah</h3>
+    <div class="card-tools flex-wrap">
+      <div class="relative">
+        <span class="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-2"><i data-icon="search" data-size="13"></i></span>
+        <input type="search" id="ag-quick-filter" class="form-control !w-44 !py-1 pl-8 text-sm"
+               placeholder="Cari cepat (semua kolom)…" aria-label="Cari cepat di grid">
+      </div>
+      <select id="ag-filter-cabang" class="form-select !w-36 !py-1 text-sm" aria-label="Saringan cabang" title="Saringan cabang">
+        <option value="" selected>Semua cabang</option>
+        <option value="Jakarta">Jakarta</option>
+        <option value="Bandung">Bandung</option>
+        <option value="Surabaya">Surabaya</option>
+        <option value="Medan">Medan</option>
+        <option value="Semarang">Semarang</option>
+        <option value="Denpasar">Denpasar</option>
+        <option value="Depok">Depok</option>
+        <option value="Bogor">Bogor</option>
+        <option value="Bekasi">Bekasi</option>
+        <option value="Tangerang">Tangerang</option>
+        <option value="Malang">Malang</option>
+        <option value="Yogyakarta">Yogyakarta</option>
+        <option value="Palembang">Palembang</option>
+        <option value="Makassar">Makassar</option>
+      </select>
+      <select id="ag-filter-status" class="form-select !w-40 !py-1 text-sm" aria-label="Saringan status" title="Saringan status">
+        <option value="" selected>Semua status</option>
+        <option value="Aktif">Aktif</option>
+        <option value="Menunggu verifikasi">Menunggu verifikasi</option>
+        <option value="Dibekukan">Dibekukan</option>
+      </select>
+      <button type="button" id="ag-filter-reset" class="btn btn-light btn-sm whitespace-nowrap" title="Bersihkan semua saringan">
+        <i data-icon="funnel" data-size="13"></i> Bersihkan saringan
+      </button>
+      <select id="ag-page-size" class="form-select !w-28 !py-1 text-sm" aria-label="Baris per halaman">
+        <option value="10" selected>10 baris</option>
+        <option value="20">20 baris</option>
+        <option value="50">50 baris</option>
+      </select>
+      <button class="btn btn-light btn-sm" onclick="window.AgGridDemo.autoSize()" title="Sesuaikan lebar kolom"><i data-icon="arrows-angle-expand" data-size="13"></i></button>
+      <button class="btn btn-light btn-sm" data-card-tool="collapse" aria-expanded="true"><i data-icon="chevron-up" data-size="13"></i></button>
+      <button class="btn btn-light btn-sm" data-card-tool="refresh" title="Muat ulang"><i data-icon="arrow-clockwise" data-size="13"></i></button>
+      <button class="btn btn-light btn-sm" data-card-tool="fullscreen" title="Layar penuh"><i data-icon="arrows-fullscreen" data-size="13"></i></button>
+    </div>
+  </div>
+  <div class="card-body !p-0">
+    <div id="ag-grid-nasabah" class="ag-grid-host" style="height: 520px"></div>
+  </div>
+  <div class="card-footer flex flex-wrap items-center justify-between gap-2">
+    <span class="fs-8 text-muted-2" id="ag-selection-info">Belum ada baris dipilih</span>
+    <span class="flex flex-wrap items-center gap-2">
+      <button class="btn btn-light btn-sm" onclick="window.AgGridDemo.hapusPilihan()"><i data-icon="x-circle" data-size="13"></i> Bersihkan pilihan</button>
+      <button class="btn btn-light btn-sm" onclick="window.AgGridDemo.tambahBaris()"><i data-icon="plus-lg" data-size="13"></i> Tambah baris</button>
+      <button class="btn btn-primary btn-sm" onclick="window.AgGridDemo.eksporCsv()"><i data-icon="download" data-size="13"></i> Ekspor CSV</button>
+    </span>
+  </div>
+</div>
+
+<!-- ================= GRID RINGKAS + CATATAN ================= -->
+<div class="grid gap-4 mt-4 lg:grid-cols-5">
+  <div class="card lg:col-span-3">
+    <div class="card-header">
+      <h3 class="card-title"><i data-icon="diagram-3" class="text-info"></i> Ringkasan per Cabang</h3>
+      <div class="card-tools"><span class="badge badge-soft-info">2 grid di satu halaman</span></div>
+    </div>
+    <div class="card-body !p-0">
+      <div id="ag-grid-cabang" class="ag-grid-host"></div>
+    </div>
+  </div>
+
+  <div class="card lg:col-span-2">
+    <div class="card-header">
+      <h3 class="card-title"><i data-icon="check2-circle" class="text-success"></i> Fitur yang aktif</h3>
+    </div>
+    <div class="card-body">
+      <ul class="list-unstyled m-0 space-y-2 text-sm">
+        <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span>Sortir multi-kolom (Shift + klik judul)</span></li>
+        <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span>Filter per kolom: teks, angka, dan tanggal</span></li>
+        <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span>Penyaring pilihan <i>Cabang</i> &amp; <i>Status</i> di toolbar (setara set filter, tetap Community)</span></li>
+        <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span><i>Floating filter</i> — kotak saring langsung di bawah judul</span></li>
+        <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span>Paginasi + pemilih jumlah baris</span></li>
+        <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span>Pilih baris massal (checkbox) + ringkasan saldo</span></li>
+        <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span>Kolom disematkan kiri (<i>pinned</i>) dan bisa digeser</span></li>
+        <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span>Ubah lebar kolom, lebar otomatis, dan panel kolom</span></li>
+        <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span>Ekspor CSV dari dalam grid</span></li>
+        <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span>Tema mengikuti skin perbankan &amp; dark mode</span></li>
+        <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span>Semua label ikut bahasa aktif (ID/EN)</span></li>
+      </ul>
+      <div class="callout callout-warning mt-3">
+        <b>Catatan lisensi.</b> AG Grid <b>Community</b> bersifat MIT (gratis). Fitur Enterprise
+        (pengelompokan baris, pivot, ekspor Excel, <i>master/detail</i>, <i>server-side row model</i>,
+        serta filter <i>Set</i>/<i>Multi</i>) tidak termasuk dalam paket ini — karena itu penyaring
+        pilihan di toolbar dibuat dari text filter Community.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= CARA PAKAI ================= -->
+<div class="card mt-4">
+  <div class="card-header">
+    <h3 class="card-title"><i data-icon="code-slash" class="text-primary"></i> Cara memakai di halaman lain</h3>
+  </div>
+  <div class="card-body">
+    <ol class="mb-3 space-y-1 text-sm">
+      <li>1. Muat dua berkas lokal di halaman (tanpa CDN) — sudah tersedia di folder <code>assets/js/</code>:
+        <code>ag-grid-community.min.js</code> lalu <code>ag-grid-demo.js</code>.</li>
+      <li>2. Sediakan wadah ber-tinggi tetap, mis. <code>&lt;div id="grid-saya" style="height:420px"&gt;&lt;/div&gt;</code>.</li>
+      <li>3. Panggil <code>agGrid.createGrid(...)</code> seperti contoh di bawah.</li>
+    </ol>
+<pre class="code-block"><code>const { createGrid, themeQuartz, ModuleRegistry, AllCommunityModule } = agGrid;
+ModuleRegistry.registerModules([AllCommunityModule]);
+
+const api = createGrid(document.getElementById("grid-saya"), {
+  theme: themeQuartz.withParams({ accentColor: "#16385c", fontFamily: "inherit" }),
+  columnDefs: [
+    { field: "nama",  headerName: "Nama",  sortable: true, filter: true, flex: 1 },
+    { field: "saldo", headerName: "Saldo", type: "numericColumn",
+      valueFormatter: p =&gt; "Rp " + p.value.toLocaleString("id-ID") }
+  ],
+  rowData: dataAnda,
+  defaultColDef: { resizable: true, floatingFilter: true },
+  pagination: true,
+  paginationPageSize: 10,
+  rowSelection: { mode: "multiRow", checkboxes: true },
+  localeText: { page: "Halaman", of: "dari", next: "Berikutnya", previous: "Sebelumnya" }
+});
+
+// filter "pilih dari daftar" (Community): text filter dengan kondisi equals
+api.setFilterModel({ cabang: { filterType: "text", type: "equals", filter: "Jakarta" } });
+
+// contoh operasi umum
+api.setGridOption("quickFilterText", "jakarta");   // pencarian cepat
+api.exportDataAsCsv({ fileName: "data.csv" });      // unduh CSV</code></pre>
+    <p class="fs-8 text-muted-2 mb-0">
+      Integrasi tema &amp; bahasa untuk halaman ini ada di <code>assets/js/ag-grid-demo.js</code> —
+      warna dibaca dari CSS variable template, lalu diterapkan ulang setiap kali event
+      <code>theme:changed</code> atau <code>i18n:changed</code> terpicu.
+    </p>
+  </div>
+</div>
+
+<style>
+  /* AG Grid memakai Theming API; hanya tinggi wadah yang perlu diatur */
+  .ag-grid-host { width: 100%; }
+  .page-ag-grid .card-body.\!p-0 { padding: 0; }
+  .page-ag-grid .ag-theme-quartz { --ag-grid-size: 5px; }
+  @media print {
+    .page-ag-grid #ag-grid-nasabah { height: auto !important; }
+  }
+</style>

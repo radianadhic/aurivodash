@@ -1,0 +1,97 @@
+---
+path: pages/mini-grid-5.html
+title: Mini Grid 5 — Data dari API
+pageTitle: Mini Grid 5
+subtitle: Data diambil dari API · tombol muat ulang · status muat & latensi
+crumb: Home|index.html, Tables, Mini Grid, Mini Grid 5
+description: Contoh MiniGrid 5: grid kosong yang datanya diambil dari API lewat opsi onRefresh (Promise) — lengkap dengan tombol muat ulang, status sumber, latensi, dan simulasi offline.
+scripts: minigrid/grid.js, minigrid/export.js, minigrid-demo.js
+bodyClass: page-mini-grid
+---
+<!--#navbar-->
+<button type="button" class="nav-icon-btn" title="Muat ulang data dari API"
+        onclick="window.MiniGridDemo.muatUlang(5)" aria-label="Muat ulang data Mini Grid 5">
+  <i data-icon="arrow-repeat" data-size="17"></i>
+</button>
+<button type="button" class="nav-icon-btn" title="Ekspor CSV (MiniGrid)"
+        onclick="window.MiniGridDemo.eksporCsv(5)" aria-label="Ekspor CSV Mini Grid 5">
+  <i data-icon="file-earmark-spreadsheet" data-size="17"></i>
+</button>
+<!--/#navbar-->
+
+<!--#actions-->
+<button class="btn btn-primary" onclick="window.MiniGridDemo.muatUlang(5)"><i data-icon="cloud-download"></i> Ambil ulang dari API</button>
+<button class="btn btn-light" onclick="window.MiniGridDemo.pilihSemua(5)"><i data-icon="list-check"></i> Pilih semua</button>
+<button class="btn btn-light" onclick="window.MiniGridDemo.eksporCsv(5)"><i data-icon="download"></i> Ekspor CSV</button>
+<!--/#actions-->
+
+<div class="alert alert-info items-start">
+  <i data-icon="cloud-download" class="mt-0.5"></i>
+  <div>
+    <b>Mini Grid 5 — data dari API.</b> Grid dibuka dalam keadaan kosong, lalu mengisi dirinya
+    lewat <code>onRefresh(grid)</code> yang mengembalikan <b>Promise</b>: pustaka menampilkan
+    status muat (<code>setLoading</code>) selama permintaan berjalan. Template ini tetap
+    <b>100% offline</b>, jadi permintaannya disimulasikan dengan latensi 450 ms — mau
+    disambungkan ke endpoint sungguhan? Cukup
+    <code>MiniGridDemo.sumberAPI = "/api/karyawan"</code> lalu klik <b>Ambil ulang dari API</b>.
+  </div>
+</div>
+
+<div id="minigrid-page-5">
+  <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+    <div>
+      <h3 class="card-title m-0"><i data-icon="cloud-download" class="text-primary"></i> Data Karyawan (dari sumber eksternal)</h3>
+      <p class="fs-8 text-muted-2 m-0">Tombol <b>muat ulang</b> di toolbar grid memanggil fungsi yang sama dengan tombol di header halaman ini.</p>
+    </div>
+    <span class="flex items-center gap-2">
+      <span class="badge badge-soft-primary"><span data-mg-count>0</span> baris</span>
+      <span class="badge badge-soft-info" data-mg-sumber="5">belum diambil</span>
+    </span>
+  </div>
+  <div id="minigrid-5" class="minigrid-host"></div>
+  <p class="fs-8 text-muted-2 mt-2 m-0" id="mg-log">MiniGrid siap.</p>
+</div>
+
+<div class="grid gap-4 mt-4 lg:grid-cols-2">
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title"><i data-icon="sliders" class="text-info"></i> Fitur contoh ini</h3>
+    </div>
+    <div class="card-body">
+      <ul class="list-unstyled m-0 space-y-2 text-sm">
+        <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span>Grid mulai kosong, data diisi oleh <code>onRefresh</code> (Promise)</span></li>
+        <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span>Status muat otomatis (<code>setLoading</code>) selama permintaan berjalan</span></li>
+        <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span>Tombol <b>muat ulang</b> di toolbar + tombol di header halaman &amp; navbar</span></li>
+        <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span>Data segar tiap panggilan (seed baru) — jumlah baris berubah acak di sekitar 500</span></li>
+        <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span>Status sumber + jam di sebelah chip, ikut bahasa aktif</span></li>
+        <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span>Formulir filter, pilih kolom, ekspor CSV/XLSX/PDF tetap jalan</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title"><i data-icon="code-slash" class="text-primary"></i> Kode inti</h3>
+    </div>
+    <div class="card-body">
+<pre class="code-block"><code>MiniGrid({
+  el: "#minigrid-5",
+  columns: kolom,
+  data: [],                 // kosong dulu
+  filterForm: true,
+  onRefresh: async function (grid) {
+    const r = await fetch("/api/karyawan");     // template: simulasi 450 ms
+    const list = await r.json();
+    grid.data = grid.o.data = list;             // ganti isi
+    grid.s.page = 1; grid.render();
+    return list;                                // Promise → status muat otomatis
+  }
+});</code></pre>
+      <div class="callout callout-info mt-3 mb-0">
+        <b>Kait cepat.</b> Setel <code>MiniGridDemo.sumberAPI = "/api/karyawan"</code> dari konsol
+        peramban untuk memakai endpoint sungguhan. Tanpa itu (atau bila server tidak terjangkau)
+        grid otomatis kembali ke simulasi lokal — halaman tidak pernah macet.
+      </div>
+    </div>
+  </div>
+</div>

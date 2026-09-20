@@ -1,0 +1,506 @@
+{
+  "title": "Laporan Stok per Kategori",
+  "description": "Mendemokan SUB GROUP: setiap kategori (content) menampilkan daftar barangnya masing-masing (sub group berulang).",
+  "layout": {
+    "version": 1,
+    "width": 700,
+    "headerSection": {
+      "height": 92,
+      "visible": true,
+      "style": {
+        "backgroundColor": "#1d4ed8"
+      },
+      "items": [
+        {
+          "id": "it_mu53ki7x_0",
+          "type": "text",
+          "name": "",
+          "text": "📦",
+          "binding": "",
+          "x": 20,
+          "y": 16,
+          "width": 44,
+          "height": 44,
+          "src": "",
+          "style": {
+            "fontSize": 30
+          }
+        },
+        {
+          "id": "it_mu53ki7x_1",
+          "type": "text",
+          "name": "",
+          "text": "LAPORAN STOK BARANG",
+          "binding": "",
+          "x": 76,
+          "y": 16,
+          "width": 400,
+          "height": 24,
+          "src": "",
+          "style": {
+            "color": "#ffffff",
+            "fontSize": 17,
+            "fontWeight": "bold"
+          }
+        },
+        {
+          "id": "it_mu53ki7x_2",
+          "type": "text",
+          "name": "",
+          "text": "Gudang",
+          "binding": "warehouse",
+          "x": 76,
+          "y": 44,
+          "width": 320,
+          "height": 16,
+          "src": "",
+          "style": {
+            "color": "#bfdbfe",
+            "fontSize": 10
+          }
+        },
+        {
+          "id": "it_mu53ki7x_3",
+          "type": "text",
+          "name": "",
+          "text": "Tanggal",
+          "binding": "date",
+          "x": 76,
+          "y": 62,
+          "width": 320,
+          "height": 14,
+          "src": "",
+          "style": {
+            "color": "#bfdbfe",
+            "fontSize": 10
+          }
+        },
+        {
+          "id": "it_mu53ki7x_4",
+          "type": "text",
+          "name": "",
+          "text": "Ringkasan",
+          "binding": "meta.totalSKUs",
+          "x": 480,
+          "y": 16,
+          "width": 200,
+          "height": 16,
+          "src": "",
+          "style": {
+            "color": "#dbeafe",
+            "fontSize": 10,
+            "textAlign": "right"
+          }
+        },
+        {
+          "id": "it_mu53ki7x_5",
+          "type": "text",
+          "name": "",
+          "text": "Dicetak",
+          "binding": "__now",
+          "x": 480,
+          "y": 62,
+          "width": 200,
+          "height": 14,
+          "src": "",
+          "style": {
+            "color": "#93c5fd",
+            "fontSize": 9,
+            "textAlign": "right"
+          }
+        }
+      ]
+    },
+    "contentSection": {
+      "height": 32,
+      "visible": true,
+      "style": {},
+      "items": [
+        {
+          "id": "it_mu53ki7x_6",
+          "type": "text",
+          "name": "",
+          "text": "",
+          "binding": "",
+          "x": 0,
+          "y": 0,
+          "width": 700,
+          "height": 32,
+          "src": "",
+          "style": {
+            "backgroundColor": "#dbeafe"
+          }
+        },
+        {
+          "id": "it_mu53ki7x_7",
+          "type": "text",
+          "name": "",
+          "text": "▸ Kategori",
+          "binding": "name",
+          "x": 12,
+          "y": 8,
+          "width": 260,
+          "height": 16,
+          "src": "",
+          "style": {
+            "fontSize": 11,
+            "fontWeight": "bold",
+            "color": "#1e3a8a"
+          }
+        },
+        {
+          "id": "it_mu53ki7x_8",
+          "type": "text",
+          "name": "",
+          "text": "Info",
+          "binding": "info",
+          "x": 280,
+          "y": 9,
+          "width": 280,
+          "height": 14,
+          "src": "",
+          "style": {
+            "fontSize": 10,
+            "color": "#1e40af",
+            "textAlign": "right"
+          }
+        },
+        {
+          "id": "it_mu53ki7x_9",
+          "type": "text",
+          "name": "",
+          "text": "Total",
+          "binding": "totalStock",
+          "x": 570,
+          "y": 8,
+          "width": 118,
+          "height": 16,
+          "src": "",
+          "style": {
+            "fontSize": 10,
+            "fontWeight": "bold",
+            "color": "#1e3a8a",
+            "textAlign": "right"
+          }
+        }
+      ],
+      "binding": "categories",
+      "groups": [
+        {
+          "id": "gr_mu53ki7x_e",
+          "height": 24,
+          "binding": "items",
+          "visible": true,
+          "style": {
+            "backgroundColor": "#ffffff"
+          },
+          "items": [
+            {
+              "id": "it_mu53ki7x_f",
+              "type": "text",
+              "name": "",
+              "text": "Kode",
+              "binding": "code",
+              "x": 24,
+              "y": 4,
+              "width": 90,
+              "height": 15,
+              "src": "",
+              "style": {
+                "fontSize": 9,
+                "color": "#64748b",
+                "fontFamily": "ui-monospace,monospace"
+              }
+            },
+            {
+              "id": "it_mu53ki7x_g",
+              "type": "text",
+              "name": "",
+              "text": "Nama",
+              "binding": "name",
+              "x": 122,
+              "y": 4,
+              "width": 300,
+              "height": 15,
+              "src": "",
+              "style": {
+                "fontSize": 10
+              }
+            },
+            {
+              "id": "it_mu53ki7x_h",
+              "type": "text",
+              "name": "",
+              "text": "Stok",
+              "binding": "stock",
+              "x": 486,
+              "y": 4,
+              "width": 60,
+              "height": 15,
+              "src": "",
+              "style": {
+                "fontSize": 10,
+                "fontWeight": "bold",
+                "textAlign": "right"
+              }
+            },
+            {
+              "id": "it_mu53ki7x_i",
+              "type": "text",
+              "name": "",
+              "text": "Satuan",
+              "binding": "unit",
+              "x": 556,
+              "y": 4,
+              "width": 56,
+              "height": 15,
+              "src": "",
+              "style": {
+                "fontSize": 9,
+                "color": "#64748b",
+                "textAlign": "center"
+              }
+            },
+            {
+              "id": "it_mu53ki7x_j",
+              "type": "text",
+              "name": "",
+              "text": "Status",
+              "binding": "status",
+              "x": 622,
+              "y": 4,
+              "width": 66,
+              "height": 15,
+              "src": "",
+              "style": {
+                "fontSize": 9,
+                "color": "#64748b",
+                "textAlign": "right"
+              }
+            },
+            {
+              "id": "it_mu53ki7x_k",
+              "type": "line",
+              "name": "",
+              "text": "",
+              "binding": "",
+              "x": 12,
+              "y": 22,
+              "width": 676,
+              "height": 2,
+              "src": "",
+              "style": {
+                "borderColor": "#e2e8f0",
+                "borderWidth": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "footerSection": {
+      "height": 62,
+      "visible": true,
+      "style": {
+        "backgroundColor": "#f8fafc"
+      },
+      "items": [
+        {
+          "id": "it_mu53ki7x_a",
+          "type": "text",
+          "name": "",
+          "text": "TOTAL KESELURUHAN STOK:",
+          "binding": "",
+          "x": 20,
+          "y": 12,
+          "width": 210,
+          "height": 16,
+          "src": "",
+          "style": {
+            "fontSize": 10,
+            "fontWeight": "bold",
+            "color": "#1e3a8a"
+          }
+        },
+        {
+          "id": "it_mu53ki7x_b",
+          "type": "text",
+          "name": "",
+          "text": "Total",
+          "binding": "totals.stock",
+          "x": 234,
+          "y": 12,
+          "width": 160,
+          "height": 16,
+          "src": "",
+          "style": {
+            "fontSize": 11,
+            "fontWeight": "bold"
+          }
+        },
+        {
+          "id": "it_mu53ki7x_c",
+          "type": "text",
+          "name": "",
+          "text": "Catatan",
+          "binding": "footer.note",
+          "x": 20,
+          "y": 34,
+          "width": 520,
+          "height": 14,
+          "src": "",
+          "style": {
+            "fontSize": 9,
+            "color": "#94a3b8"
+          }
+        },
+        {
+          "id": "it_mu53ki7x_d",
+          "type": "text",
+          "name": "",
+          "text": "Hal",
+          "binding": "__page",
+          "x": 560,
+          "y": 20,
+          "width": 120,
+          "height": 14,
+          "src": "",
+          "style": {
+            "fontSize": 9,
+            "color": "#94a3b8",
+            "textAlign": "right"
+          }
+        }
+      ]
+    },
+    "page": {
+      "paper": "A4",
+      "orientation": "portrait",
+      "margins": {
+        "top": 47,
+        "right": 47,
+        "bottom": 47,
+        "left": 47
+      },
+      "pagination": false
+    },
+    "pageHeaderSection": {
+      "height": 34,
+      "visible": false,
+      "style": {},
+      "items": []
+    },
+    "pageFooterSection": {
+      "height": 30,
+      "visible": false,
+      "style": {},
+      "items": []
+    }
+  },
+  "data": {
+    "warehouse": "Gudang Pusat — Depok, Jawa Barat",
+    "date": "Per 17 September 2026",
+    "meta": {
+      "totalSKUs": "10 SKU • 3 kategori"
+    },
+    "categories": [
+      {
+        "name": "Elektronik",
+        "info": "4 jenis item",
+        "totalStock": "199",
+        "items": [
+          {
+            "code": "ELK-001",
+            "name": "UPS 1200VA",
+            "stock": 4,
+            "unit": "unit",
+            "status": "⚠ RESTOCK"
+          },
+          {
+            "code": "ELK-008",
+            "name": "Kabel LAN Cat6 (roll)",
+            "stock": 145,
+            "unit": "roll",
+            "status": "OK"
+          },
+          {
+            "code": "ELK-015",
+            "name": "Router WiFi 6",
+            "stock": 12,
+            "unit": "unit",
+            "status": "OK"
+          },
+          {
+            "code": "ELK-023",
+            "name": "SSD 1TB NVMe",
+            "stock": 38,
+            "unit": "pcs",
+            "status": "OK"
+          }
+        ]
+      },
+      {
+        "name": "Alat Tulis Kantor (ATK)",
+        "info": "3 jenis item",
+        "totalStock": "785",
+        "items": [
+          {
+            "code": "ATK-002",
+            "name": "Kertas A4 80gsm",
+            "stock": 210,
+            "unit": "rim",
+            "status": "OK"
+          },
+          {
+            "code": "ATK-009",
+            "name": "Pulpen Hitam",
+            "stock": 480,
+            "unit": "pcs",
+            "status": "OK"
+          },
+          {
+            "code": "ATK-017",
+            "name": "Map Ordner Bantex",
+            "stock": 95,
+            "unit": "pcs",
+            "status": "OK"
+          }
+        ]
+      },
+      {
+        "name": "Furnitur",
+        "info": "3 jenis item",
+        "totalStock": "41",
+        "items": [
+          {
+            "code": "FRN-004",
+            "name": "Meja Kerja 120cm",
+            "stock": 14,
+            "unit": "unit",
+            "status": "OK"
+          },
+          {
+            "code": "FRN-011",
+            "name": "Kursi Ergonomis",
+            "stock": 21,
+            "unit": "unit",
+            "status": "OK"
+          },
+          {
+            "code": "FRN-019",
+            "name": "Lemari Arsip Besi",
+            "stock": 6,
+            "unit": "unit",
+            "status": "⚠ RESTOCK"
+          }
+        ]
+      }
+    ],
+    "totals": {
+      "stock": "1.025 unit/rim/pcs"
+    },
+    "footer": {
+      "note": "Item bertanda ⚠ RESTOCK berada di bawah stok minimum dan perlu pengadaan."
+    }
+  }
+}

@@ -1,0 +1,148 @@
+---
+path: register.html
+title: Daftar Akun
+layout: auth
+description: Halaman pendaftaran akun dengan validasi kekuatan kata sandi dan persetujuan syarat layanan.
+---
+<main class="auth-card !max-w-[30rem]">
+  <div class="auth-logo">
+    <span class="inline-grid h-12 w-12 place-items-center rounded-lg bg-primary text-white align-middle"><i data-icon="person-plus" data-size="24"></i></span>
+    <div class="mt-2">Buat <b>akun baru</b></div>
+  </div>
+
+  <p class="mb-4 text-center text-sm text-muted-2">Gratis 30 hari, tanpa kartu kredit</p>
+
+  <form x-data="registerForm()" @submit.prevent="submit()" novalidate :class="validated && 'was-validated'">
+    <div class="form-row">
+      <div>
+        <label class="form-label" for="namaDepan">Nama depan</label>
+        <input id="namaDepan" class="form-control" placeholder="Rani" required>
+        <div class="invalid-feedback">Nama depan wajib diisi.</div>
+      </div>
+      <div>
+        <label class="form-label" for="namaBelakang">Nama belakang</label>
+        <input id="namaBelakang" class="form-control" placeholder="Setiawati" required>
+        <div class="invalid-feedback">Nama belakang wajib diisi.</div>
+      </div>
+    </div>
+
+    <div class="mt-3">
+      <label class="form-label" for="emailDaftar">Email kerja</label>
+      <div class="input-group">
+        <span class="input-group-text">@</span>
+        <input id="emailDaftar" type="email" class="form-control" placeholder="nama@perusahaan.id" required>
+      </div>
+      <div class="invalid-feedback">Email belum valid atau sudah dipakai.</div>
+    </div>
+
+    <div class="mt-3">
+      <label class="form-label" for="sandi">Kata sandi</label>
+      <input id="sandi" type="password" class="form-control" placeholder="Minimal 8 karakter" x-model="password" required minlength="8"
+             @input="score = strength($event.target.value)">
+      <div class="mt-2">
+        <div class="progress progress-sm"><div class="progress-bar" :class="barClass" :style="'width:' + (score * 25) + '%'"></div></div>
+        <div class="mt-1 flex items-center gap-2 fs-8 text-muted-2">
+          <span>Kekuatan:</span><b :class="textClass" x-text="$store.i18n.t(label)"></b>
+        </div>
+      </div>
+      <div class="invalid-feedback">Kata sandi minimal 8 karakter.</div>
+    </div>
+
+    <div class="mt-3">
+      <label class="form-label" for="sandi2">Ulangi kata sandi</label>
+      <input id="sandi2" type="password" class="form-control" placeholder="Ketik ulang kata sandi" required>
+    </div>
+
+    <div class="mt-3">
+      <label class="form-label" for="perusahaanDaftar">Nama perusahaan / toko</label>
+      <input id="perusahaanDaftar" class="form-control" placeholder="Toko Ritel Mandiri">
+    </div>
+
+    <div class="mt-3">
+      <label class="form-label" for="ukuranTim">Ukuran tim</label>
+      <select id="ukuranTim" class="form-select">
+        <option>Hanya saya</option>
+        <option>2–10 orang</option>
+        <option>11–50 orang</option>
+        <option>Lebih dari 50 orang</option>
+      </select>
+    </div>
+
+    <div class="mt-4">
+      <label class="form-check items-start">
+        <input type="checkbox" class="form-check-input mt-0.5" required>
+        <span class="text-sm">Saya setuju dengan <a href="#">syarat layanan</a> dan <a href="#">kebijakan privasi</a>.</span>
+      </label>
+      <label class="form-check items-start">
+        <input type="checkbox" class="form-check-input mt-0.5" x-model="newsletter">
+        <span class="text-sm">Kirimi saya tips produk &amp; penawaran (opsional).</span>
+      </label>
+    </div>
+
+    <button class="btn btn-primary btn-block btn-lg mt-3" type="submit" :disabled="loading">
+      <span x-show="!loading"><i data-icon="check2"></i> Daftar sekarang</span>
+      <span x-show="loading" x-cloak class="flex items-center gap-2"><span class="spinner !h-4 !w-4 !border-2"></span> Membuat akun…</span>
+    </button>
+  </form>
+
+  <div class="mt-3 grid grid-cols-3 gap-2">
+    <button class="btn btn-light btn-sm" onclick="window.toast('Daftar dengan Google (demo).','info')"><i data-icon="google"></i> Google</button>
+    <button class="btn btn-light btn-sm" onclick="window.toast('Daftar dengan GitHub (demo).','info')"><i data-icon="github"></i> GitHub</button>
+    <button class="btn btn-light btn-sm" onclick="window.toast('Daftar dengan LinkedIn (demo).','info')"><i data-icon="linkedin"></i> LinkedIn</button>
+  </div>
+
+  <p class="mb-0 mt-4 text-center text-sm text-muted-2">
+    Sudah punya akun? <a href="login.html" class="font-semibold">Masuk di sini</a>
+  </p>
+</main>
+
+<script>
+  document.addEventListener("alpine:init", function () {
+    Alpine.data("registerForm", function () {
+      return {
+        password: "",
+        score: 0,
+        newsletter: true,
+        validated: false,
+        loading: false,
+        get label() { return ["Sangat lemah", "Lemah", "Cukup", "Kuat", "Sangat kuat"][this.score] || "—"; },
+        get barClass() {
+          return ["bg-danger", "bg-danger", "bg-warning", "bg-info", "bg-success"][this.score] || "bg-danger";
+        },
+        get textClass() {
+          return ["text-danger", "text-danger", "text-warning", "text-info", "text-success"][this.score] || "text-danger";
+        },
+        strength: function (v) {
+          var s = 0;
+          if (!v) return 0;
+          if (v.length >= 8) s++;
+          if (/[A-Z]/.test(v) && /[a-z]/.test(v)) s++;
+          if (/\d/.test(v)) s++;
+          if (/[^A-Za-z0-9]/.test(v) && v.length >= 12) s++;
+          return s;
+        },
+        submit: function () {
+          var form = this.$el;
+          this.validated = true;
+          var pw = form.querySelector("#sandi").value;
+          var pw2 = form.querySelector("#sandi2").value;
+          if (!form.checkValidity()) {
+            window.toast("Lengkapi dulu kolom yang ditandai.", "danger", "Validasi gagal");
+            return;
+          }
+          if (pw !== pw2) {
+            window.toast("Kata sandi dan konfirmasinya tidak sama.", "danger", "Tidak cocok");
+            return;
+          }
+          var self = this;
+          this.loading = true;
+          setTimeout(function () {
+            self.loading = false;
+            window.toast("Akun demo dibuat. Silakan masuk.", "success", "Berhasil");
+            setTimeout(function () { window.location.href = "login.html"; }, 800);
+          }, 1000);
+        }
+      };
+    });
+  });
+</script>

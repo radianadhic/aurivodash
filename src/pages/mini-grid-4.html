@@ -1,0 +1,100 @@
+---
+path: pages/mini-grid-4.html
+title: Mini Grid 4 — Aksi per Baris
+pageTitle: Mini Grid 4
+subtitle: Ikon Detail/Edit/Hapus di setiap baris (tanpa checkbox) · formulir 3 kolom
+crumb: Home|index.html, Tables, Mini Grid, Mini Grid 4
+description: Contoh MiniGrid 4: aksi per baris tanpa seleksi checkbox (rowActions) dengan formulir tambah/edit 3 kolom responsif.
+scripts: minigrid/grid.js, minigrid/export.js, minigrid-demo.js
+bodyClass: page-mini-grid
+---
+<!--#navbar-->
+<button type="button" class="nav-icon-btn" title="Muat ulang data (refresh)"
+        onclick="window.MiniGridDemo.muatUlang(4)" aria-label="Muat ulang data Mini Grid 4">
+  <i data-icon="arrow-repeat" data-size="17"></i>
+</button>
+<button type="button" class="nav-icon-btn" title="Tambah proyek (form 3 kolom)"
+        onclick="window.MiniGridDemo.tambahBaris(4)" aria-label="Tambah proyek Mini Grid 4">
+  <i data-icon="plus-lg" data-size="17"></i>
+</button>
+<button type="button" class="nav-icon-btn" title="Ekspor XLSX (MiniGrid)"
+        onclick="window.MiniGridDemo.eksporXlsx(4)" aria-label="Ekspor XLSX Mini Grid 4">
+  <i data-icon="file-earmark-spreadsheet" data-size="17"></i>
+</button>
+<!--/#navbar-->
+
+<!--#actions-->
+<button class="btn btn-light" onclick="window.MiniGridDemo.muatUlang(4)"><i data-icon="arrow-repeat"></i> Muat ulang</button>
+<button class="btn btn-light" onclick="window.print()"><i data-icon="printer"></i> Cetak</button>
+<button class="btn btn-light" onclick="window.MiniGridDemo.eksporXlsx(4)"><i data-icon="file-earmark-spreadsheet"></i> Ekspor XLSX</button>
+<button class="btn btn-primary" onclick="window.MiniGridDemo.tambahBaris(4)"><i data-icon="plus-lg"></i> Tambah proyek</button>
+<!--/#actions-->
+
+<div class="alert alert-info items-start">
+  <i data-icon="pencil-square" class="mt-0.5"></i>
+  <div>
+    <b>Mini Grid 4 — aksi per baris.</b> Tanpa checkbox sama sekali
+    (<code>select: false</code>): setiap baris punya ikon <b>Detail</b>, <b>Edit</b>, dan
+    <b>Hapus</b> (<code>rowActions: true</code>). Formulir Tambah/Edit memakai
+    <b>3 kolom</b> (<code>formCols: 3</code>) yang otomatis menumpuk di layar sempit.
+  </div>
+</div>
+
+<div id="minigrid-page-4">
+  <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+    <div>
+      <h3 class="card-title m-0"><i data-icon="briefcase" class="text-primary"></i> Penugasan Proyek</h3>
+      <p class="fs-8 text-muted-2 m-0">Gunakan ikon di kolom <b>Aksi</b> pada tiap baris · tombol Filter untuk menyaring kolom Prioritas/Status</p>
+    </div>
+    <span class="flex items-center gap-2">
+      <span class="badge badge-soft-primary"><span data-mg-count>0</span> baris</span>
+      <span class="badge badge-soft-info">aksi per baris</span>
+    </span>
+  </div>
+  <div id="minigrid-4" class="minigrid-host"></div>
+  <p class="fs-8 text-muted-2 mt-2 m-0" id="mg-log">MiniGrid siap.</p>
+</div>
+
+<div class="grid gap-4 mt-4 lg:grid-cols-2">
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title"><i data-icon="eye" class="text-info"></i> Fitur contoh ini</h3>
+    </div>
+    <div class="card-body">
+      <ul class="list-unstyled m-0 space-y-2 text-sm">
+        <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span>Ikon <b>Detail</b>, <b>Edit</b>, <b>Hapus</b> pada tiap baris</span></li>
+        <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span>Tanpa checkbox (<code>select: false</code>) — tidak ada tombol mati</span></li>
+        <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span>Formulir 3 kolom responsif (<code>formCols: 3</code>)</span></li>
+        <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span>Mode <b>Detail</b> hanya-baca (semua input disabled)</span></li>
+        <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span>Pill warna untuk Prioritas &amp; Status via <code>render</code></span></li>
+        <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span>Filter terpusat + bantuan (<code>filterForm</code>, <code>help</code>)</span></li>
+        <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span>Modal bisa digeser (seret bilah judulnya)</span></li>
+        <li class="flex gap-2"><i data-icon="check2" class="text-success mt-0.5" data-size="14"></i><span>Ekspor XLSX (header tebal + pane beku + AutoFilter)</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title"><i data-icon="code-slash" class="text-primary"></i> Kode inti</h3>
+    </div>
+    <div class="card-body">
+<pre class="code-block"><code>MiniGrid({
+  el: "#minigrid-4",
+  columns: kolomProyek,
+  data: rowsProyek,
+  height: 380, pageSize: 8,
+  select: false,          // tanpa checkbox & tanpa seleksi massal
+  rowActions: true,       // ikon Detail / Edit / Hapus di kolom Aksi
+  add: true, editForm: true, formCols: 3,
+  filter: false, filterForm: true, help: true,
+  onAdd: function (r) { r.id = nomorBerikutnya(); return r; }
+});</code></pre>
+      <div class="callout callout-info mt-3 mb-0">
+        <b>Kapan dipakai?</b> Bila pengguna berinteraksi per baris (detail satu record) dan
+        seleksi massal justru membingungkan — mis. daftar penugasan, tiket, atau daftar
+        transaksi yang setiap barisnya punya aksi sendiri.
+      </div>
+    </div>
+  </div>
+</div>

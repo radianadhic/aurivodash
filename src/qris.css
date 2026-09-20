@@ -1,0 +1,244 @@
+/* ------------------------------------------------------------------
+   qris.css — gaya visual untuk halaman QRIS & "Kartu dengan QRIS".
+   Warna diambil dari token tema (--c-*) supaya ikut preset perbankan
+   dan mode gelap template. Kartu memakai 3D flip (rotateY).
+   ------------------------------------------------------------------ */
+
+@layer components {
+  /* ------------------------------- panggung & kartu 3D ------------------- */
+  .kartu-panggung {
+    perspective: 1500px;
+    display: flex;
+    justify-content: center;
+  }
+  .kartu {
+    position: relative;
+    width: 100%;
+    max-width: 26.5rem;
+    aspect-ratio: 1.586;
+    transform-style: preserve-3d;
+    transition: transform 0.6s cubic-bezier(0.2, 0.75, 0.3, 1);
+  }
+  .kartu-panggung[data-balik="1"] .kartu {
+    transform: rotateY(180deg);
+  }
+  .kartu-face {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 1rem 1.15rem;
+    border-radius: 1rem;
+    color: #fff;
+    overflow: hidden;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    box-shadow: 0 20px 40px -22px rgba(2, 8, 23, 0.6), inset 0 0 0 1px rgba(255, 255, 255, 0.14);
+  }
+  /* kilau diagonal supaya terasa seperti kartu plastik */
+  .kartu-face::after {
+    content: "";
+    position: absolute;
+    top: -40%;
+    right: -35%;
+    width: 55%;
+    height: 180%;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.18) 45%, rgba(255, 255, 255, 0));
+    transform: rotate(18deg);
+    pointer-events: none;
+  }
+  .kartu-face[data-tema="navy"] {
+    background: linear-gradient(135deg, #08203c 0%, #14508c 55%, #1f86dd 100%);
+  }
+  .kartu-face[data-tema="gold"] {
+    background: linear-gradient(135deg, #2a1f10 0%, #6d5320 48%, #cfa94f 100%);
+  }
+  .kartu-face[data-tema="emerald"] {
+    background: linear-gradient(135deg, #04241c 0%, #0a5a45 52%, #17a074 100%);
+  }
+  .kartu-belakang {
+    transform: rotateY(180deg);
+  }
+  .kartu-chip {
+    width: 2.5rem;
+    height: 1.85rem;
+    border-radius: 0.35rem;
+    position: relative;
+    background: linear-gradient(135deg, #f7df95, #d3b155 55%, #8f7229);
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.28);
+  }
+  .kartu-chip::before,
+  .kartu-chip::after {
+    content: "";
+    position: absolute;
+    background: rgba(35, 25, 5, 0.35);
+  }
+  .kartu-chip::before {
+    left: 0.55rem;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+  }
+  .kartu-chip::after {
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 1px;
+  }
+  .kartu-nomor {
+    font-family: var(--font-mono);
+    font-size: 1.08rem;
+    letter-spacing: 0.13em;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+  }
+  .kartu-label {
+    display: block;
+    font-size: 0.58rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    opacity: 0.72;
+  }
+  .kartu-strip {
+    height: 2.2rem;
+    margin: 0 -1.15rem;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0.5));
+  }
+  .kartu-qr {
+    width: 5.6rem;
+    height: 5.6rem;
+    padding: 0.25rem;
+    border-radius: 0.5rem;
+    background: #fff;
+    flex: none;
+  }
+  .kartu-qr svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  /* pilihan kartu (chip tombol) */
+  .kartu-chip-pilih {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.28rem 0.6rem;
+    border-radius: 999px;
+    border: 1px solid var(--c-border);
+    background: var(--c-body-bg);
+    color: var(--c-body-fg);
+    font-size: 0.75rem;
+    transition: all 0.15s ease;
+  }
+  .kartu-chip-pilih:hover {
+    border-color: var(--c-primary);
+    color: var(--c-primary);
+  }
+  .kartu-chip-pilih.aktif {
+    background: var(--c-primary);
+    border-color: var(--c-primary);
+    color: var(--c-primary-fg);
+  }
+  .kartu-titik {
+    width: 0.6rem;
+    height: 0.6rem;
+    border-radius: 999px;
+    display: inline-block;
+  }
+  .kartu-titik[data-tema="navy"] { background: #14508c; }
+  .kartu-titik[data-tema="gold"] { background: #cfa94f; }
+  .kartu-titik[data-tema="emerald"] { background: #17a074; }
+
+  /* ------------------------------- kotak QR ----------------------------- */
+  .qr-kotak {
+    position: relative;
+    width: 100%;
+    max-width: 15rem;
+    margin-inline: auto;
+    padding: 0.85rem;
+    border-radius: 1rem;
+    background: #fff;                 /* QR harus gelap di atas terang */
+    box-shadow: 0 10px 24px -16px rgba(2, 8, 23, 0.45), inset 0 0 0 1px rgba(15, 23, 42, 0.08);
+  }
+  .qr-isi {
+    width: 100%;
+    aspect-ratio: 1;
+  }
+  .qr-isi svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  .qr-logo {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.1rem;
+    padding: 0.3rem 0.42rem;
+    border-radius: 0.6rem;
+    background: #fff;
+    box-shadow: 0 0 0 5px #fff;
+    pointer-events: none;
+  }
+  .qr-logo b {
+    font-size: 0.62rem;
+    letter-spacing: 0.09em;
+    color: #10192a;
+  }
+  .qr-tanda {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2px;
+  }
+  .qr-tanda i {
+    width: 0.3rem;
+    height: 0.3rem;
+    border-radius: 1px;
+    background: #10192a;
+  }
+  .qr-tanda i:nth-child(2) { background: var(--c-primary); }
+  .qr-tanda i:nth-child(3) { background: var(--c-info); }
+  .qr-kedaluwarsa-pesan {
+    position: absolute;
+    inset: 0;
+    display: none;
+    place-items: center;
+    text-align: center;
+    padding: 1rem;
+    border-radius: 1rem;
+    background: rgba(15, 23, 42, 0.74);
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.85rem;
+  }
+  .qr-kotak[data-kedaluwarsa="1"] .qr-kedaluwarsa-pesan { display: grid; }
+  .qr-kotak[data-kedaluwarsa="1"] .qr-isi { opacity: 0.35; filter: grayscale(1); }
+  .qr-payload {
+    display: block;
+    margin-top: 0.35rem;
+    padding: 0.55rem 0.65rem;
+    border-radius: 0.5rem;
+    border: 1px dashed var(--c-border);
+    background: rgba(120, 132, 150, 0.08);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    line-height: 1.5;
+    word-break: break-all;
+    color: var(--c-body-fg);
+    max-height: 7.5rem;
+    overflow: auto;
+  }
+  .qris-struktur td {
+    vertical-align: top;
+  }
+  .kartu-tanda-air {
+    font-size: 0.62rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    opacity: 0.75;
+  }
+}

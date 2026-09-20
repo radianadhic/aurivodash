@@ -1,0 +1,685 @@
+{
+  "title": "Surat Jalan / Delivery Order",
+  "description": "Dokumen pengiriman barang dengan barcode nomor resi, tabel barang, kolom keterangan, dan tiga blok tanda tangan.",
+  "layout": {
+    "version": 1,
+    "width": 700,
+    "headerSection": {
+      "height": 150,
+      "visible": true,
+      "style": {
+        "backgroundColor": "#9a3412"
+      },
+      "items": [
+        {
+          "id": "it_mu53ki6o_0",
+          "type": "text",
+          "name": "",
+          "text": "🚚",
+          "binding": "",
+          "x": 16,
+          "y": 12,
+          "width": 44,
+          "height": 44,
+          "src": "",
+          "style": {
+            "fontSize": 32
+          }
+        },
+        {
+          "id": "it_mu53ki6o_1",
+          "type": "text",
+          "name": "",
+          "text": "PT SATU SEJAHTERA",
+          "binding": "company",
+          "x": 68,
+          "y": 16,
+          "width": 280,
+          "height": 20,
+          "src": "",
+          "style": {
+            "color": "#ffffff",
+            "fontSize": 14,
+            "fontWeight": "bold"
+          }
+        },
+        {
+          "id": "it_mu53ki6o_2",
+          "type": "text",
+          "name": "",
+          "text": "Alamat",
+          "binding": "companyAddr",
+          "x": 68,
+          "y": 38,
+          "width": 280,
+          "height": 15,
+          "src": "",
+          "style": {
+            "color": "#fed7aa",
+            "fontSize": 10
+          }
+        },
+        {
+          "id": "it_mu53ki6o_3",
+          "type": "barcode",
+          "name": "",
+          "text": "SJ/2026/0917",
+          "binding": "no",
+          "x": 16,
+          "y": 70,
+          "width": 180,
+          "height": 42,
+          "src": "",
+          "style": {
+            "color": "#ffffff"
+          }
+        },
+        {
+          "id": "it_mu53ki6o_4",
+          "type": "text",
+          "name": "",
+          "text": "SURAT JALAN",
+          "binding": "",
+          "x": 430,
+          "y": 12,
+          "width": 254,
+          "height": 26,
+          "src": "",
+          "style": {
+            "color": "#ffffff",
+            "fontSize": 20,
+            "fontWeight": "bold",
+            "textAlign": "right"
+          }
+        },
+        {
+          "id": "it_mu53ki6o_5",
+          "type": "text",
+          "name": "",
+          "text": "No.",
+          "binding": "no",
+          "x": 430,
+          "y": 40,
+          "width": 254,
+          "height": 15,
+          "src": "",
+          "style": {
+            "color": "#ffedd5",
+            "fontSize": 11,
+            "textAlign": "right"
+          }
+        },
+        {
+          "id": "it_mu53ki6o_6",
+          "type": "text",
+          "name": "",
+          "text": "Tanggal",
+          "binding": "date",
+          "x": 430,
+          "y": 56,
+          "width": 254,
+          "height": 14,
+          "src": "",
+          "style": {
+            "color": "#fed7aa",
+            "fontSize": 10,
+            "textAlign": "right"
+          }
+        },
+        {
+          "id": "it_mu53ki6o_7",
+          "type": "text",
+          "name": "",
+          "text": "Kepada:",
+          "binding": "",
+          "x": 430,
+          "y": 76,
+          "width": 100,
+          "height": 12,
+          "src": "",
+          "style": {
+            "color": "#fdba74",
+            "fontSize": 8
+          }
+        },
+        {
+          "id": "it_mu53ki6o_8",
+          "type": "text",
+          "name": "",
+          "text": "Penerima",
+          "binding": "customer.name",
+          "x": 430,
+          "y": 88,
+          "width": 254,
+          "height": 16,
+          "src": "",
+          "style": {
+            "color": "#ffffff",
+            "fontSize": 11,
+            "fontWeight": "bold"
+          }
+        },
+        {
+          "id": "it_mu53ki6o_9",
+          "type": "text",
+          "name": "",
+          "text": "Kota",
+          "binding": "customer.city",
+          "x": 430,
+          "y": 104,
+          "width": 254,
+          "height": 14,
+          "src": "",
+          "style": {
+            "color": "#fed7aa",
+            "fontSize": 10
+          }
+        },
+        {
+          "id": "it_mu53ki6o_a",
+          "type": "text",
+          "name": "",
+          "text": "",
+          "binding": "",
+          "x": 0,
+          "y": 124,
+          "width": 700,
+          "height": 26,
+          "src": "",
+          "style": {
+            "backgroundColor": "#7c2d12"
+          }
+        },
+        {
+          "id": "it_mu53ki6o_b",
+          "type": "text",
+          "name": "",
+          "text": "No",
+          "binding": "",
+          "x": 8,
+          "y": 130,
+          "width": 24,
+          "height": 14,
+          "src": "",
+          "style": {
+            "color": "#fed7aa",
+            "fontSize": 9,
+            "textAlign": "center"
+          }
+        },
+        {
+          "id": "it_mu53ki6o_c",
+          "type": "text",
+          "name": "",
+          "text": "KODE",
+          "binding": "",
+          "x": 40,
+          "y": 130,
+          "width": 90,
+          "height": 14,
+          "src": "",
+          "style": {
+            "color": "#fed7aa",
+            "fontSize": 9
+          }
+        },
+        {
+          "id": "it_mu53ki6o_d",
+          "type": "text",
+          "name": "",
+          "text": "NAMA BARANG",
+          "binding": "",
+          "x": 140,
+          "y": 130,
+          "width": 300,
+          "height": 14,
+          "src": "",
+          "style": {
+            "color": "#fed7aa",
+            "fontSize": 9
+          }
+        },
+        {
+          "id": "it_mu53ki6o_e",
+          "type": "text",
+          "name": "",
+          "text": "QTY",
+          "binding": "",
+          "x": 450,
+          "y": 130,
+          "width": 60,
+          "height": 14,
+          "src": "",
+          "style": {
+            "color": "#fed7aa",
+            "fontSize": 9,
+            "textAlign": "right"
+          }
+        },
+        {
+          "id": "it_mu53ki6o_f",
+          "type": "text",
+          "name": "",
+          "text": "SATUAN",
+          "binding": "",
+          "x": 520,
+          "y": 130,
+          "width": 80,
+          "height": 14,
+          "src": "",
+          "style": {
+            "color": "#fed7aa",
+            "fontSize": 9,
+            "textAlign": "center"
+          }
+        },
+        {
+          "id": "it_mu53ki6o_g",
+          "type": "text",
+          "name": "",
+          "text": "KETERANGAN",
+          "binding": "",
+          "x": 610,
+          "y": 130,
+          "width": 82,
+          "height": 14,
+          "src": "",
+          "style": {
+            "color": "#fed7aa",
+            "fontSize": 9,
+            "textAlign": "right"
+          }
+        }
+      ]
+    },
+    "contentSection": {
+      "height": 26,
+      "visible": true,
+      "style": {},
+      "items": [
+        {
+          "id": "it_mu53ki6o_h",
+          "type": "text",
+          "name": "",
+          "text": "1",
+          "binding": "__row",
+          "x": 8,
+          "y": 5,
+          "width": 24,
+          "height": 16,
+          "src": "",
+          "style": {
+            "fontSize": 10,
+            "textAlign": "center",
+            "color": "#a8a29e"
+          }
+        },
+        {
+          "id": "it_mu53ki6o_i",
+          "type": "text",
+          "name": "",
+          "text": "Kode",
+          "binding": "code",
+          "x": 40,
+          "y": 5,
+          "width": 90,
+          "height": 16,
+          "src": "",
+          "style": {
+            "fontSize": 10,
+            "color": "#64748b",
+            "fontFamily": "ui-monospace,monospace"
+          }
+        },
+        {
+          "id": "it_mu53ki6o_j",
+          "type": "text",
+          "name": "",
+          "text": "Nama",
+          "binding": "name",
+          "x": 140,
+          "y": 5,
+          "width": 300,
+          "height": 16,
+          "src": "",
+          "style": {
+            "fontSize": 10
+          }
+        },
+        {
+          "id": "it_mu53ki6o_k",
+          "type": "text",
+          "name": "",
+          "text": "Qty",
+          "binding": "qty",
+          "x": 450,
+          "y": 5,
+          "width": 60,
+          "height": 16,
+          "src": "",
+          "style": {
+            "fontSize": 10,
+            "textAlign": "right"
+          }
+        },
+        {
+          "id": "it_mu53ki6o_l",
+          "type": "text",
+          "name": "",
+          "text": "Satuan",
+          "binding": "unit",
+          "x": 520,
+          "y": 5,
+          "width": 80,
+          "height": 16,
+          "src": "",
+          "style": {
+            "fontSize": 10,
+            "textAlign": "center",
+            "color": "#64748b"
+          }
+        },
+        {
+          "id": "it_mu53ki6o_m",
+          "type": "text",
+          "name": "",
+          "text": "Ket",
+          "binding": "note",
+          "x": 610,
+          "y": 5,
+          "width": 82,
+          "height": 16,
+          "src": "",
+          "style": {
+            "fontSize": 9,
+            "textAlign": "right",
+            "color": "#9a3412"
+          }
+        },
+        {
+          "id": "it_mu53ki6o_n",
+          "type": "line",
+          "name": "",
+          "text": "",
+          "binding": "",
+          "x": 0,
+          "y": 24,
+          "width": 700,
+          "height": 2,
+          "src": "",
+          "style": {
+            "borderColor": "#e7e5e4",
+            "borderWidth": 1
+          }
+        }
+      ],
+      "binding": "items",
+      "groups": []
+    },
+    "footerSection": {
+      "height": 150,
+      "visible": true,
+      "style": {},
+      "items": [
+        {
+          "id": "it_mu53ki6o_o",
+          "type": "text",
+          "name": "",
+          "text": "Keterangan:",
+          "binding": "",
+          "x": 16,
+          "y": 12,
+          "width": 100,
+          "height": 13,
+          "src": "",
+          "style": {
+            "fontSize": 9,
+            "color": "#9a3412",
+            "fontWeight": "bold"
+          }
+        },
+        {
+          "id": "it_mu53ki6o_p",
+          "type": "text",
+          "name": "",
+          "text": "Catatan",
+          "binding": "note",
+          "x": 16,
+          "y": 26,
+          "width": 340,
+          "height": 44,
+          "src": "",
+          "style": {
+            "fontSize": 10,
+            "color": "#57534e",
+            "backgroundColor": "#fafaf9",
+            "borderRadius": 6,
+            "padding": 6,
+            "lineHeight": 16
+          }
+        },
+        {
+          "id": "it_mu53ki6o_q",
+          "type": "text",
+          "name": "",
+          "text": "Pengirim,",
+          "binding": "",
+          "x": 40,
+          "y": 88,
+          "width": 150,
+          "height": 14,
+          "src": "",
+          "style": {
+            "fontSize": 10,
+            "color": "#44403c",
+            "textAlign": "center"
+          }
+        },
+        {
+          "id": "it_mu53ki6o_r",
+          "type": "text",
+          "name": "",
+          "text": "Kurir,",
+          "binding": "",
+          "x": 275,
+          "y": 88,
+          "width": 150,
+          "height": 14,
+          "src": "",
+          "style": {
+            "fontSize": 10,
+            "color": "#44403c",
+            "textAlign": "center"
+          }
+        },
+        {
+          "id": "it_mu53ki6o_s",
+          "type": "text",
+          "name": "",
+          "text": "Penerima,",
+          "binding": "",
+          "x": 510,
+          "y": 88,
+          "width": 150,
+          "height": 14,
+          "src": "",
+          "style": {
+            "fontSize": 10,
+            "color": "#44403c",
+            "textAlign": "center"
+          }
+        },
+        {
+          "id": "it_mu53ki6o_t",
+          "type": "line",
+          "name": "",
+          "text": "",
+          "binding": "",
+          "x": 55,
+          "y": 128,
+          "width": 120,
+          "height": 2,
+          "src": "",
+          "style": {
+            "borderColor": "#a8a29e",
+            "borderWidth": 1
+          }
+        },
+        {
+          "id": "it_mu53ki6o_u",
+          "type": "line",
+          "name": "",
+          "text": "",
+          "binding": "",
+          "x": 290,
+          "y": 128,
+          "width": 120,
+          "height": 2,
+          "src": "",
+          "style": {
+            "borderColor": "#a8a29e",
+            "borderWidth": 1
+          }
+        },
+        {
+          "id": "it_mu53ki6o_v",
+          "type": "line",
+          "name": "",
+          "text": "",
+          "binding": "",
+          "x": 525,
+          "y": 128,
+          "width": 120,
+          "height": 2,
+          "src": "",
+          "style": {
+            "borderColor": "#a8a29e",
+            "borderWidth": 1
+          }
+        },
+        {
+          "id": "it_mu53ki6o_w",
+          "type": "text",
+          "name": "",
+          "text": "( Nama jelas & cap )",
+          "binding": "",
+          "x": 40,
+          "y": 132,
+          "width": 150,
+          "height": 13,
+          "src": "",
+          "style": {
+            "fontSize": 9,
+            "color": "#a8a29e",
+            "textAlign": "center"
+          }
+        },
+        {
+          "id": "it_mu53ki6o_x",
+          "type": "text",
+          "name": "",
+          "text": "( Nama jelas & cap )",
+          "binding": "",
+          "x": 275,
+          "y": 132,
+          "width": 150,
+          "height": 13,
+          "src": "",
+          "style": {
+            "fontSize": 9,
+            "color": "#a8a29e",
+            "textAlign": "center"
+          }
+        },
+        {
+          "id": "it_mu53ki6o_y",
+          "type": "text",
+          "name": "",
+          "text": "( Nama jelas & cap )",
+          "binding": "",
+          "x": 510,
+          "y": 132,
+          "width": 150,
+          "height": 13,
+          "src": "",
+          "style": {
+            "fontSize": 9,
+            "color": "#a8a29e",
+            "textAlign": "center"
+          }
+        }
+      ]
+    },
+    "page": {
+      "paper": "A4",
+      "orientation": "portrait",
+      "margins": {
+        "top": 47,
+        "right": 47,
+        "bottom": 47,
+        "left": 47
+      },
+      "pagination": false
+    },
+    "pageHeaderSection": {
+      "height": 34,
+      "visible": false,
+      "style": {},
+      "items": []
+    },
+    "pageFooterSection": {
+      "height": 30,
+      "visible": false,
+      "style": {},
+      "items": []
+    }
+  },
+  "data": {
+    "company": "PT SATU SEJAHTERA",
+    "companyAddr": "Jl. Raya Sawangan No. 12, Depok",
+    "no": "SJ/2026/0917-03",
+    "date": "17 September 2026",
+    "customer": {
+      "name": "Toko Elektronik Barokah",
+      "city": "Jakarta Timur"
+    },
+    "items": [
+      {
+        "code": "BRG-001",
+        "name": "Laptop Pro 14\"",
+        "qty": 5,
+        "unit": "unit",
+        "note": "Baru"
+      },
+      {
+        "code": "BRG-014",
+        "name": "Mouse Wireless M2",
+        "qty": 25,
+        "unit": "pcs",
+        "note": ""
+      },
+      {
+        "code": "BRG-022",
+        "name": "Keyboard Mechanical RGB",
+        "qty": 10,
+        "unit": "pcs",
+        "note": ""
+      },
+      {
+        "code": "BRG-030",
+        "name": "Monitor LED 27\"",
+        "qty": 8,
+        "unit": "unit",
+        "note": "Fragile"
+      },
+      {
+        "code": "BRG-041",
+        "name": "Kabel HDMI 2 meter",
+        "qty": 30,
+        "unit": "pcs",
+        "note": ""
+      }
+    ],
+    "note": "Barang sudah dicek dan dalam kondisi baik saat serah terima. Segel box jangan dibuka sebelum diterima pembeli."
+  }
+}

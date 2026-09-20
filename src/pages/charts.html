@@ -1,0 +1,229 @@
+---
+path: pages/charts.html
+title: Grafik
+pageTitle: Grafik & Visualisasi
+crumb: Home|index.html, Komponen, Grafik
+description: Semua jenis grafik (line, area, bar, stacked, horizontal, donut, radial, sparkline) dibuat dengan SVG murni tanpa library eksternal.
+---
+<!--#navbar-->
+<button type="button" class="nav-icon-btn" title="Unduh grafik (PNG)"
+        onclick="window.toast('Grafik diunduh (demo).', 'success', 'Unduh')" aria-label="Unduh grafik">
+  <i data-icon="image" data-size="17"></i>
+</button>
+<button type="button" class="nav-icon-btn" title="Gambar ulang grafik"
+        onclick="window.dispatchEvent(new Event('resize')); window.toast('Grafik digambar ulang.', 'info', 'Grafik')" aria-label="Gambar ulang grafik">
+  <i data-icon="arrow-clockwise" data-size="17"></i>
+</button>
+<!--/#navbar-->
+
+<!--#actions-->
+<div class="nav-pills" role="tablist" aria-label="Tema grafik">
+  <button class="nav-link active" @click="$store.ui.setTheme('light')">Terang</button>
+  <button class="nav-link" @click="$store.ui.setTheme('dark')">Gelap</button>
+</div>
+<button class="btn btn-light" onclick="window.Charts.refreshAll(); window.toast('Semua grafik digambar ulang.','info','Grafik')"><i data-icon="arrow-clockwise"></i> Gambar ulang</button>
+<!--/#actions-->
+
+<div class="alert alert-primary items-start">
+  <i data-icon="lightning-charge" class="mt-0.5"></i>
+  <div>
+    <b>Tanpa Chart.js, tanpa CDN.</b> Semua grafik di halaman ini dirender oleh <code>assets/js/charts.js</code>
+    (± 20 KB) memakai SVG dan otomatis mengikuti warna skin/tema aktif — bukti bahwa template benar-benar bisa offline.
+    Grafik juga ikut berubah warna saat Anda mengganti skin di panel kanan.
+  </div>
+</div>
+
+<!-- ============== LINE & AREA ============== -->
+<div class="grid gap-4 xl:grid-cols-2">
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title">Garis multi-seri (dengan tooltip)</h3>
+      <div class="card-tools"><span class="badge badge-soft-info">Arahkan kursor ke grafik</span></div>
+    </div>
+    <div class="card-body">
+      <div class="chart" data-chart="line" data-height="280" data-formatter="compact" data-legend="true"
+           data-labels="Jan,Feb,Mar,Apr,Mei,Jun,Jul,Agu"
+           data-series='[{"name":"Penjualan","data":[42,48,51,47,58,62,66,72],"color":"primary"},{"name":"Target","data":[45,46,50,52,55,60,64,68],"color":"success","area":false,"dashed":true},{"name":"Biaya","data":[28,30,29,33,35,34,38,40],"color":"danger","area":false}]'></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h3 class="card-title">Area bertumpuk (gradien)</h3></div>
+    <div class="card-body">
+      <div class="chart" data-chart="area" data-height="280" data-formatter="compact"
+           data-labels="Sen,Sel,Rab,Kam,Jum,Sab,Min"
+           data-series='[{"name":"Kunjungan","data":[3200,4100,3800,4700,5200,6100,5600],"color":"info"}]'></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============== BAR ============== -->
+<div class="grid gap-4 xl:grid-cols-2">
+  <div class="card">
+    <div class="card-header"><h3 class="card-title">Batang berkelompok</h3></div>
+    <div class="card-body">
+      <div class="chart" data-chart="bar" data-height="270" data-formatter="compact" data-legend="true"
+           data-labels="Q1 2025,Q2 2025,Q3 2025,Q1 2026,Q2 2026,Q3 2026"
+           data-series='[{"name":"Ritel","data":[62,68,74,81,88,96],"color":"primary"},{"name":"B2B","data":[38,41,44,52,56,64],"color":"success"}]'></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h3 class="card-title">Batang bertumpuk</h3></div>
+    <div class="card-body">
+      <div class="chart" data-chart="stacked-bar" data-height="270" data-formatter="compact" data-legend="true"
+           data-labels="Jan,Feb,Mar,Apr,Mei,Jun,Jul,Agu"
+           data-series='[{"name":"Aplikasi","data":[42,48,51,47,58,62,66,72],"color":"primary"},{"name":"Web","data":[28,31,30,34,36,33,39,41],"color":"info"},{"name":"Offline","data":[12,14,15,18,16,20,22,21],"color":"warning"}]'></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============== DONUT / RADIAL / H-BAR ============== -->
+<div class="grid gap-4 lg:grid-cols-3">
+  <div class="card">
+    <div class="card-header"><h3 class="card-title">Donut (cincin)</h3></div>
+    <div class="card-body">
+      <div class="chart" data-chart="donut" data-height="230" data-center-label="Total order" data-legend="true"
+           data-labels="Selesai,Diproses,Dikirim,Dibatalkan" data-values="4820,1240,860,320"
+           data-colors="success,info,primary,danger"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h3 class="card-title">Radial (persen)</h3></div>
+    <div class="card-body">
+      <div class="grid grid-cols-2 gap-4">
+        <div class="chart" data-chart="radial" data-value="86" data-label="Penjualan" data-color="primary" data-size="132" data-formatter="percent"></div>
+        <div class="chart" data-chart="radial" data-value="62" data-label="Marketing" data-color="success" data-size="132" data-formatter="percent"></div>
+        <div class="chart" data-chart="radial" data-value="34" data-label="Operasional" data-color="warning" data-size="132" data-formatter="percent"></div>
+        <div class="chart" data-chart="radial" data-value="91" data-label="Kepuasan" data-color="info" data-size="132" data-formatter="percent"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h3 class="card-title">Batang horizontal</h3></div>
+    <div class="card-body">
+      <div class="chart" data-chart="hbar" data-color="primary" data-formatter="compact" data-height="200"
+           data-labels="Jakarta,Bandung,Surabaya,Medan,Denpasar" data-values="18420,12380,9640,5120,3480"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============== SPARKLINE ============== -->
+<div class="card">
+  <div class="card-header">
+    <h3 class="card-title">Sparkline (mini chart untuk kartu &amp; tabel)</h3>
+    <div class="card-tools"><span class="badge badge-light">Cocok untuk small-box / KPI</span></div>
+  </div>
+  <div class="card-body">
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div class="rounded border border-line p-3">
+        <div class="fs-8 uppercase tracking-wide text-muted-2">Pendapatan</div>
+        <div class="text-xl font-bold">Rp 128,4 jt</div>
+        <div class="chart h-12" data-chart="sparkline" data-color="var(--c-primary)" data-values="12,14,13,17,19,18,22,25,24,28,31" data-mode="area"></div>
+      </div>
+      <div class="rounded border border-line p-3">
+        <div class="fs-8 uppercase tracking-wide text-muted-2">Pengunjung</div>
+        <div class="text-xl font-bold">42.180</div>
+        <div class="chart h-12" data-chart="sparkline" data-color="var(--c-info)" data-values="30,33,31,36,40,38,44,46,45,48,52" data-mode="area"></div>
+      </div>
+      <div class="rounded border border-line p-3">
+        <div class="fs-8 uppercase tracking-wide text-muted-2">Order</div>
+        <div class="text-xl font-bold">1.284</div>
+        <div class="chart h-12" data-chart="sparkline" data-color="var(--c-success)" data-values="18,16,21,19,24,22,28,26,31,29,34" data-mode="bars"></div>
+      </div>
+      <div class="rounded border border-line p-3">
+        <div class="fs-8 uppercase tracking-wide text-muted-2">Retur</div>
+        <div class="text-xl font-bold">0,8%</div>
+        <div class="chart h-12" data-chart="sparkline" data-color="var(--c-danger)" data-values="9,7,8,6,7,5,6,4,5,3,2" data-mode="area"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============== TAB BERISI GRAFIK ============== -->
+<div class="card" x-data="tabs(0)">
+  <div class="card-header !pb-0">
+    <div class="nav-tabs border-0">
+      <button class="nav-link" :class="is(0) && 'active'" @click="select(0)">Ringkasan</button>
+      <button class="nav-link" :class="is(1) && 'active'" @click="select(1)">Keuangan</button>
+      <button class="nav-link" :class="is(2) && 'active'" @click="select(2)">Pengguna</button>
+    </div>
+  </div>
+  <div class="card-body">
+    <p class="fs-8 text-muted-2">
+      Grafik di dalam tab tersembunyi otomatis digambar ketika tab dibuka (tidak gepeng) berkat
+      <code>IntersectionObserver</code> di <code>charts.js</code>.
+    </p>
+    <div x-show="is(0)" x-transition.opacity>
+      <div class="chart" data-chart="line" data-height="260" data-formatter="compact" data-legend="true"
+           data-labels="Jan,Feb,Mar,Apr,Mei,Jun"
+           data-series='[{"name":"Aktivitas","data":[24,31,28,36,42,48],"color":"primary"},{"name":"Sesi","data":[18,22,20,26,30,34],"color":"info"}]'></div>
+    </div>
+    <div x-show="is(1)" x-cloak x-transition.opacity>
+      <div class="chart" data-chart="bar" data-height="260" data-formatter="idr"
+           data-labels="Q1,Q2,Q3,Q4" data-series='[{"name":"Laba","data":[124000000,158000000,172000000,196000000],"color":"success"}]'></div>
+    </div>
+    <div x-show="is(2)" x-cloak x-transition.opacity>
+      <div class="chart" data-chart="hbar" data-color="info" data-height="200"
+           data-labels="Pengguna baru,Pengguna aktif,Pengguna pasif,Churn"
+           data-values="1840,6420,920,140"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============== CONTOH API JS ============== -->
+<div class="card">
+  <div class="card-header">
+    <h3 class="card-title"><i data-icon="code-slash" class="text-primary"></i> Cara memakai lewat JavaScript</h3>
+  </div>
+  <div class="card-body">
+    <p class="text-sm text-muted-2">
+      Untuk data dinamis, panggil API berikut (semua parameter opsional kecuali yang bertanda *):
+    </p>
+<pre class="scrollbar-thin overflow-x-auto rounded bg-surface-2 p-3 text-[0.8rem] leading-relaxed"><code>// Ganti data grafik kapan saja — sudah otomatis mengikuti tema
+Charts.line(document.getElementById("grafik"), {
+  labels: ["Jan", "Feb", "Mar"],
+  height: 280,
+  formatter: "compact",          // number | compact | idr | percent
+  series: [
+    { name: "Penjualan", data: [42, 48, 51], color: "primary" },
+    { name: "Target",    data: [45, 46, 50], color: "success", area: false, dashed: true }
+  ]
+});
+
+Charts.bar(el,  { labels, series, stacked: true });
+Charts.hbar(el, { labels, values, color: "info" });
+Charts.donut(el,{ data: [{label:"A", value:10, color:"primary"}], centerLabel: "Total" });
+Charts.radial(el,{ value: 72, max: 100, color: "success", label: "Kuota" });
+Charts.sparkline(el, { data: [1,4,2,6,5,9], color: "#fff", type: "area" });
+Charts.refreshAll();            // gambar ulang semua grafik (mis. setelah ganti skin)</code></pre>
+    <div class="flex flex-wrap gap-2 mt-3">
+      <button class="btn btn-primary btn-sm" onclick="randomizeDemo()"><i data-icon="arrow-repeat"></i> Isi data acak</button>
+      <button class="btn btn-light btn-sm" onclick="window.Charts.refreshAll()"><i data-icon="arrow-clockwise"></i> Gambar ulang</button>
+    </div>
+    <p class="fs-8 text-muted-2 mt-3 mb-0">
+      Versi deklaratif juga tersedia: cukup tulis <code>data-chart="line"</code> + <code>data-values="…"</code>
+      pada sebuah <code>&lt;div&gt;</code>, maka grafik langsung muncul tanpa JS tambahan.
+    </p>
+  </div>
+</div>
+
+<script>
+  /* Demo memperbarui grafik dengan data acak memakai API JS */
+  function randomizeDemo() {
+    var host = document.querySelector("[data-chart='line']");
+    window.Charts.line(host, {
+      labels: ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu"],
+      height: 280,
+      formatter: "compact",
+      legend: true,
+      series: [
+        { name: "Penjualan", data: Array.from({ length: 8 }, () => 30 + Math.round(Math.random() * 45)), color: "primary" },
+        { name: "Target", data: Array.from({ length: 8 }, () => 40 + Math.round(Math.random() * 25)), color: "success", area: false, dashed: true }
+      ]
+    });
+    window.toast("Grafik diisi ulang dengan data acak.", "success", "Data diperbarui");
+  }
+</script>

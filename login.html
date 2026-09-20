@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light" data-skin="blue">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="Halaman masuk dua langkah (kata sandi lalu OTP 6 digit) dengan splash screen, hitung mundur kirim ulang, dan kunci layar saat verifikasi.">
+<title>Masuk · Aurivo Dash</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%23007bff'/%3E%3Cpath d='M8 3.2a4.8 4.8 0 1 0 0 9.6 4.8 4.8 0 0 0 0-9.6Zm0 1.4 2.4 3.6H8V4.6Z' fill='white'/%3E%3C/svg%3E">
+
+<!-- ================= ASET LOKAL (tanpa internet) =================
+     tailwind di-compile ke satu file, ikon & font ikut dibundel. -->
+<link rel="stylesheet" href="assets/css/app.css?v=19681127">
+<script src="assets/js/theme-boot.js?v=19681127"></script>
+
+<!-- Urutan penting: ikon → bahasa (i18n) → app (daftarkan komponen Alpine) → charts → Alpine -->
+<script defer src="assets/js/icons.js?v=19681127"></script>
+<script defer src="assets/js/i18n.js?v=19681127"></script>
+<script defer src="assets/js/app.js?v=19681127"></script>
+<script defer src="assets/js/lock.js?v=19681127"></script>
+<script defer src="assets/js/notify.js?v=19681127"></script>
+<script defer src="assets/js/aichat.js?v=19681127"></script>
+<script defer src="assets/js/charts.js?v=19681127"></script>
+<script defer src="assets/js/alpine.min.js?v=19681127"></script>
+
+
+</head>
+<body x-data class="auth-page has-splash">
+
+  <!-- Tombol tema di sudut kanan atas -->
+  <div class="fixed right-4 top-4 z-20">
+    <button type="button" class="btn btn-light shadow" @click="$store.ui.toggleTheme()">
+      <span x-show="$store.ui.theme === 'light'"><i data-icon="moon-stars"></i> Mode gelap</span>
+      <span x-show="$store.ui.theme === 'dark'" x-cloak><i data-icon="sun"></i> Mode terang</span>
+    </button>
+  </div>
+
+<!-- ============================== SPLASH SCREEN ============================== -->
+<div class="splash" id="splash" data-open="1" aria-hidden="true">
+  <div class="splash-inner">
+    <span class="splash-logo"><i data-icon="shield-lock" data-size="34"></i></span>
+    <div class="splash-nama">Bank<b>Nusantara</b></div>
+    <div class="splash-sub">Internet Banking</div>
+    <div class="splash-bar" aria-hidden="true"><i></i></div>
+    <div class="splash-status" data-splash-status aria-live="polite">Memuat aset lokal…</div>
+  </div>
+</div>
+<noscript><style>.splash { display: none !important; }</style></noscript>
+
+<main class="auth-card" x-data="masukFlow()">
+  <div class="auth-logo">
+    <span class="inline-grid h-12 w-12 place-items-center rounded-lg bg-primary text-white align-middle"><i data-icon="speedometer2" data-size="24"></i></span>
+    <div class="mt-2">Admin<b>LTE</b> <span class="text-muted-2 text-base">Tailwind</span></div>
+  </div>
+
+  <!-- =============================== LANGKAH 1 =============================== -->
+  <section x-show="langkah === 1" x-transition.opacity.duration.200ms>
+    <p class="mb-4 text-center text-sm text-muted-2">Masuk untuk melanjutkan ke dashboard</p>
+
+    <form @submit.prevent="kirim()" novalidate :class="validated && 'was-validated'">
+      <div class="mb-3">
+        <label class="form-label" for="email">Email</label>
+        <div class="input-group">
+          <span class="input-group-text"><i data-icon="envelope" data-size="14"></i></span>
+          <input id="email" type="email" class="form-control" placeholder="admin@perusahaan.id" x-model="email" required autocomplete="username">
+        </div>
+        <div class="invalid-feedback">Masukkan email yang valid.</div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label" for="password">Kata sandi</label>
+        <div class="input-group">
+          <span class="input-group-text"><i data-icon="lock" data-size="14"></i></span>
+          <input id="password" :type="show ? 'text' : 'password'" class="form-control" placeholder="••••••••" x-model="password" required minlength="6" autocomplete="current-password">
+          <button class="btn btn-light" type="button" @click="show = !show" :aria-label="show ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi'">
+            <span x-show="!show"><i data-icon="eye" data-size="15"></i></span>
+            <span x-show="show" x-cloak><i data-icon="eye-slash" data-size="15"></i></span>
+          </button>
+        </div>
+        <div class="invalid-feedback">Kata sandi minimal 6 karakter.</div>
+      </div>
+
+      <div class="mb-3 flex items-center justify-between">
+        <label class="form-check mb-0">
+          <input type="checkbox" class="form-check-input" x-model="remember">
+          <span class="text-sm">Ingat saya</span>
+        </label>
+        <a href="#" class="text-sm" @click.prevent="window.toast($store.i18n.t('Tautan reset kata sandi dikirim (demo).'),'info',$store.i18n.t('Lupa sandi'))">Lupa kata sandi?</a>
+      </div>
+
+      <button class="btn btn-primary btn-block btn-lg" type="submit" :disabled="loading">
+        <span x-show="!loading"><i data-icon="box-arrow-in-right"></i> Masuk</span>
+        <span x-show="loading" x-cloak class="flex items-center gap-2"><span class="spinner !h-4 !w-4 !border-2"></span> Memeriksa…</span>
+      </button>
+
+      <div class="divider my-4"><span>atau</span></div>
+
+      <div class="grid grid-cols-2 gap-2">
+        <button class="btn btn-light" type="button" @click="fillDemo()"><i data-icon="person-check"></i> Isi demo</button>
+        <a href="pages/index.html" class="btn btn-outline-secondary"><i data-icon="box-arrow-up-right"></i> Dashboard</a>
+      </div>
+
+      <div class="alert alert-info items-start mt-4 mb-0">
+        <i data-icon="info-circle-fill" class="mt-0.5"></i>
+        <div class="fs-8">
+          <b>Kredensial demo:</b> admin@perusahaan.id / admin123 — lanjut ke langkah OTP.
+          Ini contoh tampilan saja, autentikasi sungguhan harus divalidasi di server.
+        </div>
+      </div>
+    </form>
+
+    <p class="mb-0 mt-4 text-center text-sm text-muted-2">
+      Belum punya akun? <a href="register.html" class="font-semibold">Daftar sekarang</a>
+    </p>
+  </section>
+
+  <!-- =============================== LANGKAH 2 (OTP) =============================== -->
+  <section x-show="langkah === 2" x-cloak x-transition.opacity.duration.200ms>
+    <div class="mb-3 flex items-center gap-2">
+      <button type="button" class="btn btn-light btn-sm" @click="kembali()" aria-label="Kembali ke langkah kata sandi">
+        <i data-icon="arrow-left" data-size="14"></i>
+      </button>
+      <div class="min-w-0">
+        <div class="font-semibold leading-tight">Verifikasi dua langkah</div>
+        <div class="fs-8 text-muted-2 truncate">Kode dikirim ke <b x-text="email || 'admin@perusahaan.id'"></b></div>
+      </div>
+      <span class="badge badge-soft-success ml-auto">OTP</span>
+    </div>
+
+    <p class="mb-3 text-sm text-muted-2">
+      Masukkan <b>6 digit</b> kode OTP. Kode berlaku 2 menit dan hanya bisa dipakai sekali.
+    </p>
+
+    <form @submit.prevent="verifikasiKode()">
+      <div class="otp-baris mb-2" role="group" aria-label="Enam digit kode OTP">
+        <template x-for="i in 6" :key="i">
+          <input type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="1"
+                 class="otp-digit" :data-otp="i - 1" :aria-label="'Digit ' + i"
+                 :data-salah="salah ? '1' : '0'"
+                 @input="ketik(i - 1, $event)" @keydown="tombol(i - 1, $event)" @paste="tempel($event)">
+        </template>
+      </div>
+
+      <div class="otp-bar-bawah mb-3">
+        <span class="fs-8 text-muted-2" aria-live="polite">
+          <template x-if="hitung > 0">
+            <span>Kirim ulang dalam <b class="tabular-nums" x-text="hitung"></b> detik</span>
+          </template>
+          <template x-if="hitung <= 0">
+            <span>Belum menerima kode?</span>
+          </template>
+        </span>
+        <button type="button" class="btn btn-link btn-sm p-0" :disabled="hitung > 0" @click="kirimUlang()">Kirim ulang</button>
+      </div>
+
+      <div class="alert alert-warning items-start mb-3">
+        <i data-icon="shield-exclamation" class="mt-0.5"></i>
+        <div class="fs-8">
+          <b>Mode demo:</b> kode OTP tidak dikirim lewat SMS/email.
+          Kode Anda: <span class="otp-demo" data-otp-demo x-text="kodeOTP"></span>
+          <button type="button" class="btn btn-light btn-sm ml-1" @click="isiKodeOtomatis()">
+            <i data-icon="lightning-charge" data-size="13"></i> Isi otomatis
+          </button>
+        </div>
+      </div>
+
+      <button class="btn btn-primary btn-block btn-lg" type="submit" :disabled="verifikasi || kode.length !== 6">
+        <span x-show="!verifikasi"><i data-icon="shield-check"></i> Verifikasi &amp; masuk</span>
+        <span x-show="verifikasi" x-cloak class="flex items-center gap-2"><span class="spinner !h-4 !w-4 !border-2"></span> Memverifikasi…</span>
+      </button>
+    </form>
+
+    <label class="form-check mt-3">
+      <input type="checkbox" class="form-check-input" x-model="percaya">
+      <span class="text-sm">Percayai perangkat ini selama 30 hari</span>
+    </label>
+
+    <div class="callout callout-info mt-3 mb-0">
+      <b>Kunci layar.</b> Selama kode diverifikasi, seluruh halaman ditutup animasi kunci
+      layar (<code>window.Lock</code>) supaya isi formulir tidak bisa diubah di tengah proses.
+    </div>
+  </section>
+</main>
+
+<script>
+  /* T() — terjemahkan teks JS lewat kamus i18n (fallback: teks aslinya) */
+  function T(s) { return (window.I18n && window.I18n.t) ? window.I18n.t(s, s) : s; }
+
+  /* ---------------- Splash screen: tampil sampai halaman benar-benar siap ---------------- */
+  (function () {
+    var sp = document.getElementById("splash");
+    if (!sp) return;
+    var status = sp.querySelector("[data-splash-status]");
+    var tahap = ["Memuat aset lokal…", "Menyiapkan koneksi aman…", "Menyiapkan formulir masuk…"];
+    var i = 0;
+    var t = setInterval(function () {
+      i += 1;
+      if (status && tahap[i]) status.textContent = tahap[i];
+    }, 480);
+    var selesai = false;
+    function tutup() {
+      if (selesai) return;
+      selesai = true;
+      clearInterval(t);
+      sp.setAttribute("data-open", "0");
+      setTimeout(function () { if (sp.parentNode) sp.parentNode.removeChild(sp); }, 520);
+    }
+    window.addEventListener("load", function () { setTimeout(tutup, 850); });
+    setTimeout(tutup, 3400);            /* jaring pengaman agar tidak pernah mengunci halaman */
+    document.addEventListener("keydown", tutup, { once: true });
+  })();
+
+  /* ---------------- Alur masuk: kata sandi → OTP 6 digit ---------------- */
+  document.addEventListener("alpine:init", function () {
+    Alpine.data("masukFlow", function () {
+      return {
+        langkah: 1,
+        email: "",
+        password: "",
+        remember: true,
+        percaya: true,
+        show: false,
+        validated: false,
+        loading: false,
+        verifikasi: false,
+        salah: false,
+        otp: ["", "", "", "", "", ""],
+        kodeOTP: "",
+        hitung: 0,
+        _timer: null,
+        _gerbang: 0,          /* penjaga urutan: hide hanya berlaku untuk overlay terbaru */
+
+        get kode() { return this.otp.join(""); },
+
+        /* --- penjaga overlay kunci layar (hindari race antar tahap) --- */
+        kunci: function (o) {
+          if (window.Lock) window.Lock.show(o);
+          this._gerbang += 1;
+          return this._gerbang;
+        },
+        kunciNanti: function (g, ms) {
+          var self = this;
+          setTimeout(function () {
+            if (window.Lock && self._gerbang === g) window.Lock.hide();
+          }, ms || 700);
+        },
+        kunciTutup: function (g) {
+          if (window.Lock && this._gerbang === g) window.Lock.hide();
+        },
+
+        /* --- langkah 1: periksa kredensial lalu kirim OTP --- */
+        fillDemo: function () {
+          this.email = "admin@perusahaan.id";
+          this.password = "admin123";
+          window.toast(T("Kredensial demo diisi."), "info", T("Demo"));
+        },
+
+        kirim: function () {
+          this.validated = true;
+          var form = this.$root.querySelector("form");
+          if (form && !form.checkValidity()) {
+            window.toast(T("Periksa kembali email dan kata sandi."), "danger", T("Validasi gagal"));
+            return;
+          }
+          var self = this;
+          this.loading = true;
+          var g = this.kunci({
+            mode: "form", title: "Memeriksa kredensial",
+            message: "Menyiapkan kode OTP satu kali pakai…"
+          });
+          setTimeout(function () {
+            self.loading = false;
+            var cocok = self.email === "admin@perusahaan.id" && self.password === "admin123";
+            if (!cocok) {
+              self.kunciTutup(g);
+              window.toast(T("Email atau kata sandi salah (demo)."), "danger", T("Gagal masuk"));
+              return;
+            }
+            self.buatKode();
+            self.langkah = 2;
+            self.mulaiHitung(60);
+            var g2 = self.kunci({
+              mode: "form", title: "Kode terkirim",
+              message: "Mengirim kode ke " + self.email + "…"
+            });
+            self.kunciNanti(g2, 700);
+            window.toast(T("Kode OTP dikirim (mode demo)."), "info", T("Verifikasi dua langkah"));
+            self.fokus(0);
+          }, 950);
+        },
+
+        /* --- OTP: kode demo & hitung mundur --- */
+        buatKode: function () {
+          this.kodeOTP = String(Math.floor(100000 + Math.random() * 900000));
+          this.otp = ["", "", "", "", "", ""];
+          this.salah = false;
+        },
+        mulaiHitung: function (detik) {
+          var self = this;
+          this.hitung = detik;
+          clearInterval(this._timer);
+          this._timer = setInterval(function () {
+            self.hitung -= 1;
+            if (self.hitung <= 0) { clearInterval(self._timer); self.hitung = 0; }
+          }, 1000);
+        },
+        kirimUlang: function () {
+          if (this.hitung > 0) return;
+          this.buatKode();
+          this.mulaiHitung(60);
+          window.toast(T("Kode OTP baru dikirim (demo)."), "success", T("Kirim ulang"));
+        },
+        fokus: function (i) {
+          var el = this.$root.querySelector('[data-otp="' + i + '"]');
+          if (el) { el.focus(); el.select(); }
+        },
+        ketik: function (i, ev) {
+          var v = String(ev.target.value || "").replace(/\D/g, "");
+          if (v.length > 1) v = v.slice(-1);
+          this.otp[i] = v;
+          ev.target.value = v;
+          this.salah = false;
+          if (v && i < 5) this.fokus(i + 1);
+          if (this.kode.length === 6 && this.otp.every(function (d) { return d; })) this.verifikasiKode();
+        },
+        tombol: function (i, ev) {
+          if (ev.key === "Backspace" && !this.otp[i] && i > 0) { this.otp[i - 1] = ""; this.fokus(i - 1); }
+          if (ev.key === "ArrowLeft" && i > 0) this.fokus(i - 1);
+          if (ev.key === "ArrowRight" && i < 5) this.fokus(i + 1);
+        },
+        tempel: function (ev) {
+          var teks = (ev.clipboardData || window.clipboardData).getData("text") || "";
+          var digit = teks.replace(/\D/g, "").slice(0, 6).split("");
+          if (!digit.length) return;
+          ev.preventDefault();
+          var self = this;
+          digit.forEach(function (d, i) { self.otp[i] = d; });
+          var kotak = this.$root.querySelectorAll("[data-otp]");
+          kotak.forEach(function (el, i) { el.value = self.otp[i] || ""; });
+          this.fokus(Math.min(digit.length, 5));
+          if (digit.length === 6) this.verifikasiKode();
+        },
+        isiKodeOtomatis: function () {
+          var self = this;
+          this.kodeOTP.split("").forEach(function (d, i) { self.otp[i] = d; });
+          var kotak = this.$root.querySelectorAll("[data-otp]");
+          kotak.forEach(function (el, i) { el.value = self.otp[i] || ""; });
+          this.fokus(5);
+        },
+        kembali: function () {
+          clearInterval(this._timer);
+          this.langkah = 1;
+          this.otp = ["", "", "", "", "", ""];
+          this.salah = false;
+        },
+
+        /* --- langkah 2: verifikasi kode (dengan kunci layar) --- */
+        verifikasiKode: function () {
+          if (this.verifikasi || this.kode.length !== 6) return;
+          var self = this;
+          this.verifikasi = true;
+          this.kunci({
+            mode: "screen", tone: "primary",
+            title: "Memverifikasi kode",
+            message: "Jangan tutup halaman ini…"
+          });
+          setTimeout(function () {
+            self.verifikasi = false;
+            if (self.kode === self.kodeOTP) {
+              var g = self.kunci({
+                mode: "screen", tone: "primary", title: "Selamat datang",
+                message: "Berhasil. Mengalihkan ke dashboard…"
+              });
+              self.kunciNanti(g, 900);
+              window.toast(T("Berhasil masuk. Mengalihkan ke dashboard…"), "success", T("Selamat datang"));
+              setTimeout(function () { window.location.href = "pages/index.html"; }, 1200);
+            } else {
+              var gs = self.kunci({
+                mode: "screen", tone: "danger", title: "Kode OTP salah",
+                message: "Masukkan ulang 6 digit kode terbaru."
+              });
+              self.kunciNanti(gs, 900);
+              self.salah = true;
+              window.toast(T("Kode OTP tidak cocok. Coba lagi."), "danger", T("Verifikasi gagal"));
+              self.otp = ["", "", "", "", "", ""];
+              self.$root.querySelectorAll("[data-otp]").forEach(function (el) { el.value = ""; });
+              self.fokus(0);
+            }
+          }, 1100);
+        }
+      };
+    });
+  });
+</script>
+
+  <!-- ===================== TOAST ===================== -->
+<div class="pointer-events-none fixed right-4 top-20 z-[100] flex w-[22rem] max-w-[92vw] flex-col gap-2 no-print"
+     aria-live="polite" aria-atomic="true">
+  <template x-for="t in $store.toasts.items" :key="t.id">
+    <div class="toast pointer-events-auto"
+         :class="'toast-' + t.type"
+         x-transition:enter="transition ease-out duration-200"
+         x-transition:enter-start="opacity-0 translate-x-6"
+         x-transition:leave="transition ease-in duration-150"
+         x-transition:leave-end="opacity-0 translate-x-6">
+      <span class="mt-0.5 flex-none"
+            :class="{
+              'text-success': t.type === 'success',
+              'text-danger': t.type === 'danger',
+              'text-warning': t.type === 'warning',
+              'text-info': t.type === 'info',
+              'text-primary': !['success','danger','warning','info'].includes(t.type)
+            }">
+        <i data-icon="check-circle-fill" x-show="t.type === 'success'"></i>
+        <i data-icon="exclamation-triangle-fill" x-show="t.type === 'danger' || t.type === 'warning'" x-cloak></i>
+        <i data-icon="info-circle-fill" x-show="!['success','danger','warning'].includes(t.type)" x-cloak></i>
+      </span>
+      <div class="min-w-0 flex-1">
+        <strong class="block text-sm" x-text="t.title" x-show="t.title"></strong>
+        <span class="block text-sm" x-text="t.message"></span>
+      </div>
+      <button class="link-muted flex-none" @click="$store.toasts.remove(t.id)" aria-label="Tutup notifikasi">
+        <i data-icon="x-lg" data-size="13"></i>
+      </button>
+    </div>
+  </template>
+</div>
+
+<!-- ===================== DIALOG KONFIRMASI ===================== -->
+<div class="no-print">
+  <template x-if="$store.dialog.open">
+    <div class="modal-backdrop" @keydown.escape.window="$store.dialog.cancel()">
+      <div class="modal-panel" role="dialog" aria-modal="true">
+        <div class="modal-header">
+          <span class="grid h-9 w-9 flex-none place-items-center rounded-full"
+                :class="$store.dialog.tone === 'danger' ? 'bg-danger/15 text-danger' : 'bg-primary/15 text-primary'">
+            <i data-icon="exclamation-triangle-fill" data-size="18" x-show="$store.dialog.tone === 'danger'"></i>
+            <i data-icon="question-circle" data-size="18" x-show="$store.dialog.tone !== 'danger'" x-cloak></i>
+          </span>
+          <h3 class="m-0 text-lg font-semibold" x-text="$store.dialog.title"></h3>
+        </div>
+        <div class="modal-body">
+          <p class="m-0 text-muted-2" x-text="$store.dialog.message"></p>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-light" @click="$store.dialog.cancel()" x-text="$store.dialog.cancelText"></button>
+          <button class="btn" :class="$store.dialog.tone === 'danger' ? 'btn-danger' : 'btn-primary'"
+                  @click="$store.dialog.confirm()" x-text="$store.dialog.confirmText"></button>
+        </div>
+      </div>
+    </div>
+  </template>
+</div>
+
+<!-- ===================== TOMBOL ATAS ===================== -->
+<button class="no-print fixed bottom-[5.8rem] right-5 z-[70] grid h-11 w-11 place-items-center rounded-full bg-primary text-primary-fg shadow-lg transition hover:brightness-110"
+        data-back-to-top aria-label="Kembali ke atas"
+        x-data="{ show:false }" x-init="window.addEventListener('scroll', () => show = window.scrollY > 320)"
+        x-show="show" x-cloak x-transition.opacity>
+  <i data-icon="arrow-up-short" data-size="22"></i>
+</button>
+
+</body>
+</html>

@@ -1,0 +1,1329 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light" data-skin="blue">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="Halaman penjadwal (scheduler) — job terjadwal mingguan, autodebet, laporan, dan rekonsiliasi dengan agenda pekan, aksi Jalankan/Jeda, serta riwayat eksekusi.">
+<title>Scheduler · Aurivo Dash</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%23007bff'/%3E%3Cpath d='M8 3.2a4.8 4.8 0 1 0 0 9.6 4.8 4.8 0 0 0 0-9.6Zm0 1.4 2.4 3.6H8V4.6Z' fill='white'/%3E%3C/svg%3E">
+
+<!-- ================= ASET LOKAL (tanpa internet) =================
+     tailwind di-compile ke satu file, ikon & font ikut dibundel. -->
+<link rel="stylesheet" href="../assets/css/app.css?v=19681127">
+<script src="../assets/js/theme-boot.js?v=19681127"></script>
+
+<!-- Urutan penting: ikon → bahasa (i18n) → app (daftarkan komponen Alpine) → charts → Alpine -->
+<script defer src="../assets/js/icons.js?v=19681127"></script>
+<script defer src="../assets/js/i18n.js?v=19681127"></script>
+<script defer src="../assets/js/app.js?v=19681127"></script>
+<script defer src="../assets/js/lock.js?v=19681127"></script>
+<script defer src="../assets/js/notify.js?v=19681127"></script>
+<script defer src="../assets/js/aichat.js?v=19681127"></script>
+<script defer src="../assets/js/charts.js?v=19681127"></script>
+<script defer src="../assets/js/alpine.min.js?v=19681127"></script>
+<script defer src="../assets/js/notify.js"></script>
+
+</head>
+<body x-data data-page="shell" class="">
+
+  <!-- ===================== SIDEBAR (AdminLTE style) ===================== -->
+<aside class="app-sidebar" role="complementary" aria-label="Menu utama">
+  <!-- Brand -->
+  <a href="index.html" class="sidebar-brand">
+    <span class="flex items-center gap-2">
+      <span class="sidebar-chip grid h-8 w-8 place-items-center rounded">
+        <i data-icon="speedometer2" data-size="18"></i>
+      </span>
+      <span>Aurivo<b>Dash</b></span>
+    </span>
+  </a>
+
+  <!-- Pencarian menu -->
+  <div class="px-3 pt-3">
+    <label class="relative block">
+      <span class="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-sidebar-muted">
+        <i data-icon="search" data-size="13"></i>
+      </span>
+      <input type="search" x-data="{ q:'' }" x-model="q"
+             @input="document.querySelectorAll('.sidebar-body li[data-url]').forEach(function(li){ li.style.display = li.dataset.url.toLowerCase().includes($event.target.value.toLowerCase()) || !$event.target.value ? '' : 'none'; })"
+             class="sidebar-input rounded py-1.5 pl-8 pr-2 text-sm"
+             placeholder="Cari menu…" aria-label="Cari menu">
+    </label>
+  </div>
+
+  <nav class="sidebar-body scrollbar-thin mt-1">
+    <div class="nav-heading">Menu Utama</div>
+    <ul class="space-y-0.5 pb-4">
+      <li data-url="Dashboard">
+        <a href="index.html" class="side-link">
+          <span class="ico"><i data-icon="speedometer2"></i></span>
+          <span class="txt">Dashboard</span>
+          <span class="badge badge-primary">3</span>
+        </a>
+      </li>
+      <li data-url="Analitik Laporan">
+        <a href="analytics.html" class="side-link">
+          <span class="ico"><i data-icon="graph-up-arrow"></i></span>
+          <span class="txt">Analitik</span>
+          <span class="badge badge-success">Baru</span>
+        </a>
+      </li>
+      <li data-url="Tables Data Table Tabel Sederhana Kepala Sticky">
+        <button type="button" class="side-link w-full text-left" data-menu-toggle
+                :aria-expanded="$store.ui.menuOpen('tables')"
+                @click="$store.ui.toggleMenu('tables')">
+          <span class="ico"><i data-icon="table"></i></span>
+          <span class="txt">Tables</span>
+          <span class="badge badge-soft-info">5</span>
+          <i data-icon="chevron-right" class="caret" data-size="12"></i>
+        </button>
+        <div class="submenu-wrap" data-menu="tables" :class="!$store.ui.menuOpen('tables') && 'closed'">
+          <ul class="side-submenu">
+            <li data-url="Data Table Tabel Pintar">
+              <a href="tables.html" class="side-link">
+                <span class="ico"><i data-icon="card-checklist" data-size="14"></i></span>
+                <span class="txt">Data Table</span>
+              </a>
+            </li>
+            <li data-url="Tabel Sederhana Simple">
+              <a href="tables.html#tabel-sederhana" class="side-link">
+                <span class="ico"><i data-icon="layout-text-sidebar" data-size="14"></i></span>
+                <span class="txt">Tabel Sederhana</span>
+              </a>
+            </li>
+            <li data-url="Kepala Tabel Sticky Menempel">
+              <a href="tables.html#tabel-sticky" class="side-link">
+                <span class="ico"><i data-icon="arrow-down-up" data-size="14"></i></span>
+                <span class="txt">Kepala Tabel Sticky</span>
+              </a>
+            </li>
+            <li data-url="AG Grid Community Data Grid Interaktif">
+              <a href="ag-grid.html" class="side-link">
+                <span class="ico"><i data-icon="grid-3x3-gap" data-size="14"></i></span>
+                <span class="txt">AG Grid Community</span>
+                <span class="badge badge-soft-success">MIT</span>
+              </a>
+            </li>
+            <!-- Mini Grid: submenu bertingkat (4 contoh dari github.com/radianadhic/minigrid) -->
+            <li data-url="Mini Grid MiniGrid Contoh">
+              <button type="button" class="side-link w-full text-left" data-menu-toggle
+                      :aria-expanded="$store.ui.menuOpen('minigrid')"
+                      @click="$store.ui.toggleMenu('minigrid')">
+                <span class="ico"><i data-icon="grid-1x2" data-size="14"></i></span>
+                <span class="txt">Mini Grid</span>
+                <span class="badge badge-soft-primary">6</span>
+                <i data-icon="chevron-right" class="caret" data-size="12"></i>
+              </button>
+              <div class="submenu-wrap" data-menu="minigrid" :class="!$store.ui.menuOpen('minigrid') && 'closed'">
+                <ul class="side-submenu">
+                  <li data-url="Mini Grid 1 Skala Besar Virtual Scroll">
+                    <a href="mini-grid-1.html" class="side-link">
+                      <span class="ico"><i data-icon="speedometer2" data-size="13"></i></span>
+                      <span class="txt">Mini Grid 1</span>
+                    </a>
+                  </li>
+                  <li data-url="Mini Grid 2 CRUD Edit Inline Form Modal">
+                    <a href="mini-grid-2.html" class="side-link">
+                      <span class="ico"><i data-icon="pencil-square" data-size="13"></i></span>
+                      <span class="txt">Mini Grid 2</span>
+                    </a>
+                  </li>
+                  <li data-url="Mini Grid 3 Alur Persetujuan Approve Reject">
+                    <a href="mini-grid-3.html" class="side-link">
+                      <span class="ico"><i data-icon="check2-circle" data-size="13"></i></span>
+                      <span class="txt">Mini Grid 3</span>
+                    </a>
+                  </li>
+                  <li data-url="Mini Grid 4 Aksi Per Baris Row Actions">
+                    <a href="mini-grid-4.html" class="side-link">
+                      <span class="ico"><i data-icon="briefcase" data-size="13"></i></span>
+                      <span class="txt">Mini Grid 4</span>
+                    </a>
+                  </li>
+                  <li data-url="Mini Grid 5 Data dari API Refresh Status Muat">
+                    <a href="mini-grid-5.html" class="side-link">
+                      <span class="ico"><i data-icon="cloud-download" data-size="13"></i></span>
+                      <span class="txt">Mini Grid 5</span>
+                    </a>
+                  </li>
+                  <li data-url="Mini Grid 6 Mode Server-side Paging Server">
+                    <a href="mini-grid-6.html" class="side-link">
+                      <span class="ico"><i data-icon="hdd-network" data-size="13"></i></span>
+                      <span class="txt">Mini Grid 6</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </li>
+      <!-- Kartu: pembayaran kartu, QRIS, dan aplikasi nasabah -->
+      <li data-url="Kartu QRIS Credit Debit Aplikasi Nasabah Mobile">
+        <button type="button" class="side-link w-full text-left" data-menu-toggle
+                :aria-expanded="$store.ui.menuOpen('kartu')"
+                @click="$store.ui.toggleMenu('kartu')">
+          <span class="ico"><i data-icon="credit-card-2-front"></i></span>
+          <span class="txt">Kartu</span>
+          <span class="badge badge-soft-primary">3</span>
+          <i data-icon="chevron-right" class="caret" data-size="12"></i>
+        </button>
+        <div class="submenu-wrap" data-menu="kartu" :class="!$store.ui.menuOpen('kartu') && 'closed'">
+          <ul class="side-submenu">
+            <li data-url="Kartu dengan QRIS Kartu Bank 3D Balik QR">
+              <a href="kartu-qris.html" class="side-link">
+                <span class="ico"><i data-icon="credit-card" data-size="14"></i></span>
+                <span class="txt">Kartu dengan QRIS</span>
+                <span class="badge badge-soft-success">Baru</span>
+              </a>
+            </li>
+            <li data-url="QRIS QR Code Pembayaran Merchant">
+              <a href="qris.html" class="side-link">
+                <span class="ico"><i data-icon="qr-code" data-size="14"></i></span>
+                <span class="txt">QRIS</span>
+              </a>
+            </li>
+            <li data-url="Aplikasi Nasabah Mobile HP Customer">
+              <a href="../mobile/index.html" class="side-link">
+                <span class="ico"><i data-icon="phone" data-size="14"></i></span>
+                <span class="txt">Aplikasi Nasabah</span>
+                <span class="badge badge-soft-warning">Mobile</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </li>
+
+      <li data-url="Notifikasi Pemberitahuan Push">
+        <a href="notifications.html" class="side-link">
+          <span class="ico"><i data-icon="bell"></i></span>
+          <span class="txt">Notifikasi</span>
+          <span class="badge badge-soft-danger" x-show="$store.notif.belum('admin') > 0"
+                x-text="$store.notif.belum('admin')"></span>
+        </a>
+      </li>
+      <li data-url="Scheduler Penjadwal Job Terjadwal">
+        <a href="scheduler.html" class="side-link">
+          <span class="ico"><i data-icon="calendar-check"></i></span>
+          <span class="txt">Scheduler</span>
+          <span class="badge badge-soft-primary">4</span>
+        </a>
+      </li>
+
+      <li data-url="Formulir">
+        <a href="forms.html" class="side-link">
+          <span class="ico"><i data-icon="pencil-square"></i></span>
+          <span class="txt">Formulir</span>
+        </a>
+      </li>
+
+      <!-- Tools: aplikasi laporan SatuReport (github.com/radianadhic/satureport) -->
+      <li data-url="Tools Perkakas Laporan Report SatuReport">
+        <button type="button" class="side-link w-full text-left" data-menu-toggle
+                :aria-expanded="$store.ui.menuOpen('tools')"
+                @click="$store.ui.toggleMenu('tools')">
+          <span class="ico"><i data-icon="tools"></i></span>
+          <span class="txt">Tools</span>
+          <span class="badge badge-soft-warning">3</span>
+          <i data-icon="chevron-right" class="caret" data-size="12"></i>
+        </button>
+        <div class="submenu-wrap" data-menu="tools" :class="!$store.ui.menuOpen('tools') && 'closed'">
+          <ul class="side-submenu">
+            <li data-url="Report Design Designer Desainer Laporan Buat Rancang">
+              <a href="report-design.html" class="side-link">
+                <span class="ico"><i data-icon="brush" data-size="14"></i></span>
+                <span class="txt">Report Design</span>
+              </a>
+            </li>
+            <li data-url="Report Viewer Penampil Laporan Lihat Cetak">
+              <a href="report-viewer.html" class="side-link">
+                <span class="ico"><i data-icon="eye" data-size="14"></i></span>
+                <span class="txt">Report Viewer</span>
+              </a>
+            </li>
+            <li data-url="Report Example Contoh Galeri Sampel Template">
+              <a href="report-example.html" class="side-link">
+                <span class="ico"><i data-icon="clipboard-data" data-size="14"></i></span>
+                <span class="txt">Report Example</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </li>
+
+      <li class="nav-heading">Komponen</li>
+      <li data-url="Grafik Chart">
+        <a href="charts.html" class="side-link">
+          <span class="ico"><i data-icon="bar-chart-line"></i></span>
+          <span class="txt">Grafik</span>
+        </a>
+      </li>
+      <li data-url="Widget Kartu">
+        <a href="widgets.html" class="side-link">
+          <span class="ico"><i data-icon="grid-1x2"></i></span>
+          <span class="txt">Widget &amp; Kartu</span>
+        </a>
+      </li>
+      <li data-url="Kanban Papan Proyek">
+        <a href="kanban.html" class="side-link">
+          <span class="ico"><i data-icon="kanban"></i></span>
+          <span class="txt">Papan Kanban</span>
+        </a>
+      </li>
+      <li data-url="Ikon Font">
+        <a href="icons.html" class="side-link">
+          <span class="ico"><i data-icon="star"></i></span>
+          <span class="txt">Galeri Ikon</span>
+        </a>
+      </li>
+
+      <li class="nav-heading">Halaman</li>
+      <li data-url="Profil Pengguna">
+        <a href="profile.html" class="side-link">
+          <span class="ico"><i data-icon="person-circle"></i></span>
+          <span class="txt">Profil</span>
+        </a>
+      </li>
+      <li data-url="Invoice Faktur">
+        <a href="invoice.html" class="side-link">
+          <span class="ico"><i data-icon="receipt"></i></span>
+          <span class="txt">Invoice</span>
+        </a>
+      </li>
+
+      <!-- Treeview: multi level + badge -->
+      <li data-url="Halaman Lain Autentikasi Error">
+        <button type="button" class="side-link w-full text-left" data-menu-toggle
+                :aria-expanded="$store.ui.menuOpen('pages')"
+                @click="$store.ui.toggleMenu('pages')">
+          <span class="ico"><i data-icon="menu-button-wide"></i></span>
+          <span class="txt">Halaman Lain</span>
+          <span class="badge badge-warning">4</span>
+          <i data-icon="chevron-right" class="caret" data-size="12"></i>
+        </button>
+        <div class="submenu-wrap" data-menu="pages" :class="!$store.ui.menuOpen('pages') && 'closed'">
+          <ul class="side-submenu">
+            <li data-url="Masuk Login">
+              <a href="../login.html" class="side-link">
+                <span class="ico"><i data-icon="box-arrow-in-left" data-size="14"></i></span>
+                <span class="txt">Masuk (login)</span>
+              </a>
+            </li>
+            <li data-url="Daftar Register">
+              <a href="../register.html" class="side-link">
+                <span class="ico"><i data-icon="person-plus" data-size="14"></i></span>
+                <span class="txt">Daftar akun</span>
+              </a>
+            </li>
+            <li data-url="Error 404">
+              <a href="../404.html" class="side-link">
+                <span class="ico"><i data-icon="exclamation-triangle-fill" data-size="14"></i></span>
+                <span class="txt">Halaman 404</span>
+              </a>
+            </li>
+            <li data-url="Kembali Landing">
+              <a href="../index.html" class="side-link">
+                <span class="ico"><i data-icon="box-arrow-up-right" data-size="14"></i></span>
+                <span class="txt">Halaman demo</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </li>
+
+      <!-- Treeview kedua, menunjukkan sub-menu aktif otomatis -->
+      <li data-url="Pengaturan Sistem Preferensi">
+        <button type="button" class="side-link w-full text-left" data-menu-toggle
+                :aria-expanded="$store.ui.menuOpen('settings')"
+                @click="$store.ui.toggleMenu('settings')">
+          <span class="ico"><i data-icon="gear"></i></span>
+          <span class="txt">Pengaturan</span>
+          <i data-icon="chevron-right" class="caret" data-size="12"></i>
+        </button>
+        <div class="submenu-wrap" data-menu="settings" :class="!$store.ui.menuOpen('settings') && 'closed'">
+          <ul class="side-submenu">
+            <li data-url="Profil Perusahaan">
+              <a href="#" class="side-link" @click.prevent="$store.ui.toggleControl()">
+                <span class="ico"><i data-icon="sliders2" data-size="14"></i></span>
+                <span class="txt">Tampilan &amp; tema</span>
+              </a>
+            </li>
+            <li data-url="Peran Akses Pengguna">
+              <a href="profile.html" class="side-link">
+                <span class="ico"><i data-icon="shield-check" data-size="14"></i></span>
+                <span class="txt">Peran &amp; akses</span>
+              </a>
+            </li>
+            <li data-url="Log Aktivitas Audit">
+              <a href="analytics.html" class="side-link">
+                <span class="ico"><i data-icon="journal-text" data-size="14"></i></span>
+                <span class="txt">Log aktivitas</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- Footer sidebar -->
+  <div class="sidebar-footer border-t p-3">
+    <!-- Tombol keluar -->
+    <button type="button" class="side-link side-logout w-full text-left" title="Keluar dari sesi ini"
+            @click="$store.dialog.ask({
+              title: 'Keluar dari sesi ini?',
+              message: 'Anda akan keluar dari dashboard demo ini dan kembali ke halaman masuk.',
+              confirmText: 'Keluar',
+              tone: 'danger',
+              onConfirm: () => { window.location.href = 'login.html'; }
+            })">
+      <span class="ico"><i data-icon="box-arrow-right"></i></span>
+      <span class="txt">Keluar</span>
+    </button>
+
+    <div class="sidebar-meta mt-2 flex items-center justify-between text-[0.72rem]">
+      <span>Versi 1.0.0</span>
+      <span class="flex items-center gap-1"><i data-icon="wifi-off" data-size="12"></i> Offline ready</span>
+    </div>
+  </div>
+</aside>
+<div class="sidebar-backdrop" @click="$store.ui.closeMobile()" aria-hidden="true"></div>
+
+
+  <div class="app-wrapper">
+    <!-- ===================== NAVBAR ===================== -->
+<header class="app-navbar no-print">
+  <!-- 1. Toggle sidebar: di mobile membuka off-canvas, di desktop mengecilkan sidebar -->
+  <button type="button" class="nav-icon-btn" title="Buka/tutup sidebar (Ctrl+B)"
+          @click="window.matchMedia('(max-width: 1023.98px)').matches ? $store.ui.toggleMobile() : $store.ui.toggleCollapsed()"
+          aria-label="Buka atau tutup menu sidebar">
+    <i data-icon="list" data-size="20"></i>
+  </button>
+
+  <!-- 2. Pencarian global — mengisi ruang di sisi kiri (tersembunyi di layar sangat kecil) -->
+  <div class="navbar-search relative hidden flex-1 sm:block">
+    <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted">
+      <i data-icon="search" data-size="14"></i>
+    </span>
+    <input type="search" data-global-search placeholder="Cari apa pun…  (Ctrl + K)"
+           class="w-full rounded-full border border-line bg-surface-2 py-1.5 pl-9 pr-3 text-sm text-fg placeholder:text-muted focus:border-primary focus:bg-surface focus:outline-none focus:ring-2 focus:ring-primary/20"
+           aria-label="Pencarian global">
+  </div>
+
+  <!-- 3. Kumpulan aksi di sisi kanan:
+       [aksi khusus halaman] | pesan · notifikasi | bahasa · layar penuh · tema · panel | pengguna -->
+  <div class="ml-auto flex items-center gap-0.5">
+    <!-- Aksi khusus halaman ini (diisi dari blok #navbar di sumber halaman) -->
+    <div class="navbar-extra hidden items-center gap-1.5 md:flex"><button type="button" class="nav-icon-btn" title="Jalankan semua job yang jatuh tempo" aria-label="Jalankan job jatuh tempo"
+        onclick="schedAksi('tempo')">
+  <i data-icon="play-circle" data-size="17"></i>
+</button>
+<button type="button" class="nav-icon-btn" title="Tambah job" aria-label="Tambah job" onclick="schedAksi('tambah')">
+  <i data-icon="plus-lg" data-size="17"></i>
+</button><span class="nav-sep hidden md:block" aria-hidden="true"></span></div>
+
+    <!-- Kotak masuk -->
+    <div class="relative" x-data="dropdown">
+      <button type="button" class="nav-icon-btn relative" @click="toggle()" :aria-expanded="open" aria-label="Pesan masuk" title="Pesan masuk">
+        <i data-icon="envelope" data-size="18"></i>
+        <span class="navbar-badge bg-warning text-dark">3</span>
+      </button>
+      <div class="dropdown-menu absolute right-0 top-full z-50 mt-2 w-80" x-show="open" x-cloak x-transition.opacity.duration.150ms @click.outside="close()" @keydown.escape.window="close()">
+        <div class="dropdown-header flex items-center justify-between">
+          <span>3 pesan baru</span>
+          <button class="text-primary fs-8" @click="close()">Tandai dibaca</button>
+        </div>
+        <a href="#" class="dropdown-item items-start">
+          <span class="avatar avatar-sm bg-info">RS</span>
+          <span class="min-w-0">
+            <span class="block truncate text-sm font-semibold">Rani Setiawati</span>
+            <span class="block truncate fs-8 text-muted-2">Laporan kuartal sudah saya kirim…</span>
+          </span>
+        </a>
+        <a href="#" class="dropdown-item items-start">
+          <span class="avatar avatar-sm bg-success">BP</span>
+          <span class="min-w-0">
+            <span class="block truncate text-sm font-semibold">Budi Prakoso</span>
+            <span class="block truncate fs-8 text-muted-2">Tolong review PR #128 ya</span>
+          </span>
+        </a>
+        <a href="#" class="dropdown-item items-start">
+          <span class="avatar avatar-sm bg-danger">NM</span>
+          <span class="min-w-0">
+            <span class="block truncate text-sm font-semibold">Nadia Maharani</span>
+            <span class="block truncate fs-8 text-muted-2">Server staging down sejak 09:12</span>
+          </span>
+        </a>
+        <div class="dropdown-divider"></div>
+        <a href="#" class="dropdown-item justify-center !text-primary">Lihat semua pesan</a>
+      </div>
+    </div>
+
+    <!-- Notifikasi (dinamis: window.Notify / $store.notif) -->
+    <div class="relative" x-data="dropdown">
+      <button type="button" class="nav-icon-btn relative" @click="toggle()" :aria-expanded="open" aria-label="Notifikasi" title="Notifikasi">
+        <i data-icon="bell" data-size="18"></i>
+        <span class="navbar-badge bg-danger" x-show="$store.notif.belum('admin') > 0"
+              x-text="$store.notif.belum('admin')"></span>
+      </button>
+      <div class="dropdown-menu absolute right-0 top-full z-50 mt-2 w-80" x-show="open" x-cloak
+           x-transition.opacity.duration.150ms @click.outside="close()" @keydown.escape.window="close()">
+        <div class="dropdown-header flex items-center justify-between">
+          <span x-text="T($store.notif.belum('admin') + ' notifikasi baru')">0 notifikasi baru</span>
+          <button class="text-primary fs-8" @click="$store.notif.bacaSemua('admin')">Tandai dibaca</button>
+        </div>
+        <ul class="max-h-72 overflow-y-auto scrollbar-thin notif-tinjau">
+          <template x-for="n in $store.notif.lingkup('admin').slice(0, 6)" :key="n.id">
+            <li>
+              <button type="button" class="notif-baris" :data-baca="n.baca ? '1' : '0'" :data-tone="n.tone"
+                      @click="$store.notif.baca(n.id, 'admin')">
+                <span class="notif-ikon"><i :data-icon="n.ikon" data-size="15"></i></span>
+                <span class="notif-teks">
+                  <b x-text="n.judul"></b>
+                  <span x-text="n.pesan"></span>
+                  <i x-text="$store.notif.waktu(n.waktu) + ' · ' + $store.i18n.t(n.kategori)"></i>
+                </span>
+                <span class="notif-titik" x-show="!n.baca"></span>
+              </button>
+            </li>
+          </template>
+          <li class="px-4 py-3 text-sm text-muted-2" x-show="!$store.notif.lingkup('admin').length">
+            Tidak ada notifikasi.
+          </li>
+        </ul>
+        <div class="dropdown-divider"></div>
+        <div class="flex items-center justify-between gap-2 px-4 py-2">
+          <a href="notifications.html" class="dropdown-item !px-0 !py-0 !text-primary fs-8">Buka pusat notifikasi</a>
+          <button type="button" class="btn btn-light btn-sm" @click="$store.notif.uji('admin')">
+            <i data-icon="send" data-size="12"></i> Kirim uji
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pemisah: notifikasi ↔ aksi tampilan -->
+    <span class="nav-sep hidden md:block" aria-hidden="true"></span>
+
+    <!-- Pilih bahasa (Indonesia / English) -->
+    <div class="relative" x-data="dropdown">
+      <button type="button" class="nav-icon-btn" @click="toggle()" :aria-expanded="open"
+              title="Bahasa / Language" aria-label="Pilih bahasa">
+        <i data-icon="translate" data-size="17"></i>
+        <span class="lang-tag" x-text="$store.i18n.locale.toUpperCase()"></span>
+      </button>
+      <div class="dropdown-menu absolute right-0 top-full z-50 mt-2 w-52" x-show="open" x-cloak x-transition.opacity.duration.150ms @click.outside="close()" @keydown.escape.window="close()">
+        <div class="dropdown-header">Bahasa / Language</div>
+        <button class="dropdown-item justify-between" @click="$store.i18n.set('id'); close()">
+          <span><i data-icon="flag" data-size="14"></i> Bahasa Indonesia</span>
+          <i data-icon="check2" data-size="14" class="text-primary" x-show="$store.i18n.locale === 'id'"></i>
+        </button>
+        <button class="dropdown-item justify-between" @click="$store.i18n.set('en'); close()">
+          <span><i data-icon="translate" data-size="14"></i> English</span>
+          <i data-icon="check2" data-size="14" class="text-primary" x-show="$store.i18n.locale === 'en'"></i>
+        </button>
+        <div class="dropdown-divider"></div>
+        <p class="fs-8 text-muted-2 px-4 py-2 m-0">Pilihan bahasa tersimpan di peramban Anda.</p>
+      </div>
+    </div>
+
+    <!-- Layar penuh -->
+    <button type="button" class="nav-icon-btn hidden sm:inline-flex" title="Layar penuh"
+            @click="window.toggleFullscreen()"
+            aria-label="Layar penuh">
+      <i data-icon="arrows-fullscreen" data-size="17"></i>
+    </button>
+    <!-- Tema terang/gelap -->
+    <button type="button" class="nav-icon-btn" title="Ganti tema (.)" @click="$store.ui.toggleTheme()" aria-label="Ganti tema terang/gelap">
+      <span x-show="$store.ui.theme === 'light'"><i data-icon="moon-stars" data-size="17"></i></span>
+      <span x-show="$store.ui.theme === 'dark'" x-cloak><i data-icon="sun" data-size="17"></i></span>
+    </button>
+    <!-- Panel kontrol tampilan -->
+    <button type="button" class="nav-icon-btn" title="Pengaturan tampilan" @click="$store.ui.toggleControl()" aria-label="Pengaturan tampilan">
+      <i data-icon="sliders" data-size="17"></i>
+    </button>
+
+    <!-- Pemisah: aksi tampilan ↔ menu pengguna -->
+    <span class="nav-sep hidden md:block" aria-hidden="true"></span>
+
+    <!-- Menu pengguna -->
+    <div class="relative" x-data="dropdown">
+      <button type="button" class="flex items-center gap-2 rounded-full py-1 pl-1 pr-2 hover:bg-surface-2" @click="toggle()" :aria-expanded="open">
+        <span class="avatar avatar-sm">AS</span>
+        <span class="hidden text-left lg:block">
+          <span class="block text-[0.82rem] font-semibold leading-tight">Aulia S.</span>
+          <span class="block fs-8 text-muted-2">Admin</span>
+        </span>
+        <i data-icon="chevron-down" data-size="11" class="hidden lg:block"></i>
+      </button>
+      <div class="dropdown-menu absolute right-0 top-full z-50 mt-2 w-60" x-show="open" x-cloak x-transition.opacity.duration.150ms @click.outside="close()" @keydown.escape.window="close()">
+        <div class="flex items-center gap-3 px-4 py-3">
+          <span class="avatar avatar-lg">AS</span>
+          <span>
+            <span class="block font-semibold">Aulia Saputra</span>
+            <span class="block fs-8 text-muted-2">aulia@perusahaan.id</span>
+          </span>
+        </div>
+        <div class="dropdown-divider"></div>
+        <a href="profile.html" class="dropdown-item"><i data-icon="person"></i> Profil saya</a>
+        <a href="forms.html" class="dropdown-item"><i data-icon="gear"></i> Pengaturan akun</a>
+        <a href="invoice.html" class="dropdown-item"><i data-icon="receipt"></i> Tagihan &amp; invoice</a>
+        <button class="dropdown-item" @click="$store.dialog.ask({ title:'Keluar dari sesi?', message:'Anda akan keluar dari dashboard demo ini.', confirmText:'Keluar', tone:'danger', onConfirm: () => { window.location.href='../login.html'; } })">
+          <i data-icon="box-arrow-right"></i> Keluar
+        </button>
+      </div>
+    </div>
+  </div>
+</header>
+
+
+    <div class="flex flex-1 flex-col">
+      <!-- Header halaman: breadcrumb + judul + subjudul + aksi -->
+      <div class="content-header no-print" data-sticky-header>
+        <div class="content-header-inner" :class="$store.ui.container === 'boxed' && 'mx-auto max-w-[1440px]'">
+          <div class="content-header-main">
+            <nav aria-label="Breadcrumb">
+              <ol class="breadcrumb"><li><span class="breadcrumb-current" aria-current="page">Scheduler</span></li></ol>
+            </nav>
+            <h1 class="page-title">Scheduler</h1>
+            <p class="page-subtitle">Halaman penjadwal (scheduler) — job terjadwal mingguan, autodebet, laporan, dan rekonsiliasi dengan agenda pekan, aksi Jalankan/Jeda, serta riwayat eksekusi.</p>
+          </div>
+          <div class="page-actions"><button class="btn btn-light" onclick="schedAksi('tempo')">
+  <i data-icon="play-circle"></i> Jalankan yang jatuh tempo
+</button>
+<button class="btn btn-primary" onclick="schedAksi('tambah')">
+  <i data-icon="plus-lg"></i> Tambah job
+</button></div>
+        </div>
+      </div>
+
+      <main class="px-4 pb-5">
+        <div :class="$store.ui.container === 'boxed' && 'mx-auto max-w-[1440px]'">
+<!--#content-->
+
+<div x-data="schedulerApp()">
+<div class="callout callout-info">
+  <b>Penjadwal tiruan (tanpa server).</b> Semua job di halaman ini berjalan di peramban —
+  “menjalankan” sebuah job menambah entri pada riwayat eksekusi, mengirim notifikasi ke lonceng navbar,
+  dan memperbarui kartu ringkasan. Di produksi, bagian ini digantikan cron/queue di sisi server
+  (mis. <code>crontab</code>, Laravel Scheduler, atau Airflow) dan halaman ini hanya menampilkan statusnya.
+</div>
+
+<div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+  <div class="small-box">
+    <div class="small-box-body">
+      <span class="small-box-ikon bg-primary"><i data-icon="calendar-check" data-size="22"></i></span>
+      <div class="small-box-teks">
+        <span class="description-header" x-text="jobAktif().length">0</span>
+        <span class="description-text">Job aktif</span>
+      </div>
+    </div>
+    <a href="#" class="small-box-footer" @click.prevent="filterStatus = 'Aktif'">
+      Lihat yang aktif <i data-icon="chevron-right" data-size="13"></i>
+    </a>
+  </div>
+  <div class="small-box">
+    <div class="small-box-body">
+      <span class="small-box-ikon bg-info"><i data-icon="clock" data-size="22"></i></span>
+      <div class="small-box-teks">
+        <span class="description-header" x-text="jatuhTempoHariIni().length">0</span>
+        <span class="description-text">Jatuh tempo hari ini</span>
+      </div>
+    </div>
+    <a href="#" class="small-box-footer" @click.prevent="jalankanJatuhTempo()">
+      Jalankan sekarang <i data-icon="chevron-right" data-size="13"></i>
+    </a>
+  </div>
+  <div class="small-box">
+    <div class="small-box-body">
+      <span class="small-box-ikon bg-success"><i data-icon="check2-circle" data-size="22"></i></span>
+      <div class="small-box-teks">
+        <span class="description-header" x-text="hitungLog('Berhasil')">0</span>
+        <span class="description-text">Eksekusi berhasil</span>
+      </div>
+    </div>
+    <a href="#" class="small-box-footer" @click.prevent="filterStatus = 'Semua'">
+      Lihat riwayat <i data-icon="chevron-right" data-size="13"></i>
+    </a>
+  </div>
+  <div class="small-box">
+    <div class="small-box-body">
+      <span class="small-box-ikon bg-danger"><i data-icon="exclamation-triangle-fill" data-size="22"></i></span>
+      <div class="small-box-teks">
+        <span class="description-header" x-text="hitungLog('Gagal')">0</span>
+        <span class="description-text">Eksekusi gagal</span>
+      </div>
+    </div>
+    <a href="#" class="small-box-footer" @click.prevent="jalankanSemua()">
+      Uji jalankan semua <i data-icon="chevron-right" data-size="13"></i>
+    </a>
+  </div>
+</div>
+
+<div class="grid gap-4 lg:grid-cols-3 mt-4">
+  <!-- agenda pekan -->
+  <div class="card lg:col-span-2">
+    <div class="card-header">
+      <div>
+        <h2 class="card-title">Agenda pekan ini</h2>
+        <p class="card-subtitle" x-text="T('Hari ini ' + hariIniTeks() + ' · ' + jadwalHariIni() + ' job dijadwalkan')"></p>
+      </div>
+      <div class="card-tools">
+        <button class="btn btn-light btn-sm" @click="pekanSebelumnya()" aria-label="Pekan sebelumnya">
+          <i data-icon="chevron-left" data-size="13"></i> Pekan lalu
+        </button>
+        <button class="btn btn-light btn-sm" @click="pekan = 0">Minggu ini</button>
+        <button class="btn btn-light btn-sm" @click="pekanBerikutnya()" aria-label="Pekan berikutnya">
+          Pekan depan <i data-icon="chevron-right" data-size="13"></i>
+        </button>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="agenda">
+        <template x-for="(hari, i) in agenda()" :key="'d' + i">
+          <div class="agenda-hari" :class="hari.kini && 'kini'">
+            <div class="agenda-kepala">
+              <b x-text="T(hari.nama)"></b>
+              <span x-text="hari.tanggal"></span>
+            </div>
+            <div class="grid gap-1.5">
+              <template x-for="j in hari.job" :key="j.id">
+                <button type="button" class="agenda-job" :data-status="j.status"
+                        @click="bukaJob(j)" :title="j.nama + ' · ' + j.waktu">
+                  <i :data-icon="j.ikon" data-size="12"></i>
+                  <span x-text="j.nama"></span>
+                  <b x-text="j.waktu"></b>
+                </button>
+              </template>
+              <span class="fs-8 text-muted-2" x-show="!hari.job.length">Tidak ada job</span>
+            </div>
+          </div>
+        </template>
+      </div>
+    </div>
+  </div>
+
+  <!-- ringkasan status -->
+  <div class="card">
+    <div class="card-header">
+      <h2 class="card-title">Status penjadwal</h2>
+      <p class="card-subtitle">Ringkasan cepat</p>
+    </div>
+    <div class="card-body grid gap-3">
+      <div>
+        <div class="flex items-center justify-between text-sm mb-1">
+          <span>Tingkat keberhasilan</span><b x-text="tingkatBerhasil() + '%'"></b>
+        </div>
+        <div class="progress"><div class="progress-bar bg-success" :style="'width:' + tingkatBerhasil() + '%'"></div></div>
+      </div>
+      <div class="widget-row">
+        <span class="widget-row-ikon bg-primary"><i data-icon="clock-history" data-size="15"></i></span>
+        <span class="widget-row-teks"><b>Job berikutnya</b><span x-text="berikutnya()"></span></span>
+      </div>
+      <div class="widget-row">
+        <span class="widget-row-ikon bg-warning"><i data-icon="hourglass-split" data-size="15"></i></span>
+        <span class="widget-row-teks"><b>Terakhir dieksekusi</b><span x-text="riwayat[0] ? (riwayat[0].nama + ' · ' + riwayat[0].waktu) : 'belum ada'"></span></span>
+      </div>
+      <div class="widget-row">
+        <span class="widget-row-ikon bg-info"><i data-icon="bell" data-size="15"></i></span>
+        <span class="widget-row-teks"><b>Notifikasi terkirim</b><span x-text="T($store.notif.lingkup('admin').filter(function (n) { return n.kategori === 'Jadwal'; }).length + ' notifikasi jadwal')"></span></span>
+      </div>
+      <button class="btn btn-light btn-block btn-sm" @click="jalankanSemua()">
+        <i data-icon="play-circle" data-size="13"></i> Uji jalankan semua job
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- daftar job -->
+<div class="card mt-4">
+  <div class="card-header cu-flex-wrap">
+    <div>
+      <h2 class="card-title">Daftar job</h2>
+      <p class="card-subtitle" x-text="T(tampil().length + ' job ditampilkan')"></p>
+    </div>
+    <div class="card-tools cu-flex-wrap">
+      <div class="input-group input-group-sm">
+        <span class="input-group-text"><i data-icon="search" data-size="13"></i></span>
+        <input class="form-control" type="search" placeholder="Cari job…" x-model="cari" aria-label="Cari job">
+      </div>
+      <template x-for="s in ['Semua','Aktif','Dijeda']" :key="s">
+        <button type="button" class="btn btn-sm" :class="filterStatus === s ? 'btn-primary' : 'btn-light'"
+                @click="filterStatus = s" x-text="$store.i18n.t(s)"></button>
+      </template>
+    </div>
+  </div>
+
+  <div class="card-body p-0">
+    <div class="table-wrap">
+      <table class="table table-hover align-middle mb-0">
+        <thead>
+          <tr>
+            <th>Job</th>
+            <th class="hidden md:table-cell">Jadwal</th>
+            <th class="hidden lg:table-cell">Berikutnya</th>
+            <th>Status</th>
+            <th class="w-40 text-right">Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          <template x-for="j in tampil()" :key="j.id">
+            <tr>
+              <td>
+                <div class="flex items-start gap-3">
+                  <span class="job-ikon" :data-jenis="j.jenis"><i :data-icon="j.ikon" data-size="15"></i></span>
+                  <span class="min-w-0">
+                    <b class="block text-sm" x-text="j.nama"></b>
+                    <span class="block fs-8 text-muted-2" x-text="j.target + ' · ' + $store.i18n.t(j.jenis)"></span>
+                    <span class="block fs-8 text-muted-2" x-text="T('Terakhir: ' + j.terakhir)"></span>
+                  </span>
+                </div>
+              </td>
+              <td class="hidden md:table-cell">
+                <code class="fs-8" x-text="j.cron"></code>
+                <span class="block fs-8 text-muted-2" x-text="T(j.jadwalTeks)"></span>
+              </td>
+              <td class="hidden lg:table-cell text-sm" x-text="T(j.berikutnya)"></td>
+              <td>
+                <span class="badge" :class="j.status === 'Aktif' ? 'badge-soft-success' : 'badge-soft-secondary'"
+                      x-text="$store.i18n.t(j.status)"></span>
+              </td>
+              <td class="text-right">
+                <div class="flex items-center justify-end gap-1">
+                  <button type="button" class="table-act" title="Jalankan sekarang" @click="jalankan(j)">
+                    <i data-icon="play-circle" data-size="14"></i>
+                  </button>
+                  <button type="button" class="table-act" :title="j.status === 'Aktif' ? 'Jeda' : 'Aktifkan'"
+                          @click="toggle(j)">
+                    <i :data-icon="j.status === 'Aktif' ? 'pause-circle' : 'play-circle'" data-size="14"></i>
+                  </button>
+                  <button type="button" class="table-act text-danger" title="Hapus job" @click="hapus(j)">
+                    <i data-icon="trash" data-size="14"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+    </div>
+    <div class="p-4 text-center text-muted-2 text-sm" x-show="!tampil().length">Tidak ada job yang cocok.</div>
+  </div>
+</div>
+
+<!-- riwayat eksekusi + detail -->
+<div class="grid gap-4 lg:grid-cols-2 mt-4">
+  <div class="card">
+    <div class="card-header">
+      <h2 class="card-title">Riwayat eksekusi</h2>
+      <div class="card-tools">
+        <span class="badge badge-soft-primary" x-text="riwayat.length + ' entri'"></span>
+        <button class="btn btn-light btn-sm" @click="bersihkanRiwayat()">
+          <i data-icon="trash" data-size="12"></i> Bersihkan
+        </button>
+      </div>
+    </div>
+    <div class="card-body p-0">
+      <ul class="timeline p-4">
+        <template x-for="r in riwayat.slice(0, 8)" :key="r.id">
+          <li>
+            <span class="timeline-marker" :class="r.status === 'Berhasil' ? 'bg-success' : 'bg-danger'">
+              <i :data-icon="r.status === 'Berhasil' ? 'check-lg' : 'x-lg'" data-size="12"></i>
+            </span>
+            <div class="timeline-panel">
+              <b x-text="r.nama"></b>
+              <div class="fs-8 text-muted-2" x-text="T(r.status) + ' · ' + T('durasi ' + r.durasi)"></div>
+              <div class="timeline-time mt-1"><i data-icon="clock" data-size="11"></i> <span x-text="T(r.waktu)"></span></div>
+            </div>
+          </li>
+        </template>
+        <li x-show="!riwayat.length">
+          <span class="timeline-marker bg-secondary"><i data-icon="dash" data-size="12"></i></span>
+          <div class="timeline-panel">Belum ada eksekusi.</div>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h2 class="card-title" x-text="terpilih ? terpilih.nama : 'Detail job'"></h2>
+      <p class="card-subtitle">Klik job pada agenda atau tabel untuk melihat rinciannya</p>
+    </div>
+    <div class="card-body" x-show="terpilih" x-cloak>
+      <template x-if="terpilih">
+        <div>
+      <dl class="detail-list">
+        <div><dt>Jenis</dt><dd x-text="$store.i18n.t(terpilih.jenis)"></dd></div>
+        <div><dt>Target</dt><dd x-text="terpilih.target"></dd></div>
+        <div><dt>Jadwal</dt><dd><code x-text="terpilih.cron"></code> · <span x-text="T(terpilih.jadwalTeks)"></span></dd></div>
+        <div><dt>Berikutnya</dt><dd x-text="terpilih.berikutnya"></dd></div>
+        <div><dt>Terakhir</dt><dd x-text="terpilih.terakhir"></dd></div>
+        <div><dt>Status</dt><dd><span class="badge" :class="terpilih.status === 'Aktif' ? 'badge-soft-success' : 'badge-soft-secondary'" x-text="$store.i18n.t(terpilih.status)"></span></dd></div>
+      </dl>
+      <div class="flex flex-wrap gap-2 mt-3">
+        <button class="btn btn-primary btn-sm" @click="jalankan(terpilih)"><i data-icon="play-circle" data-size="13"></i> Jalankan sekarang</button>
+        <button class="btn btn-light btn-sm" @click="toggle(terpilih)"><i data-icon="pause-circle" data-size="13"></i> Jeda / aktifkan</button>
+        <button class="btn btn-light btn-sm" @click="terpilih = null">Tutup detail</button>
+      </div>
+        </div>
+      </template>
+    </div>
+    <div class="card-body text-muted-2 text-sm" x-show="!terpilih">
+      Pilih job untuk melihat detailnya di sini.
+    </div>
+  </div>
+</div>
+
+</div><!-- /x-data -->
+
+<script>
+  /* tombol di header halaman & navbar berada di luar cakupan x-data,
+     jadi dipanggil lewat fungsi global yang meneruskan ke komponen Alpine */
+  function schedAksi(apa) {
+    var el = document.querySelector('[x-data^="schedulerApp"]');
+    if (!el || !window.Alpine) return;
+    var d = window.Alpine.$data(el);
+    if (apa === "tempo") d.jalankanJatuhTempo();
+    else if (apa === "tambah") d.bukaTambah();
+  }
+
+  function schedulerApp() {
+    var JOB = [
+      { id: "JB-1", nama: "Rekonsiliasi transaksi pagi", jenis: "Sistem", target: "Semua kanal · 12.480 transaksi",
+        cron: "0 6 * * *", jadwalTeks: "Setiap hari 06.00", hari: 1, waktu: "06:00", ikon: "arrow-repeat",
+        status: "Aktif", berikutnya: "Besok 06.00", terakhir: "Hari ini 06.00 · 42 detik" },
+      { id: "JB-2", nama: "Autodebet tagihan nasabah", jenis: "Tagihan", target: "1.284 nasabah terdaftar",
+        cron: "0 7 * * 1", jadwalTeks: "Setiap Senin 07.00", hari: 1, waktu: "07:00", ikon: "receipt",
+        status: "Aktif", berikutnya: "Senin 07.00", terakhir: "Senin lalu 07.00 · 1 mnt 12 dtk" },
+      { id: "JB-3", nama: "Laporan harian bank", jenis: "Laporan", target: "PDF ke direksi@perusahaan.id",
+        cron: "30 7 * * *", jadwalTeks: "Setiap hari 07.30", hari: 1, waktu: "07:30", ikon: "file-earmark-pdf",
+        status: "Aktif", berikutnya: "Besok 07.30", terakhir: "Hari ini 07.30 · 18 detik" },
+      { id: "JB-4", nama: "Sinkronisasi kurs & limit", jenis: "Sistem", target: "BI JISDOR + kata sandi limit",
+        cron: "*/30 * * * *", jadwalTeks: "Setiap 30 menit", hari: 0, waktu: "08:15", ikon: "arrow-repeat",
+        status: "Aktif", berikutnya: "45 menit lagi", terakhir: "30 menit lalu · 3 detik" },
+      { id: "JB-5", nama: "Cadangkan basis data", jenis: "Sistem", target: "Snapshot ke penyimpanan dingin",
+        cron: "0 2 * * *", jadwalTeks: "Setiap hari 02.00", hari: 1, waktu: "02:00", ikon: "hdd-stack",
+        status: "Aktif", berikutnya: "Besok 02.00", terakhir: "Hari ini 02.00 · 4 mnt 08 dtk" },
+      { id: "JB-6", nama: "Kirim promosi QRIS", jenis: "Pemasaran", target: "Segmen nasabah Gold (3.120)",
+        cron: "0 10 * * 5", jadwalTeks: "Setiap Jumat 10.00", hari: 5, waktu: "10:00", ikon: "gift",
+        status: "Dijeda", berikutnya: "—", terakhir: "Jumat lalu 10.00 · dibatalkan" },
+      { id: "JB-7", nama: "Pembersihan sesi kedaluwarsa", jenis: "Keamanan", target: "Token > 30 hari",
+        cron: "0 1 * * *", jadwalTeks: "Setiap hari 01.00", hari: 1, waktu: "01:00", ikon: "shield-check",
+        status: "Aktif", berikutnya: "Besok 01.00", terakhir: "Hari ini 01.00 · 11 detik" }
+    ];
+    var RIWAYAT = [
+      { id: "RH-1", nama: "Rekonsiliasi transaksi pagi", status: "Berhasil", waktu: "Hari ini 06:00", durasi: "42 detik" },
+      { id: "RH-2", nama: "Laporan harian bank", status: "Berhasil", waktu: "Hari ini 07:30", durasi: "18 detik" },
+      { id: "RH-3", nama: "Cadangkan basis data", status: "Berhasil", waktu: "Hari ini 02:00", durasi: "4 mnt 08 dtk" },
+      { id: "RH-4", nama: "Autodebet tagihan nasabah", status: "Gagal", waktu: "Kemarin 07:00", durasi: "— · 12 nasabah saldo kurang" },
+      { id: "RH-5", nama: "Kirim promosi QRIS", status: "Gagal", waktu: "Jumat lalu 10:00", durasi: "— · dibatalkan operator" }
+    ];
+    return {
+      job: JOB,
+      riwayat: RIWAYAT,
+      cari: "",
+      filterStatus: "Semua",
+      pekan: 0,
+      mulai: 0,
+      terpilih: null,
+
+      jobAktif: function () { return this.job.filter(function (j) { return j.status === "Aktif"; }); },
+      jatuhTempoHariIni: function () {
+        var t = this;
+        return this.jobAktif().filter(function (j) { return j.hari === 1 || j.cron.indexOf("*/30") === 0; });
+      },
+      hitungLog: function (kata) { return this.riwayat.filter(function (r) { return r.status === kata; }).length; },
+      tingkatBerhasil: function () {
+        if (!this.riwayat.length) return 100;
+        return Math.round(this.hitungLog("Berhasil") / this.riwayat.length * 100);
+      },
+      berikutnya: function () {
+        var a = this.jobAktif();
+        return a.length ? (a[0].nama + " · " + a[0].berikutnya) : "tidak ada job aktif";
+      },
+      hariIniTeks: function () {
+        var d = new Date();
+        return ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"][d.getDay()] + ", " +
+          d.getDate() + " " + ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"][d.getMonth()];
+      },
+      jadwalHariIni: function () { return this.jatuhTempoHariIni().length; },
+      pekanSebelumnya: function () { this.pekan -= 1; },
+      pekanBerikutnya: function () { this.pekan += 1; },
+      agenda: function () {
+        var nama = ["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"];
+        var kini = new Date();
+        var awal = new Date(kini.getTime() - ((kini.getDay() + 6) % 7) * 864e5 + this.pekan * 7 * 864e5);
+        var out = [];
+        for (var i = 0; i < 7; i++) {
+          var tgl = new Date(awal.getTime() + i * 864e5);
+          var indeks = tgl.getDay();                       // 0=Min … 6=Sab
+          var kolom = (indeks + 6) % 7;                    // Sen=0 … Min=6
+          var t = this;
+          var daftar = this.job.filter(function (j) {
+            if (j.cron.indexOf("*/30") === 0) return true;
+            if (j.hari === 0) return true;                 // harian
+            if (i === 0 && t.pekan === 0 && j.cron.indexOf("* 1") > -1) return true; // Senin mingguan
+            return kolom === 0 && j.cron.indexOf("* 1") > -1;
+          }).map(function (j) {
+            return { id: j.id, nama: j.nama, waktu: j.waktu, ikon: j.ikon,
+              status: j.status === "Dijeda" ? "Dijeda" : (t.riwayat.some(function (r) { return r.nama === j.nama && r.status === "Gagal"; }) ? "Gagal" : "Berhasil") };
+          });
+          if (this.pekan !== 0) {
+            /* pekan lain: tampilkan pola bulanan/mingguan sederhana */
+            daftar = this.job.map(function (j) {
+              return { id: j.id, nama: j.nama, waktu: j.waktu, ikon: j.ikon, status: j.status === "Dijeda" ? "Dijeda" : "Berhasil" };
+            }).slice(0, 3 + (i % 3));
+          }
+          out.push({
+            nama: nama[i], tanggal: tgl.getDate() + "/" + (tgl.getMonth() + 1),
+            kini: i === ((kini.getDay() + 6) % 7) && this.pekan === 0, job: daftar
+          });
+        }
+        return out;
+      },
+      tampil: function () {
+        var t = this;
+        return this.job.filter(function (j) {
+          if (t.filterStatus !== "Semua" && j.status !== t.filterStatus) return false;
+          if (t.cari && (j.nama + " " + j.target).toLowerCase().indexOf(t.cari.toLowerCase()) === -1) return false;
+          return true;
+        });
+      },
+      bukaJob: function (j) { this.terpilih = this.job.filter(function (x) { return x.id === j.id; })[0] || this.job[0]; },
+      toggle: function (j) {
+        j.status = j.status === "Aktif" ? "Dijeda" : "Aktif";
+        window.toast(window.I18n.t((j.status === "Aktif" ? "Job diaktifkan: " : "Job dijeda: ") + j.nama), "info", "Scheduler");
+      },
+      hapus: function (j) {
+        var self = this;
+        this.$store.dialog.ask({
+          title: "Hapus job ini?",
+          message: j.nama + " (" + j.cron + ") akan dihapus dari penjadwal.",
+          tone: "danger", confirmText: "Hapus",
+          onConfirm: function () {
+            self.job = self.job.filter(function (x) { return x.id !== j.id; });
+            if (self.terpilih && self.terpilih.id === j.id) self.terpilih = null;
+            window.toast(window.I18n.t("Job dihapus."), "danger", "Scheduler");
+          }
+        });
+      },
+      catat: function (j, gagal) {
+        var d = new Date();
+        var p = function (n) { return String(n).padStart(2, "0"); };
+        this.riwayat.unshift({
+          id: "RH-" + Math.floor(1000 + Math.random() * 8999), nama: j.nama,
+          status: gagal ? "Gagal" : "Berhasil",
+          waktu: p(d.getHours()) + ":" + p(d.getMinutes()) + " (uji)",
+          durasi: gagal ? "— · kesalahan sumber data" : Math.floor(1 + Math.random() * 60) + " detik"
+        });
+        j.terakhir = "Baru saja (uji)";
+      },
+      jalankan: function (j) {
+        var self = this;
+        if (window.Lock) {
+          window.Lock.show({ mode: "load", title: "Menjalankan job", message: j.nama + " · " + j.cron });
+        }
+        setTimeout(function () {
+          if (window.Lock) window.Lock.hide();
+          var gagal = Math.random() < 0.15;
+          self.catat(j, gagal);
+          if (window.Notify) {
+            window.Notify.push({
+              lingkup: "admin",
+              judul: gagal ? "Job gagal dieksekusi" : "Job dieksekusi",
+              pesan: j.nama + " · " + j.jadwalTeks + (gagal ? " · periksa log" : ""),
+              ikon: gagal ? "exclamation-triangle-fill" : "calendar-check",
+              tone: gagal ? "danger" : "success", kategori: "Jadwal", penting: gagal
+            });
+          }
+          window.toast(window.I18n.t((gagal ? "Job gagal: " : "Job selesai: ") + j.nama), gagal ? "danger" : "success", "Scheduler");
+        }, 900);
+      },
+      jalankanJatuhTempo: function () {
+        var self = this;
+        var daftar = this.jatuhTempoHariIni();
+        if (!daftar.length) { window.toast(window.I18n.t("Tidak ada job yang jatuh tempo."), "info", "Scheduler"); return; }
+        this.riwayat = [];
+        daftar.forEach(function (j, i) { setTimeout(function () { self.jalankan(j); }, i * 260); });
+        window.toast(window.I18n.t(daftar.length + " job jatuh tempo dijalankan."), "info", "Scheduler");
+      },
+      jalankanSemua: function () {
+        var self = this;
+        this.jobAktif().forEach(function (j, i) { setTimeout(function () { self.jalankan(j); }, i * 260); });
+      },
+      bersihkanRiwayat: function () { this.riwayat = []; window.toast(window.I18n.t("Riwayat eksekusi dibersihkan."), "info", "Scheduler"); },
+      bukaTambah: function () {
+        var self = this;
+        this.$store.dialog.ask({
+          title: "Tambah job terjadwal",
+          message: "Contoh interaktif: job “Uji laporan mingguan” (Setiap Senin 09.00) akan ditambahkan ke daftar job.",
+          confirmText: "Tambahkan",
+          onConfirm: function () {
+            self.job.unshift({
+              id: "JB-" + Math.floor(100 + Math.random() * 899), nama: "Uji laporan mingguan",
+              jenis: "Laporan", target: "PDF ke manajemen@perusahaan.id", cron: "0 9 * * 1",
+              jadwalTeks: "Setiap Senin 09.00", hari: 1, waktu: "09:00", ikon: "file-earmark-text",
+              status: "Aktif", berikutnya: "Senin 09.00", terakhir: "belum pernah"
+            });
+            window.toast(window.I18n.t("Job baru ditambahkan."), "success", "Scheduler");
+            if (window.Notify) {
+              window.Notify.push({
+                lingkup: "admin", judul: "Job baru dijadwalkan",
+                pesan: "Uji laporan mingguan · Setiap Senin 09.00", ikon: "calendar-plus",
+                tone: "info", kategori: "Jadwal"
+              });
+            }
+          }
+        });
+      }
+    };
+  }
+</script>
+        </div>
+      </main>
+    </div>
+
+    <!-- ===================== FOOTER ===================== -->
+<footer class="app-footer no-print">
+  <div class="flex flex-col items-start justify-between gap-2 sm:flex-row sm:items-center">
+    <p class="m-0">
+      <b>Aurivo Dash</b> &copy; <span data-year>2026</span> —
+      template dashboard perbankan <span class="font-semibold">Tailwind CSS v4</span> + <span class="font-semibold">Alpine.js</span>.
+      <span class="hidden sm:inline">Semua aset lokal, siap dipakai offline.</span>
+    </p>
+    <ul class="m-0 flex list-none flex-wrap items-center gap-4 p-0">
+      <li><a href="index.html" class="link-muted">Dashboard</a></li>
+      <li><a href="widgets.html" class="link-muted">Komponen</a></li>
+      <li class="flex items-center gap-1.5 text-muted-2">
+        <i data-icon="clock" data-size="13"></i><span data-clock>--:--:--</span>
+      </li>
+      <li>
+        <button class="link-muted flex items-center gap-1.5" data-back-to-top>
+          <i data-icon="arrow-up-short" data-size="15"></i> Ke atas
+        </button>
+      </li>
+    </ul>
+  </div>
+</footer>
+
+  </div>
+
+  <!-- ===================== PANEL KONTROL (tema & tampilan) ===================== -->
+<div class="no-print">
+  <!-- backdrop klik untuk menutup -->
+  <div class="fixed inset-0 z-[94] bg-black/40" x-show="$store.ui.controlPanel" x-cloak
+       x-transition.opacity.duration.200ms @click="$store.ui.toggleControl()"></div>
+
+  <aside class="control-sidebar" :data-open="$store.ui.controlPanel" x-cloak x-show="$store.ui.controlPanel"
+         aria-label="Pengaturan tampilan">
+    <div class="flex items-center justify-between border-b border-line px-4 py-3">
+      <h3 class="m-0 text-base font-semibold">Pengaturan tampilan</h3>
+      <button class="nav-icon-btn !h-8 !w-8" @click="$store.ui.toggleControl()" aria-label="Tutup panel">
+        <i data-icon="x-lg" data-size="15"></i>
+      </button>
+    </div>
+
+    <div class="scrollbar-thin flex-1 overflow-y-auto p-4">
+      <!-- Tema terang/gelap -->
+      <section class="mb-6">
+        <h4 class="mb-2 text-sm font-semibold uppercase tracking-wide text-muted-2">Mode warna</h4>
+        <div class="grid grid-cols-2 gap-2">
+          <button class="btn btn-light" :class="$store.ui.theme === 'light' && '!border-primary !text-primary'" @click="$store.ui.setTheme('light')">
+            <i data-icon="sun"></i> Terang
+          </button>
+          <button class="btn btn-light" :class="$store.ui.theme === 'dark' && '!border-primary !text-primary'" @click="$store.ui.setTheme('dark')">
+            <i data-icon="moon-stars"></i> Gelap
+          </button>
+        </div>
+      </section>
+
+      <!-- Preset perbankan (kombinasi tema + skin + sidebar) -->
+      <section class="mb-6">
+        <h4 class="mb-2 text-sm font-semibold uppercase tracking-wide text-muted-2">Preset bank</h4>
+        <div class="grid gap-2">
+          <template x-for="p in $store.ui.presets" :key="p.id">
+            <button type="button" class="preset-card" @click="$store.ui.applyPreset(p)"
+                    :data-active="$store.ui.theme === p.theme && $store.ui.skin === p.skin && $store.ui.sidebarMode === p.sidebar">
+              <span class="preset-dot" :style="'background:' + ({blue:'#007bff',navy:'#16385c',midnight:'#0e2a47',emerald:'#0f6b4a',burgundy:'#8a1f3d',graphite:'#334155',gold:'#a8842c',teal:'#0f6f7a',royal:'#3f3fb0',green:'#28a745',purple:'#6f42c1',red:'#dc3545',yellow:'#ffc107',black:'#343a40'})[p.skin]"></span>
+              <span class="min-w-0 text-left">
+                <b class="block truncate text-sm" x-text="$store.i18n.t(p.label)"></b>
+                <span class="block truncate fs-8 text-muted-2" x-text="$store.i18n.t(p.desc)"></span>
+              </span>
+              <i data-icon="check2-circle" data-size="15" class="ml-auto text-primary" x-show="$store.ui.theme === p.theme && $store.ui.skin === p.skin && $store.ui.sidebarMode === p.sidebar" x-cloak></i>
+            </button>
+          </template>
+        </div>
+      </section>
+
+      <!-- Skin warna -->
+      <section class="mb-6">
+        <h4 class="mb-2 text-sm font-semibold uppercase tracking-wide text-muted-2">Warna aksen</h4>
+        <div class="flex flex-wrap gap-2">
+          <template x-for="skin in [
+              {id:'blue',     c:'#007bff', label:'Biru'},
+              {id:'navy',     c:'#16385c', label:'Navy perbankan'},
+              {id:'midnight', c:'#0e2a47', label:'Navy tengah malam'},
+              {id:'emerald',  c:'#0f6b4a', label:'Zamrud'},
+              {id:'teal',     c:'#0f6f7a', label:'Toska'},
+              {id:'burgundy', c:'#8a1f3d', label:'Marun'},
+              {id:'gold',     c:'#a8842c', label:'Emas'},
+              {id:'graphite', c:'#334155', label:'Grafit'},
+              {id:'royal',    c:'#3f3fb0', label:'Indigo royal'},
+              {id:'green',    c:'#28a745', label:'Hijau'},
+              {id:'purple',   c:'#6f42c1', label:'Ungu'},
+              {id:'red',      c:'#dc3545', label:'Merah'},
+              {id:'yellow',   c:'#ffc107', label:'Kuning'},
+              {id:'black',    c:'#343a40', label:'Hitam'}
+            ]" :key="skin.id">
+            <button type="button" class="skin-swatch" :style="'background:' + skin.c"
+                    :data-active="$store.ui.skin === skin.id" :title="$store.i18n.t(skin.label)"
+                    :aria-label="'Warna aksen ' + skin.label"
+                    @click="$store.ui.setSkin(skin.id)"></button>
+          </template>
+        </div>
+        <p class="fs-8 text-muted-2 mt-2 mb-0">Warna aksen dipakai untuk tombol, grafik, tautan, dan menu aktif. Palet navy, zamrud, marun, emas, dan grafit dirancang untuk kebutuhan perbankan.</p>
+      </section>
+
+      <!-- Sidebar terang / gelap -->
+      <section class="mb-6">
+        <h4 class="mb-2 text-sm font-semibold uppercase tracking-wide text-muted-2">Gaya sidebar</h4>
+        <div class="grid grid-cols-2 gap-2">
+          <button class="btn btn-light" :class="$store.ui.sidebarMode === 'dark' && '!border-primary !text-primary'" @click="$store.ui.setSidebar('dark')">
+            <i data-icon="moon" data-size="15"></i> Gelap
+          </button>
+          <button class="btn btn-light" :class="$store.ui.sidebarMode === 'light' && '!border-primary !text-primary'" @click="$store.ui.setSidebar('light')">
+            <i data-icon="sun" data-size="15"></i> Terang
+          </button>
+        </div>
+      </section>
+
+      <!-- Bahasa -->
+      <section class="mb-6">
+        <h4 class="mb-2 text-sm font-semibold uppercase tracking-wide text-muted-2">Bahasa / Language</h4>
+        <div class="grid grid-cols-2 gap-2">
+          <button class="btn btn-light" :class="$store.i18n.locale === 'id' && '!border-primary !text-primary'" @click="$store.i18n.set('id')">
+            <i data-icon="flag" data-size="15"></i> Indonesia
+          </button>
+          <button class="btn btn-light" :class="$store.i18n.locale === 'en' && '!border-primary !text-primary'" @click="$store.i18n.set('en')">
+            <i data-icon="translate" data-size="15"></i> English
+          </button>
+        </div>
+        <p class="fs-8 text-muted-2 mt-2 mb-0">Seluruh antarmuka, menu, dan judul halaman berganti bahasa secara langsung. Pilihan tersimpan di peramban.</p>
+      </section>
+
+      <!-- Layout -->
+      <section class="mb-6">
+        <h4 class="mb-2 text-sm font-semibold uppercase tracking-wide text-muted-2">Layout</h4>
+        <label class="form-check form-switch justify-between">
+          <span class="text-sm">Sidebar mengecil (mini)</span>
+          <input type="checkbox" class="form-check-input" :checked="$store.ui.collapsed" @change="$store.ui.toggleCollapsed()">
+        </label>
+        <label class="form-check form-switch justify-between">
+          <span class="text-sm">Panel kontrol otomatis terbuka</span>
+          <input type="checkbox" class="form-check-input" :checked="$store.ui.controlPanel" @change="$store.ui.toggleControl()">
+        </label>
+        <div class="mt-3">
+          <span class="form-label">Lebar konten</span>
+          <div class="nav-pills">
+            <button class="nav-link" :class="$store.ui.container === 'fluid' && 'active'" @click="$store.ui.setContainer('fluid')">
+              <i data-icon="arrows-angle-expand" data-size="13"></i> Fluid
+            </button>
+            <button class="nav-link" :class="$store.ui.container === 'boxed' && 'active'" @click="$store.ui.setContainer('boxed')">
+              <i data-icon="bounding-box-circles" data-size="13"></i> Boxed
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Info offline -->
+      <section>
+        <div class="alert alert-success items-start">
+          <i data-icon="wifi-off" class="mt-0.5"></i>
+          <div class="text-sm">
+            <b>100% offline.</b> Tailwind di-compile ke <code>assets/css/app.css</code>, Alpine.js, ikon,
+            dan font semuanya tersimpan lokal — tidak ada permintaan ke internet.
+          </div>
+        </div>
+        <button class="btn btn-outline-danger w-full" @click="window.confirmDialog({ title:'Reset tampilan?', message:'Tema, skin, dan tata letak kembali ke pengaturan awal.', confirmText:'Reset', onConfirm(){ $store.ui.reset(); window.toast('Tampilan direset ke default.', 'info'); } })">
+          <i data-icon="arrow-counterclockwise"></i> Reset ke default
+        </button>
+      </section>
+    </div>
+  </aside>
+</div>
+
+  <!-- ===================== TOAST ===================== -->
+<div class="pointer-events-none fixed right-4 top-20 z-[100] flex w-[22rem] max-w-[92vw] flex-col gap-2 no-print"
+     aria-live="polite" aria-atomic="true">
+  <template x-for="t in $store.toasts.items" :key="t.id">
+    <div class="toast pointer-events-auto"
+         :class="'toast-' + t.type"
+         x-transition:enter="transition ease-out duration-200"
+         x-transition:enter-start="opacity-0 translate-x-6"
+         x-transition:leave="transition ease-in duration-150"
+         x-transition:leave-end="opacity-0 translate-x-6">
+      <span class="mt-0.5 flex-none"
+            :class="{
+              'text-success': t.type === 'success',
+              'text-danger': t.type === 'danger',
+              'text-warning': t.type === 'warning',
+              'text-info': t.type === 'info',
+              'text-primary': !['success','danger','warning','info'].includes(t.type)
+            }">
+        <i data-icon="check-circle-fill" x-show="t.type === 'success'"></i>
+        <i data-icon="exclamation-triangle-fill" x-show="t.type === 'danger' || t.type === 'warning'" x-cloak></i>
+        <i data-icon="info-circle-fill" x-show="!['success','danger','warning'].includes(t.type)" x-cloak></i>
+      </span>
+      <div class="min-w-0 flex-1">
+        <strong class="block text-sm" x-text="t.title" x-show="t.title"></strong>
+        <span class="block text-sm" x-text="t.message"></span>
+      </div>
+      <button class="link-muted flex-none" @click="$store.toasts.remove(t.id)" aria-label="Tutup notifikasi">
+        <i data-icon="x-lg" data-size="13"></i>
+      </button>
+    </div>
+  </template>
+</div>
+
+<!-- ===================== DIALOG KONFIRMASI ===================== -->
+<div class="no-print">
+  <template x-if="$store.dialog.open">
+    <div class="modal-backdrop" @keydown.escape.window="$store.dialog.cancel()">
+      <div class="modal-panel" role="dialog" aria-modal="true">
+        <div class="modal-header">
+          <span class="grid h-9 w-9 flex-none place-items-center rounded-full"
+                :class="$store.dialog.tone === 'danger' ? 'bg-danger/15 text-danger' : 'bg-primary/15 text-primary'">
+            <i data-icon="exclamation-triangle-fill" data-size="18" x-show="$store.dialog.tone === 'danger'"></i>
+            <i data-icon="question-circle" data-size="18" x-show="$store.dialog.tone !== 'danger'" x-cloak></i>
+          </span>
+          <h3 class="m-0 text-lg font-semibold" x-text="$store.dialog.title"></h3>
+        </div>
+        <div class="modal-body">
+          <p class="m-0 text-muted-2" x-text="$store.dialog.message"></p>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-light" @click="$store.dialog.cancel()" x-text="$store.dialog.cancelText"></button>
+          <button class="btn" :class="$store.dialog.tone === 'danger' ? 'btn-danger' : 'btn-primary'"
+                  @click="$store.dialog.confirm()" x-text="$store.dialog.confirmText"></button>
+        </div>
+      </div>
+    </div>
+  </template>
+</div>
+
+<!-- ===================== TOMBOL ATAS ===================== -->
+<button class="no-print fixed bottom-[5.8rem] right-5 z-[70] grid h-11 w-11 place-items-center rounded-full bg-primary text-primary-fg shadow-lg transition hover:brightness-110"
+        data-back-to-top aria-label="Kembali ke atas"
+        x-data="{ show:false }" x-init="window.addEventListener('scroll', () => show = window.scrollY > 320)"
+        x-show="show" x-cloak x-transition.opacity>
+  <i data-icon="arrow-up-short" data-size="22"></i>
+</button>
+
+
+  <script>
+    /* Tahun otomatis di footer */
+    document.querySelectorAll("[data-year]").forEach(function (n) { n.textContent = new Date().getFullYear(); });
+  </script>
+</body>
+</html>

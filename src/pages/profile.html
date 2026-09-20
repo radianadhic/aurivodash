@@ -1,0 +1,239 @@
+---
+path: pages/profile.html
+title: Profil Pengguna
+pageTitle: Profil Pengguna
+crumb: Home|index.html, Pengguna, Profil
+description: Halaman profil dengan ringkasan aktivitas, kartu statistik, tab informasi, dan pengaturan akun.
+---
+<!--#navbar-->
+<button type="button" class="nav-icon-btn" title="Edit profil"
+        onclick="window.toast('Mode edit profil dibuka (demo).', 'info', 'Profil')" aria-label="Edit profil">
+  <i data-icon="pencil-square" data-size="17"></i>
+</button>
+<!--/#navbar-->
+
+<!--#actions-->
+<button class="btn btn-light" onclick="window.print()"><i data-icon="printer"></i> Cetak profil</button>
+<button class="btn btn-primary" onclick="window.toast('Undangan terkirim ke tim (demo).', 'success', 'Berhasil')"><i data-icon="send"></i> Kirim pesan</button>
+<!--/#actions-->
+
+<div class="grid gap-4 xl:grid-cols-4">
+  <!-- ============ KOLOM PROFIL ============ -->
+  <div class="card xl:col-span-1">
+    <div class="card-body text-center">
+      <span class="avatar avatar-xl mx-auto bg-primary">AS</span>
+      <h3 class="mb-0 mt-3 text-lg font-semibold">Aulia Saputra</h3>
+      <p class="mb-2 text-sm text-muted-2">Administrator Sistem</p>
+      <div class="mb-3 flex justify-center gap-1">
+        <span class="badge badge-soft-success"><span class="dot"></span> Online</span>
+        <span class="badge badge-soft-primary">Pro</span>
+      </div>
+      <p class="text-sm text-muted-2">
+        Membangun produk data untuk UMKM Indonesia. Fokus pada analitik penjualan, otomasi laporan, dan pengalaman pengguna.
+      </p>
+      <div class="flex justify-center gap-2">
+        <button class="btn btn-icon btn-light" title="GitHub"><i data-icon="github"></i></button>
+        <button class="btn btn-icon btn-light" title="LinkedIn"><i data-icon="linkedin"></i></button>
+        <button class="btn btn-icon btn-light" title="Instagram"><i data-icon="instagram"></i></button>
+        <button class="btn btn-icon btn-light" title="Surel"><i data-icon="envelope"></i></button>
+      </div>
+    </div>
+    <div class="card-footer">
+      <div class="grid grid-cols-3 divide-line text-center">
+        <div class="description-block">
+          <span class="description-header text-base">128</span>
+          <span class="description-text">Proyek</span>
+        </div>
+        <div class="description-block">
+          <span class="description-header text-base">4,8</span>
+          <span class="description-text">Rating</span>
+        </div>
+        <div class="description-block">
+          <span class="description-header text-base">36</span>
+          <span class="description-text">Tim</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ INFORMASI + TAB ============ -->
+  <div class="xl:col-span-3 space-y-4">
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div class="info-box mb-0">
+        <div class="info-box-icon" style="--ib: var(--c-primary)"><i data-icon="calendar-check"></i></div>
+        <div class="info-box-content">
+          <span class="info-box-text">Bergabung</span>
+          <span class="info-box-number text-base">12 Feb 2023</span>
+        </div>
+      </div>
+      <div class="info-box mb-0">
+        <div class="info-box-icon" style="--ib: var(--c-info)"><i data-icon="geo-alt-fill"></i></div>
+        <div class="info-box-content">
+          <span class="info-box-text">Lokasi</span>
+          <span class="info-box-number text-base">Depok, ID</span>
+        </div>
+      </div>
+      <div class="info-box mb-0">
+        <div class="info-box-icon" style="--ib: var(--c-success)"><i data-icon="clock-history"></i></div>
+        <div class="info-box-content">
+          <span class="info-box-text">Login terakhir</span>
+          <span class="info-box-number text-base">2 menit lalu</span>
+        </div>
+      </div>
+      <div class="info-box mb-0">
+        <div class="info-box-icon warn-fg" style="--ib: var(--c-warning)"><i data-icon="shield-check"></i></div>
+        <div class="info-box-content">
+          <span class="info-box-text">Peran</span>
+          <span class="info-box-number text-base">Super Admin</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" x-data="tabs(0)">
+      <div class="card-header !pb-0">
+        <div class="nav-tabs border-0">
+          <button class="nav-link" :class="is(0) && 'active'" @click="select(0)"><i data-icon="journal-text" data-size="13"></i> Ringkasan</button>
+          <button class="nav-link" :class="is(1) && 'active'" @click="select(1)"><i data-icon="graph-up" data-size="13"></i> Aktivitas</button>
+          <button class="nav-link" :class="is(2) && 'active'" @click="select(2)"><i data-icon="person-lines-fill" data-size="13"></i> Biodata</button>
+          <button class="nav-link" :class="is(3) && 'active'" @click="select(3)"><i data-icon="gear" data-size="13"></i> Pengaturan</button>
+        </div>
+      </div>
+
+      <!-- Tab 1: ringkasan -->
+      <div class="card-body" x-show="is(0)" x-transition.opacity>
+        <div class="grid gap-4 lg:grid-cols-2">
+          <div>
+            <h4 class="mb-2 text-sm font-semibold uppercase tracking-wide text-muted-2">Performa 6 bulan</h4>
+            <div class="chart" data-chart="area" data-height="200" data-formatter="compact"
+                 data-labels="Apr,Mei,Jun,Jul,Agu,Sep" data-values="42,58,54,68,74,82" data-color="primary"></div>
+          </div>
+          <div>
+            <h4 class="mb-2 text-sm font-semibold uppercase tracking-wide text-muted-2">Keterlibatan proyek</h4>
+            <div class="chart" data-chart="hbar" data-color="info" data-formatter="compact" data-height="150"
+                 data-labels="Situs baru,CRM internal,Portal mitra,Mobile app" data-values="142,96,64,38"></div>
+            <div class="mt-3 space-y-3">
+              <div>
+                <div class="mb-1 flex justify-between text-sm"><span>Penyelesaian tugas</span><b>92%</b></div>
+                <div class="progress progress-sm"><div class="progress-bar bg-success" data-progress="92"></div></div>
+              </div>
+              <div>
+                <div class="mb-1 flex justify-between text-sm"><span>Ketepatan waktu</span><b>86%</b></div>
+                <div class="progress progress-sm"><div class="progress-bar bg-primary" data-progress="86"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 2: aktivitas -->
+      <div class="card-body" x-show="is(1)" x-cloak x-transition.opacity>
+        <ul class="timeline">
+          <li><span class="timeline-marker bg-success"><i data-icon="check-lg" data-size="12"></i></span>
+            <div class="timeline-panel">Menutup sprint 24 dengan 38 tugas selesai<div class="timeline-time">Hari ini, 09:20</div></div></li>
+          <li><span class="timeline-marker bg-primary"><i data-icon="upload" data-size="12"></i></span>
+            <div class="timeline-panel">Mengunggah revisi desain halaman invoice<div class="timeline-time">Kemarin, 16:40</div></div></li>
+          <li><span class="timeline-marker bg-info"><i data-icon="chat-dots" data-size="12"></i></span>
+            <div class="timeline-panel">Membalas 12 komentar pada papan kanban<div class="timeline-time">17 Sep 2026, 11:05</div></div></li>
+          <li><span class="timeline-marker bg-warning"><i data-icon="shield-exclamation" data-size="12"></i></span>
+            <div class="timeline-panel">Menonaktifkan 2 sesi perangkat asing<div class="timeline-time">16 Sep 2026, 21:12</div></div></li>
+          <li><span class="timeline-marker bg-danger"><i data-icon="trash" data-size="12"></i></span>
+            <div class="timeline-panel">Menghapus 14 berkas duplikat di arsip<div class="timeline-time">15 Sep 2026, 10:30</div></div></li>
+        </ul>
+      </div>
+
+      <!-- Tab 3: biodata -->
+      <div class="card-body" x-show="is(2)" x-cloak x-transition.opacity>
+        <div class="table-wrap">
+          <table class="table table-striped table-bordered">
+            <tbody>
+              <tr><th style="width:200px">Nama lengkap</th><td>Aulia Saputra</td></tr>
+              <tr><th>Nama pengguna</th><td>@aulia.saputra</td></tr>
+              <tr><th>Email</th><td>aulia@perusahaan.id</td></tr>
+              <tr><th>Telepon</th><td>+62 812 3456 7890</td></tr>
+              <tr><th>Jabatan</th><td>Administrator Sistem</td></tr>
+              <tr><th>Departemen</th><td>Teknologi &amp; Data</td></tr>
+              <tr><th>Atasan langsung</th><td>Dewi Lestari (VP Engineering)</td></tr>
+              <tr><th>Nomor karyawan</th><td>EMP-2023-0118</td></tr>
+              <tr><th>Alamat</th><td>Jl. Margonda Raya No. 118, Depok, Jawa Barat 16424</td></tr>
+              <tr><th>Status</th><td><span class="badge badge-soft-success">Karyawan tetap</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Tab 4: pengaturan -->
+      <div class="card-body" x-show="is(3)" x-cloak x-transition.opacity>
+        <div class="grid gap-4 lg:grid-cols-2">
+          <div>
+            <h4 class="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-2">Notifikasi</h4>
+            <label class="form-check form-switch justify-between"><span class="text-sm">Email laporan harian</span><input type="checkbox" class="form-check-input" checked></label>
+            <label class="form-check form-switch justify-between"><span class="text-sm">Peringatan stok menipis</span><input type="checkbox" class="form-check-input" checked></label>
+            <label class="form-check form-switch justify-between"><span class="text-sm">Ringkasan mingguan</span><input type="checkbox" class="form-check-input"></label>
+            <label class="form-check form-switch justify-between"><span class="text-sm">Notifikasi browser (push)</span><input type="checkbox" class="form-check-input"></label>
+          </div>
+          <div>
+            <h4 class="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-2">Keamanan</h4>
+            <div class="mb-3">
+              <label class="form-label" for="pw1">Kata sandi baru</label>
+              <input id="pw1" type="password" class="form-control" placeholder="••••••••">
+            </div>
+            <div class="mb-3">
+              <label class="form-label" for="pw2">Konfirmasi kata sandi</label>
+              <input id="pw2" type="password" class="form-control" placeholder="••••••••">
+            </div>
+            <button class="btn btn-primary btn-block" onclick="window.toast('Kata sandi diperbarui (demo).','success','Keamanan')"><i data-icon="lock"></i> Perbarui kata sandi</button>
+            <div class="alert alert-warning items-start mt-3 mb-0">
+              <i data-icon="shield-exclamation" class="mt-0.5"></i>
+              <span class="text-sm">Verifikasi dua langkah belum aktif. Aktifkan untuk keamanan lebih baik.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Proyek terbaru -->
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">Proyek yang diikuti</h3>
+        <div class="card-tools"><button class="btn btn-light btn-sm" onclick="window.toast('Menampilkan semua proyek (demo).','info')">Semua proyek</button></div>
+      </div>
+      <div class="table-wrap">
+        <table class="table table-hover table-sortable" data-datatable>
+          <thead>
+            <tr><th data-sort>Proyek</th><th data-sort>Klien</th><th data-sort>Progres</th><th data-sort>Tim</th><th data-sort>Status</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="font-semibold">Situs e-commerce baru</td><td>Toko Merdeka</td>
+              <td><div class="progress progress-sm"><div class="progress-bar bg-success" data-progress="92"></div></div></td>
+              <td><div class="flex -space-x-2"><span class="avatar avatar-sm bg-primary ring-2 ring-surface">AS</span><span class="avatar avatar-sm bg-info ring-2 ring-surface">RS</span><span class="avatar avatar-sm bg-warning ring-2 ring-surface">BP</span></div></td>
+              <td><span class="badge badge-soft-success">Rilis</span></td>
+            </tr>
+            <tr>
+              <td class="font-semibold">CRM internal</td><td>PT Nusantara Jaya</td>
+              <td><div class="progress progress-sm"><div class="progress-bar bg-primary" data-progress="64"></div></div></td>
+              <td><div class="flex -space-x-2"><span class="avatar avatar-sm bg-info ring-2 ring-surface">NM</span><span class="avatar avatar-sm bg-secondary ring-2 ring-surface">HW</span></div></td>
+              <td><span class="badge badge-soft-primary">Berjalan</span></td>
+            </tr>
+            <tr>
+              <td class="font-semibold">Portal mitra distribusi</td><td>Distribusi Sejahtera</td>
+              <td><div class="progress progress-sm"><div class="progress-bar bg-warning" data-progress="38"></div></div></td>
+              <td><div class="flex -space-x-2"><span class="avatar avatar-sm bg-primary ring-2 ring-surface">AS</span><span class="avatar avatar-sm bg-danger ring-2 ring-surface">AD</span></div></td>
+              <td><span class="badge badge-soft-warning">Tertunda</span></td>
+            </tr>
+            <tr>
+              <td class="font-semibold">Aplikasi kasir mobile</td><td>UMKM Maju</td>
+              <td><div class="progress progress-sm"><div class="progress-bar bg-info" data-progress="20"></div></div></td>
+              <td><div class="flex -space-x-2"><span class="avatar avatar-sm bg-success ring-2 ring-surface">LS</span></div></td>
+              <td><span class="badge badge-soft-info">Dijadwalkan</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card-footer flex flex-wrap items-center justify-between gap-3">
+        <span class="fs-8 text-muted-2" data-dt-info></span>
+        <div class="flex gap-1" data-dt-pagination></div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,581 @@
+{
+  "title": "Slip Gaji Karyawan",
+  "description": "Slip gaji dua kolom: pendapatan dan potongan dalam satu baris berulang, lengkap dengan total dan gaji bersih.",
+  "layout": {
+    "version": 1,
+    "width": 700,
+    "headerSection": {
+      "height": 124,
+      "visible": true,
+      "style": {
+        "backgroundColor": "#0f766e"
+      },
+      "items": [
+        {
+          "id": "it_mu53ki5g_0",
+          "type": "image",
+          "name": "",
+          "text": "",
+          "binding": "",
+          "x": 16,
+          "y": 14,
+          "width": 52,
+          "height": 52,
+          "src": "data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23ffffff' fill-opacity='0.15'/%3E%3Crect x='4' y='4' width='56' height='56' rx='12' fill='%23ffffff'/%3E%3Ctext x='32' y='41' font-family='Arial,sans-serif' font-size='24' font-weight='bold' text-anchor='middle' fill='%230f766e'%3EA%3C/text%3E%3C/svg%3E",
+          "style": {}
+        },
+        {
+          "id": "it_mu53ki5g_1",
+          "type": "text",
+          "name": "",
+          "text": "PT SATU SEJAHTERA",
+          "binding": "company",
+          "x": 84,
+          "y": 16,
+          "width": 320,
+          "height": 20,
+          "src": "",
+          "style": {
+            "color": "#ffffff",
+            "fontSize": 14,
+            "fontWeight": "bold"
+          }
+        },
+        {
+          "id": "it_mu53ki5g_2",
+          "type": "text",
+          "name": "",
+          "text": "Periode",
+          "binding": "period",
+          "x": 84,
+          "y": 40,
+          "width": 320,
+          "height": 15,
+          "src": "",
+          "style": {
+            "color": "#99f6e4",
+            "fontSize": 10
+          }
+        },
+        {
+          "id": "it_mu53ki5g_3",
+          "type": "text",
+          "name": "",
+          "text": "Divisi Operasional",
+          "binding": "",
+          "x": 84,
+          "y": 56,
+          "width": 320,
+          "height": 14,
+          "src": "",
+          "style": {
+            "color": "#99f6e4",
+            "fontSize": 10
+          }
+        },
+        {
+          "id": "it_mu53ki5g_4",
+          "type": "text",
+          "name": "",
+          "text": "SLIP GAJI",
+          "binding": "",
+          "x": 440,
+          "y": 14,
+          "width": 244,
+          "height": 26,
+          "src": "",
+          "style": {
+            "color": "#ffffff",
+            "fontSize": 20,
+            "fontWeight": "bold",
+            "textAlign": "right"
+          }
+        },
+        {
+          "id": "it_mu53ki5g_5",
+          "type": "text",
+          "name": "",
+          "text": "Karyawan",
+          "binding": "employee.name",
+          "x": 440,
+          "y": 44,
+          "width": 244,
+          "height": 16,
+          "src": "",
+          "style": {
+            "color": "#ffffff",
+            "fontSize": 11,
+            "textAlign": "right"
+          }
+        },
+        {
+          "id": "it_mu53ki5g_6",
+          "type": "text",
+          "name": "",
+          "text": "NIP",
+          "binding": "employee.id",
+          "x": 440,
+          "y": 62,
+          "width": 244,
+          "height": 14,
+          "src": "",
+          "style": {
+            "color": "#99f6e4",
+            "fontSize": 10,
+            "textAlign": "right"
+          }
+        },
+        {
+          "id": "it_mu53ki5g_7",
+          "type": "text",
+          "name": "",
+          "text": "",
+          "binding": "",
+          "x": 0,
+          "y": 98,
+          "width": 700,
+          "height": 26,
+          "src": "",
+          "style": {
+            "backgroundColor": "#115e59"
+          }
+        },
+        {
+          "id": "it_mu53ki5g_8",
+          "type": "text",
+          "name": "",
+          "text": "PENDAPATAN",
+          "binding": "",
+          "x": 8,
+          "y": 104,
+          "width": 200,
+          "height": 14,
+          "src": "",
+          "style": {
+            "color": "#99f6e4",
+            "fontSize": 9
+          }
+        },
+        {
+          "id": "it_mu53ki5g_9",
+          "type": "text",
+          "name": "",
+          "text": "JUMLAH (RP)",
+          "binding": "",
+          "x": 212,
+          "y": 104,
+          "width": 110,
+          "height": 14,
+          "src": "",
+          "style": {
+            "color": "#99f6e4",
+            "fontSize": 9,
+            "textAlign": "right"
+          }
+        },
+        {
+          "id": "it_mu53ki5g_a",
+          "type": "text",
+          "name": "",
+          "text": "POTONGAN",
+          "binding": "",
+          "x": 392,
+          "y": 104,
+          "width": 200,
+          "height": 14,
+          "src": "",
+          "style": {
+            "color": "#99f6e4",
+            "fontSize": 9
+          }
+        },
+        {
+          "id": "it_mu53ki5g_b",
+          "type": "text",
+          "name": "",
+          "text": "JUMLAH (RP)",
+          "binding": "",
+          "x": 582,
+          "y": 104,
+          "width": 110,
+          "height": 14,
+          "src": "",
+          "style": {
+            "color": "#99f6e4",
+            "fontSize": 9,
+            "textAlign": "right"
+          }
+        }
+      ]
+    },
+    "contentSection": {
+      "height": 26,
+      "visible": true,
+      "style": {},
+      "items": [
+        {
+          "id": "it_mu53ki5g_c",
+          "type": "text",
+          "name": "",
+          "text": "Pendapatan",
+          "binding": "earn",
+          "x": 8,
+          "y": 5,
+          "width": 200,
+          "height": 16,
+          "src": "",
+          "style": {
+            "fontSize": 10
+          }
+        },
+        {
+          "id": "it_mu53ki5g_d",
+          "type": "text",
+          "name": "",
+          "text": "Jumlah",
+          "binding": "earnAmt",
+          "x": 212,
+          "y": 5,
+          "width": 110,
+          "height": 16,
+          "src": "",
+          "style": {
+            "fontSize": 10,
+            "textAlign": "right"
+          }
+        },
+        {
+          "id": "it_mu53ki5g_e",
+          "type": "text",
+          "name": "",
+          "text": "Potongan",
+          "binding": "ded",
+          "x": 392,
+          "y": 5,
+          "width": 200,
+          "height": 16,
+          "src": "",
+          "style": {
+            "fontSize": 10,
+            "color": "#0f766e"
+          }
+        },
+        {
+          "id": "it_mu53ki5g_f",
+          "type": "text",
+          "name": "",
+          "text": "Jumlah",
+          "binding": "dedAmt",
+          "x": 582,
+          "y": 5,
+          "width": 110,
+          "height": 16,
+          "src": "",
+          "style": {
+            "fontSize": 10,
+            "textAlign": "right",
+            "color": "#0f766e"
+          }
+        },
+        {
+          "id": "it_mu53ki5g_g",
+          "type": "line",
+          "name": "",
+          "text": "",
+          "binding": "",
+          "x": 8,
+          "y": 24,
+          "width": 684,
+          "height": 2,
+          "src": "",
+          "style": {
+            "borderColor": "#f1f5f9",
+            "borderWidth": 1
+          }
+        }
+      ],
+      "binding": "rows",
+      "groups": []
+    },
+    "footerSection": {
+      "height": 170,
+      "visible": true,
+      "style": {},
+      "items": [
+        {
+          "id": "it_mu53ki5g_h",
+          "type": "text",
+          "name": "",
+          "text": "",
+          "binding": "",
+          "x": 8,
+          "y": 14,
+          "width": 684,
+          "height": 66,
+          "src": "",
+          "style": {
+            "backgroundColor": "#f0fdfa",
+            "borderRadius": 8
+          }
+        },
+        {
+          "id": "it_mu53ki5g_i",
+          "type": "text",
+          "name": "",
+          "text": "Total Pendapatan",
+          "binding": "",
+          "x": 24,
+          "y": 26,
+          "width": 150,
+          "height": 14,
+          "src": "",
+          "style": {
+            "fontSize": 9,
+            "color": "#0f766e",
+            "fontWeight": "bold"
+          }
+        },
+        {
+          "id": "it_mu53ki5g_j",
+          "type": "text",
+          "name": "",
+          "text": "Total",
+          "binding": "totals.earn",
+          "x": 24,
+          "y": 42,
+          "width": 150,
+          "height": 20,
+          "src": "",
+          "style": {
+            "fontSize": 13,
+            "fontWeight": "bold",
+            "color": "#0f172a"
+          }
+        },
+        {
+          "id": "it_mu53ki5g_k",
+          "type": "text",
+          "name": "",
+          "text": "Total Potongan",
+          "binding": "",
+          "x": 244,
+          "y": 26,
+          "width": 150,
+          "height": 14,
+          "src": "",
+          "style": {
+            "fontSize": 9,
+            "color": "#0f766e",
+            "fontWeight": "bold"
+          }
+        },
+        {
+          "id": "it_mu53ki5g_l",
+          "type": "text",
+          "name": "",
+          "text": "Total",
+          "binding": "totals.ded",
+          "x": 244,
+          "y": 42,
+          "width": 150,
+          "height": 20,
+          "src": "",
+          "style": {
+            "fontSize": 13,
+            "fontWeight": "bold",
+            "color": "#0f172a"
+          }
+        },
+        {
+          "id": "it_mu53ki5g_m",
+          "type": "text",
+          "name": "",
+          "text": "GAJI BERSIH",
+          "binding": "",
+          "x": 464,
+          "y": 26,
+          "width": 210,
+          "height": 14,
+          "src": "",
+          "style": {
+            "fontSize": 9,
+            "color": "#0f766e",
+            "fontWeight": "bold",
+            "textAlign": "right"
+          }
+        },
+        {
+          "id": "it_mu53ki5g_n",
+          "type": "text",
+          "name": "",
+          "text": "Net",
+          "binding": "totals.net",
+          "x": 464,
+          "y": 40,
+          "width": 210,
+          "height": 24,
+          "src": "",
+          "style": {
+            "fontSize": 16,
+            "fontWeight": "bold",
+            "color": "#0f766e",
+            "textAlign": "right"
+          }
+        },
+        {
+          "id": "it_mu53ki5g_o",
+          "type": "text",
+          "name": "",
+          "text": "Slip gaji ini bersifat rahasia dan sah tanpa tanda tangan basah.",
+          "binding": "",
+          "x": 16,
+          "y": 140,
+          "width": 360,
+          "height": 14,
+          "src": "",
+          "style": {
+            "fontSize": 9,
+            "fontStyle": "italic",
+            "color": "#94a3b8"
+          }
+        },
+        {
+          "id": "it_mu53ki5g_p",
+          "type": "text",
+          "name": "",
+          "text": "Depok, 30 September 2026",
+          "binding": "date",
+          "x": 460,
+          "y": 96,
+          "width": 224,
+          "height": 14,
+          "src": "",
+          "style": {
+            "fontSize": 10,
+            "color": "#475569",
+            "textAlign": "center"
+          }
+        },
+        {
+          "id": "it_mu53ki5g_q",
+          "type": "text",
+          "name": "",
+          "text": "HRD Manager,",
+          "binding": "",
+          "x": 460,
+          "y": 112,
+          "width": 224,
+          "height": 14,
+          "src": "",
+          "style": {
+            "fontSize": 10,
+            "color": "#475569",
+            "textAlign": "center"
+          }
+        },
+        {
+          "id": "it_mu53ki5g_r",
+          "type": "line",
+          "name": "",
+          "text": "",
+          "binding": "",
+          "x": 512,
+          "y": 148,
+          "width": 120,
+          "height": 2,
+          "src": "",
+          "style": {
+            "borderColor": "#94a3b8",
+            "borderWidth": 1
+          }
+        },
+        {
+          "id": "it_mu53ki5g_s",
+          "type": "text",
+          "name": "",
+          "text": "( Dewi Anggraini, S.Psi )",
+          "binding": "",
+          "x": 460,
+          "y": 152,
+          "width": 224,
+          "height": 14,
+          "src": "",
+          "style": {
+            "fontSize": 10,
+            "color": "#475569",
+            "textAlign": "center"
+          }
+        }
+      ]
+    },
+    "page": {
+      "paper": "A4",
+      "orientation": "portrait",
+      "margins": {
+        "top": 47,
+        "right": 47,
+        "bottom": 47,
+        "left": 47
+      },
+      "pagination": false
+    },
+    "pageHeaderSection": {
+      "height": 34,
+      "visible": false,
+      "style": {},
+      "items": []
+    },
+    "pageFooterSection": {
+      "height": 30,
+      "visible": false,
+      "style": {},
+      "items": []
+    }
+  },
+  "data": {
+    "company": "PT SATU SEJAHTERA",
+    "period": "Periode Gaji: September 2026",
+    "employee": {
+      "name": "Budi Santoso — Staff IT Support",
+      "id": "NIP: EMP-0091"
+    },
+    "rows": [
+      {
+        "earn": "Gaji Pokok",
+        "earnAmt": "4.500.000",
+        "ded": "BPJS Kesehatan",
+        "dedAmt": "45.000"
+      },
+      {
+        "earn": "Tunjangan Jabatan",
+        "earnAmt": "750.000",
+        "ded": "BPJS Ketenagakerjaan",
+        "dedAmt": "90.000"
+      },
+      {
+        "earn": "Tunjangan Transport",
+        "earnAmt": "500.000",
+        "ded": "PPh 21",
+        "dedAmt": "210.000"
+      },
+      {
+        "earn": "Tunjangan Makan",
+        "earnAmt": "440.000",
+        "ded": "",
+        "dedAmt": ""
+      },
+      {
+        "earn": "Lembur (8 jam)",
+        "earnAmt": "320.000",
+        "ded": "",
+        "dedAmt": ""
+      }
+    ],
+    "totals": {
+      "earn": "6.510.000",
+      "ded": "345.000",
+      "net": "Rp 6.165.000"
+    },
+    "date": "Depok, 30 September 2026"
+  }
+}
