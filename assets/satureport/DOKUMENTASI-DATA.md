@@ -203,3 +203,29 @@ text: "Total Depok  : {Sum(total,'content','city == params.kota')}"
 text: "Grand total  : {Sum(total)}"
 text: "Syarat baris : city == params.kota"
 ```
+## F. Sub report / master–detail (data bersarang)
+
+Pola laporan yang setiap baris master-nya diikuti daftar detail miliknya sendiri (contoh bawaan: **Penjualan per Kota — Sub Report**).
+
+### Bentuk data
+```json
+{
+  "content": [
+    { "kota": "Jakarta", "sales": "Budi",
+      "transaksi": [ { "no": "INV-0901", "qty": 2, "total": 31000000 }, … ] },
+    { "kota": "Depok",   "sales": "Sari", "transaksi": [ … ] }
+  ]
+}
+```
+
+### Layout
+| Section / band | Binding | Isi |
+|---|---|---|
+| `contentSection` | `"content"` (array master) | header master: `{kota}`, `{sales}` |
+| `groups[0]` (sub group) | `"transaksi"` (array detail di tiap baris master) | baris detail: `{no}`, `{qty}`, `{total}` |
+
+### Semantik agregat (dijamin engine)
+- Di **band master** (content), agregat atas kolom detail memakai argumen path:
+  `{Sum(total,'transaksi')}` → subtotal master itu; `{Count('','transaksi')}` → jumlah detail-nya.
+- Di **band sub group**, agregat bersifat **LOKAL per master**: `{Sum(qty)}` menghitung hanya baris detail master yang sedang dirender (bukan semua detail).
+- Di **footer/halaman**, agregat tetap atas array `content` (level master). Simpan total terformat (mis. `subTotalDisp: "Rp 66.400.000"`) di data bila ingin tampilan uang yang rapi.

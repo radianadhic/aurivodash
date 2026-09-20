@@ -247,6 +247,32 @@ for (const [berkas, harap] of [
   if (asing2.length) fail(berkas + ': error JS — ' + asing2[0]);
   await ctx.close();
 }
+/* isi galeri & berkas lisensi aplikasi yang di-vendor */
+{
+  const contoh = fs.readFileSync(PROYEK + 'assets/satureport/examples/examples.js', 'utf8');
+  const id = [...contoh.matchAll(/id: "([a-z0-9-]+)",\s*\n\s*title:/g)].map((m) => m[1]);
+  console.log('   contoh di assets/satureport:', id.length, '→', id.join(', '));
+  if (id.length !== 13) fail('jumlah contoh SatuReport berubah: ' + id.length + ' (diharapkan 13)');
+  if (!id.includes('sales-subreport')) fail('contoh Sub Report (sales-subreport) tidak ada di galeri');
+  const lic = PROYEK + 'assets/satureport/LICENSE';
+  if (!fs.existsSync(lic)) fail('assets/satureport/LICENSE tidak ada — kredit MIT upstream belum ikut');
+  else {
+    const isi = fs.readFileSync(lic, 'utf8');
+    if (!/^MIT License/.test(isi) || !/Copyright \(c\) 2026 Radian Adhi C\. \(radianadhic\)/.test(isi))
+      fail('assets/satureport/LICENSE bukan MIT milik radianadhic');
+    else console.log('   lisensi aplikasi: MIT · © 2026 Radian Adhi C. (radianadhic) ✅');
+  }
+  /* halaman Tools harus menyebut jumlah & lisensi yang sama */
+  const contohHal = fs.readFileSync(PROYEK + 'pages/report-example.html', 'utf8');
+  if (!/13 contoh/.test(contohHal)) fail('halaman Report Example belum menyebut 13 contoh');
+  if (!/assets\/satureport\/LICENSE/.test(contohHal)) fail('halaman Report Example belum menaut berkas LICENSE');
+  ['report-design', 'report-viewer'].forEach((nama) => {
+    const h = fs.readFileSync(PROYEK + 'pages/' + nama + '.html', 'utf8');
+    if (!/MIT License/.test(h)) fail('halaman ' + nama + ' belum menyebut lisensi MIT SatuReport');
+    if (/belum memuat berkas lisensi/.test(h)) fail('halaman ' + nama + ' masih memuat teks lama "belum memuat berkas lisensi"');
+  });
+}
+
 /* tautan sidebar di berkas mandiri dashboard.html harus menuju berkas Tools */
 {
   const dash = fs.readFileSync(PROYEK + 'offline/dashboard.html', 'utf8');

@@ -803,8 +803,8 @@ asisten AI tetap berfungsi:
 | Halaman | Berkas aplikasi | Isi |
 |---|---|---|
 | Report Design | `assets/satureport/designer.html` | Desainer laporan visual: kanvas mm, band header/content/footer, data source (JSON/API/query), ekspor PDF & XLSX |
-| Report Viewer | `assets/satureport/viewer.html` | Penampil laporan: layout tersimpan, `?example=` (12 contoh), `?url=` (file paket), pratinjau & cetak |
-| Report Example | `assets/satureport/examples.html` | Galeri 12 contoh siap pakai dengan thumbnail yang dirender langsung |
+| Report Viewer | `assets/satureport/viewer.html` | Penampil laporan: layout tersimpan, `?example=` (13 contoh), `?url=` (file paket), pratinjau & cetak |
+| Report Example | `assets/satureport/examples.html` | Galeri 13 contoh siap pakai (termasuk **Sub Report** master–detail) dengan thumbnail yang dirender langsung |
 
 Yang perlu diketahui:
 
@@ -825,6 +825,13 @@ Yang perlu diketahui:
   sendiri (terang). Ini disengaja: berkas di-vendor apa adanya agar mudah diperbarui.
 - Butuh tombol pintas? `window.SatuTools` menyediakan `buka('report-viewer')`,
   `muatUlang(idBingkai)`, `layarPenuh(idKartu)`, dan `samakanBahasa()`.
+- **Riwayat pembaruan aplikasi:** versi **20 Sep 2026** (`aadf566`) — 13 contoh termasuk
+  **Sub Report** master–detail, berkas `LICENSE` MIT, dan `contoh-java-api/` dipulihkan.
+  **Cara memperbarui lagi:** unduh rilis terbaru dari repo `satureport`, salin isinya
+  (tanpa `.git`) menimpa `assets/satureport/`, lalu jalankan `npm run all`. Skrip
+  `tools/build-satureport.mjs` otomatis memetakan tautan antar-halaman dan menanam contoh
+  `?url=` sebagai data-URI; kalau ada anchor yang berubah, skrip akan memperingatkan lewat
+  baris `⚠ acuan tertinggal`.
 
 ### Ikon
 
@@ -934,10 +941,11 @@ komersial atau tertutup — dengan satu syarat: sertakan salinan lisensi beserta
 hak cipta. Perangkat lunaknya diberikan **apa adanya, tanpa jaminan**.
 
 > **Yang tidak tercakup lisensi MIT di atas:** berkas pihak ketiga di dalam `assets/`
-> tetap memakai lisensinya masing-masing (lihat daftar di bawah). Dua komponen vendored
-> — **MiniGrid** dan **SatuReport** — berasal dari repositori yang **belum memuat berkas
-> lisensi**, jadi keduanya **tidak** termasuk dalam lisensi MIT proyek ini; konfirmasi ke
-> pemilik repo sebelum dipakai di produksi.
+> tetap memakai lisensinya masing-masing (lihat daftar di bawah). Hampir semuanya sudah
+> jelas lisensinya — **SatuReport** kini menyertakan **MIT License** sendiri
+> (`assets/satureport/LICENSE`). Satu pengecualian: **MiniGrid** (`assets/js/minigrid/`)
+> berasal dari repositori yang **belum memuat berkas lisensi**, jadi tidak termasuk dalam
+> lisensi MIT proyek ini — konfirmasi ke pemilik repo sebelum dipakai di produksi.
 
 Komponen pihak ketiga:
 
@@ -951,9 +959,9 @@ Komponen pihak ketiga:
   <https://github.com/radianadhic/minigrid> (di-vendor lokal; repo upstream belum
   menyertakan berkas lisensi — konfirmasi ke pemilik repo bila akan dipakai di produksi)
 - **SatuReport** — aplikasi laporan di `assets/satureport/` dari
-  <https://github.com/radianadhic/satureport>, disertakan **apa adanya (as-is)**.
-  Repo upstream **belum menyertakan berkas lisensi** (`LICENSE`); untuk pemakaian
-  komersial, konfirmasi dulu ke pemilik repo. Kredit ini juga tampil di halaman Tools.
+  <https://github.com/radianadhic/satureport> (versi 20 Sep 2026), disertakan apa adanya
+  (*as-is*) termasuk berkas lisensinya: **MIT License, © 2026 Radian Adhi C. (radianadhic)**
+  — lihat `assets/satureport/LICENSE`. Kredit ini juga tampil di halaman Tools.
 - **Bootstrap Icons** — MIT (di-generate ke `assets/js/icons.js`)
 - **Source Sans 3** — SIL Open Font License 1.1
 

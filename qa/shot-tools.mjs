@@ -95,6 +95,18 @@ for (const [nama, url] of [
   await ctx.close();
 }
 
+/* ---------- 4b. contoh Sub Report (master–detail) di berkas mandiri ---------- */
+{
+  const ctx = await browser.newContext({ viewport: { width: 1500, height: 1000 } });
+  await tanpaAI(ctx);
+  const page = await ctx.newPage();
+  await page.goto('file://' + PROYEK + 'offline/report-viewer.html?example=sales-subreport', { waitUntil: 'load' });
+  await page.waitForTimeout(3600);
+  await page.screenshot({ path: P + 'report-sub-report.png' });
+  console.log('  ✔ report-sub-report.png');
+  await ctx.close();
+}
+
 /* ---------- 5. berkas mandiri Report Design ---------- */
 {
   const ctx = await browser.newContext({ viewport: { width: 1500, height: 1000 } });

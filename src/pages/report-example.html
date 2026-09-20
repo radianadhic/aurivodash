@@ -2,7 +2,7 @@
 path: pages/report-example.html
 title: Report Example
 pageTitle: Report Example
-subtitle: Galeri 12 contoh laporan siap pakai — thumbnail dirender langsung oleh mesin SatuReport
+subtitle: Galeri 13 contoh laporan siap pakai — thumbnail dirender langsung oleh mesin SatuReport
 crumb: Home|index.html, Tools, Report Example
 description: Report Example — galeri contoh laporan SatuReport (invoice, slip gaji, surat jalan, pivot, grafik) yang bisa dibuka di Report Viewer atau disunting di Report Design.
 bodyClass: page-tools
@@ -85,9 +85,15 @@ scripts: satureport-tools.js
 <div class="card mt-4">
   <div class="card-header">
     <h3 class="card-title"><i data-icon="journal-text" class="text-info"></i> Isi galeri</h3>
-    <div class="card-tools"><span class="badge badge-soft-primary">12 contoh</span></div>
+    <div class="card-tools"><span class="badge badge-soft-primary">13 contoh</span></div>
   </div>
   <div class="card-body !pt-2">
+    <div class="callout callout-warning mb-3">
+      <b>Kredit dan lisensi.</b>
+      <span>Aplikasi SatuReport dibuat oleh Radian Adhi C. (radianadhic) dan disertakan apa adanya (as-is) dari repositori publiknya.</span>
+      <span>Sejak 20 September 2026 repositori itu sudah memuat berkas lisensi: MIT License, hak cipta 2026 Radian Adhi C. (radianadhic) — bebas dipakai, diubah, dan dijual, termasuk untuk proyek komersial, asalkan salinan lisensi dan keterangan hak cipta disertakan.</span>
+      <span>Salinan lisensinya ikut tersimpan di folder assets/satureport/LICENSE.</span>
+    </div>
     <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
       <div>
         <h4 class="m-0 text-sm font-semibold"><i data-icon="receipt" class="text-primary" data-size="14"></i> Invoice / Faktur Penjualan</h4>
@@ -136,6 +142,10 @@ scripts: satureport-tools.js
       <div>
         <h4 class="m-0 text-sm font-semibold"><i data-icon="hdd-network" class="text-primary" data-size="14"></i> Viewer Memuat File dari Server</h4>
         <p class="fs-8 text-muted-2 m-0">Contoh pemakaian parameter url: satu berkas .satureport.json dimuat lewat fetch.</p>
+      </div>
+      <div>
+        <h4 class="m-0 text-sm font-semibold"><i data-icon="diagram-3" class="text-primary" data-size="14"></i> Penjualan per Kota — Sub Report</h4>
+        <p class="fs-8 text-muted-2 m-0">Pola Sub Report master-detail: tiap baris kota diikuti daftar transaksinya dengan subtotal per kota.</p>
       </div>
     </div>
   </div>

@@ -1,4 +1,4 @@
-# Teks yang BELUM diterjemahkan (547 dari 1735 teks unik yang terdeteksi)
+# Teks yang BELUM diterjemahkan (547 dari 1736 teks unik yang terdeteksi)
 # Tambahkan pasangan "teks Indonesia": "English text" ke src/i18n/en.json lalu jalankan: npm run i18n
 
 "--c-*": "",

@@ -685,7 +685,8 @@
             if (g.visible === false) return;
             const gArr = g.binding ? SatuReport.resolvePath(row, g.binding) : null;
             const rows = Array.isArray(gArr) ? gArr : [row];
-            rows.forEach((gRow, gi) => bands.push(mk(g, gRow, { row: gi, count: rows.length })));
+            // aggRows = baris sub group: agregat di dalam band sub group bersifat LOKAL per master
+            rows.forEach((gRow, gi) => bands.push(mk(g, gRow, { row: gi, count: rows.length, aggRows: rows })));
           });
         });
       } else {

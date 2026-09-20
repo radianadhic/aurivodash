@@ -926,7 +926,36 @@ window.SatuI18n.setLang("id"); // test deterministik: default Bahasa Indonesia
   ok("migrasi idempoten", n2 === 0 && lsMock.getItem("satureport.lang") === "en");
   ok("file java/json ter-rename", fs.existsSync(R + "contoh-java-api/SatuReportApiDemo.java") && !fs.existsSync(R + "contoh-java-api/AnkaReportApiDemo.java") && fs.existsSync(R + "laporan-penjualan.satureport.json") && rbRead("js/viewer.js").includes("laporan-penjualan.satureport.json"));
   ok("README java & dokumen rebrand", rbRead("contoh-java-api/README.md").includes("SatuReportApiDemo") && rbRead("DOKUMENTASI-DATA.md").includes("SatuReport"));
-  console.log(fail ? "\n❌ " + fail + " GAGAL" : "\n✅ SEMUA SUITE LOLOS — " + "core/chart/paginasi/idb/pustaka/export-import/api/query/param/reload/tombol/viewer/url-server/pivot/i18n/autolayout/kondisi-expr/toolbar/rebrand");
+
+  console.log("== SUB REPORT / MASTER–DETAIL ==");
+  const exSub = EX.byId("sales-subreport");
+  ok("contoh terdaftar di galeri", !!exSub && exSub.layout.contentSection.binding === "content" && exSub.layout.contentSection.groups[0].binding === "transaksi");
+  const subData = exSub.data;
+  ok("data: 3 master kota, 7 detail transaksi", subData.content.length === 3 && subData.content.reduce((s, m) => s + m.transaksi.length, 0) === 7);
+  ok("subtotal master: Sum(total,'transaksi') & Count('','transaksi')",
+    A.evalExpr("Sum(total,'transaksi')", subData.content[0], subData) === 66400000 &&
+    A.evalExpr("Count('','transaksi')", subData.content[0], subData) === 3 &&
+    A.evalExpr("Sum(total,'transaksi')", subData.content[1], subData) === 21400000 &&
+    A.evalExpr("Sum(total,'transaksi')", subData.content[2], subData) === 27750000);
+  // Agregat LOKAL per master di dalam band sub group (enhancement engine)
+  const laySub = { width: 400,
+    headerSection: { visible: false, height: 0 },
+    contentSection: { binding: "content", height: 14, items: [{ type: "text", text: "m{Count()}", binding: "", x: 0, y: 0, width: 60, height: 12, style: {} }],
+      groups: [{ height: 14, binding: "transaksi", items: [{ type: "text", text: "{Sum(qty)}", binding: "", x: 0, y: 0, width: 60, height: 12, style: {} }] }] },
+    footerSection: { visible: false, height: 0 } };
+  const bbSub = A.buildBands(A.normalizeLayout(laySub), { content: [{ m: 1, transaksi: [{ qty: 3 }, { qty: 4 }] }, { m: 2, transaksi: [{ qty: 1 }] }] });
+  ok("band: 2 master + 3 detail", bbSub.bands.length === 5);
+  const htmlSub = bbSub.bands.map((b) => b.make({ page: 1, pages: 1 })).join("");
+  ok("Sum(qty) di band sub group = lokal per master (7,7,1)", (htmlSub.match(/>7</g) || []).length === 2 && (htmlSub.match(/>1</g) || []).length === 1 && (htmlSub.match(/>8</g) || []).length === 0);
+  ok("Count() di band CONTENT tetap level master (m2)", htmlSub.includes(">m2<") && !htmlSub.includes(">m3<"));
+  // Render contoh end-to-end: urutan & kelengkapan
+  const hS = A.renderPages({ layout: exSub.layout, data: subData }).sheets.map((s) => s.innerHTML || "").join("");
+  ok("render: semua kota & faktur tampak", ["Jakarta", "Depok", "Bandung", "INV-0901", "INV-0905", "INV-0908", "INV-0912", "INV-0914", "INV-0920", "INV-0922"].every((x) => hS.includes(x)) && hS.includes("115.550.000"));
+  ok("render: detail Depok muncul > Jakarta, Bandung > Depok", hS.indexOf("INV-0901") > hS.indexOf("Jakarta") && hS.indexOf("INV-0905") > hS.indexOf("INV-0901") && hS.indexOf("INV-0908") > hS.indexOf("INV-0922"));
+  ok("subtotal ekspresi Jakarta tampil di header master (66400000)", hS.includes("66400000"));
+  ok("contoh ter-inline di designer & galeri", fs.readFileSync(R + "designer.html", "utf8").includes("sales-subreport") && fs.readFileSync(R + "examples.html", "utf8").includes("sales-subreport"));
+  ok("dok bagian F sub report ada", fs.readFileSync(R + "DOKUMENTASI-DATA.md", "utf8").includes("## F. Sub report / master–detail"));
+  console.log(fail ? "\n❌ " + fail + " GAGAL" : "\n✅ SEMUA SUITE LOLOS — " + "core/chart/paginasi/idb/pustaka/export-import/api/query/param/reload/tombol/viewer/url-server/pivot/i18n/autolayout/kondisi-expr/toolbar/rebrand/subreport");
 
   process.exit(fail ? 1 : 0);
 })().catch((e) => { console.error("FATAL", e); process.exit(1); });

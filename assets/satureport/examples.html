@@ -1982,7 +1982,8 @@ input:where([type='button'], [type='reset'], [type='submit']),
             if (g.visible === false) return;
             const gArr = g.binding ? SatuReport.resolvePath(row, g.binding) : null;
             const rows = Array.isArray(gArr) ? gArr : [row];
-            rows.forEach((gRow, gi) => bands.push(mk(g, gRow, { row: gi, count: rows.length })));
+            // aggRows = baris sub group: agregat di dalam band sub group bersifat LOKAL per master
+            rows.forEach((gRow, gi) => bands.push(mk(g, gRow, { row: gi, count: rows.length, aggRows: rows })));
           });
         });
       } else {
@@ -3383,6 +3384,102 @@ body{margin:0;background:#fff;}
         ] },
       },
       data: { content: [...salesDemo2025, ...salesDemo2026] },
+    },
+
+    /* ==================== 12. SUB REPORT (MASTER–DETAIL) ==================== */
+    {
+      id: "sales-subreport",
+      title: "Penjualan per Kota — Sub Report",
+      desc: "Pola SUB REPORT / master–detail: tiap baris kota (content/master) dirender lalu diikuti SUB GROUP berisi daftar transaksinya. Subtotal per master lewat ekspresi {Sum(total,'transaksi')}, agregat di dalam band sub group bersifat lokal per master.",
+      tags: ["Sub Report", "Master–Detail", "Subtotal ekspresi"],
+      layout: {
+        version: 1,
+        width: 700,
+        headerSection: {
+          height: 78, visible: true, style: { backgroundColor: "#0f172a" },
+          items: [
+            { type: "text", text: "Judul", binding: "judul", x: 24, y: 16, width: 470, height: 24, style: { color: "#ffffff", fontSize: 15, fontWeight: "bold" } },
+            { type: "text", text: "Perusahaan", binding: "perusahaan", x: 24, y: 42, width: 400, height: 16, style: { color: "#94a3b8", fontSize: 10 } },
+            { type: "text", text: "Periode", binding: "periode", x: 24, y: 58, width: 400, height: 14, style: { color: "#64748b", fontSize: 9 } },
+            { type: "text", text: "Dicetak", binding: "__now", x: 480, y: 44, width: 198, height: 14, style: { color: "#64748b", fontSize: 9, textAlign: "right" } },
+            { type: "line", text: "", binding: "", x: 24, y: 74, width: 652, height: 3, style: { borderColor: "#f97316", borderWidth: 3 } },
+          ],
+        },
+        pageHeaderSection: {
+          height: 20, visible: true, style: { backgroundColor: "#eff6ff" },
+          items: [
+            { type: "text", text: "NO. FAKTUR", binding: "", x: 16, y: 4, width: 90, height: 12, style: { fontSize: 8, fontWeight: "bold", color: "#1e3a8a" } },
+            { type: "text", text: "TANGGAL", binding: "", x: 112, y: 4, width: 60, height: 12, style: { fontSize: 8, fontWeight: "bold", color: "#1e3a8a" } },
+            { type: "text", text: "PELANGGAN", binding: "", x: 178, y: 4, width: 180, height: 12, style: { fontSize: 8, fontWeight: "bold", color: "#1e3a8a" } },
+            { type: "text", text: "QTY", binding: "", x: 470, y: 4, width: 54, height: 12, style: { fontSize: 8, fontWeight: "bold", color: "#1e3a8a", textAlign: "right" } },
+            { type: "text", text: "TOTAL (Rp)", binding: "", x: 530, y: 4, width: 154, height: 12, style: { fontSize: 8, fontWeight: "bold", color: "#1e3a8a", textAlign: "right" } },
+          ],
+        },
+        contentSection: {
+          height: 46, binding: "content", visible: true, style: {},
+          items: [
+            { type: "text", text: "", binding: "", x: 0, y: 0, width: 700, height: 46, style: { backgroundColor: "#164e63" } },
+            { type: "text", text: "🏙", binding: "", x: 14, y: 8, width: 26, height: 26, style: { fontSize: 18 } },
+            { type: "text", text: "Kode kota (master)", binding: "kota", x: 46, y: 7, width: 160, height: 20, style: { color: "#ffffff", fontSize: 13, fontWeight: "bold" } },
+            { type: "text", text: "Sales: {sales}", binding: "", x: 46, y: 27, width: 220, height: 13, style: { color: "#a5f3fc", fontSize: 9 } },
+            { type: "text", text: "Jumlah transaksi sub report: {Count('','transaksi')}", binding: "", x: 300, y: 8, width: 240, height: 14, style: { color: "#a5f3fc", fontSize: 9, textAlign: "right" } },
+            { type: "text", text: "Subtotal (ekspresi): {Sum(total,'transaksi')}", binding: "", x: 300, y: 23, width: 240, height: 14, style: { color: "#67e8f9", fontSize: 9, textAlign: "right" } },
+            { type: "text", text: "Tampilan subtotal", binding: "subTotalDisp", x: 550, y: 8, width: 136, height: 30, style: { color: "#ffffff", fontSize: 14, fontWeight: "bold", textAlign: "right" } },
+          ],
+          groups: [
+            {
+              height: 26, binding: "transaksi", visible: true, style: { backgroundColor: "#ffffff" },
+              items: [
+                { type: "text", text: "No faktur", binding: "no", x: 16, y: 5, width: 90, height: 15, style: { fontSize: 10, fontFamily: "ui-monospace,monospace", color: "#0f172a" } },
+                { type: "text", text: "Tanggal", binding: "tgl", x: 112, y: 5, width: 60, height: 15, style: { fontSize: 9, color: "#64748b" } },
+                { type: "text", text: "Pelanggan", binding: "pelanggan", x: 178, y: 5, width: 286, height: 15, style: { fontSize: 10 } },
+                { type: "text", text: "Qty", binding: "qty", x: 470, y: 5, width: 54, height: 15, style: { fontSize: 10, textAlign: "right" } },
+                { type: "text", text: "Total", binding: "totalDisp", x: 530, y: 5, width: 147, height: 15, style: { fontSize: 10, fontWeight: "bold", textAlign: "right", color: "#0f172a" } },
+                { type: "line", text: "", binding: "", x: 16, y: 24, width: 668, height: 1, style: { borderColor: "#e2e8f0", borderWidth: 1 } },
+              ],
+            },
+          ],
+        },
+        footerSection: {
+          height: 58, visible: true, style: { backgroundColor: "#0f172a" },
+          items: [
+            { type: "text", text: "GRAND TOTAL — seluruh kota (master)", binding: "", x: 24, y: 16, width: 300, height: 16, style: { color: "#94a3b8", fontSize: 10, fontWeight: "bold" } },
+            { type: "text", text: "Grand total", binding: "grandDisp", x: 360, y: 10, width: 316, height: 26, style: { color: "#fb923c", fontSize: 17, fontWeight: "bold", textAlign: "right" } },
+            { type: "text", text: "Pola data: content[] master kota, tiap baris membawa transaksi[] detail. Di band sub group, {Sum(qty)} dkk. dihitung LOKAL per master.", binding: "", x: 24, y: 38, width: 560, height: 12, style: { color: "#64748b", fontSize: 8, fontStyle: "italic" } },
+            { type: "text", text: "Hal {PageNo}/{PageCount}", binding: "", x: 596, y: 38, width: 80, height: 12, style: { color: "#64748b", fontSize: 8, textAlign: "right" } },
+          ],
+        },
+      },
+      data: {
+        judul: "LAPORAN PENJUALAN PER KOTA — SUB REPORT (MASTER–DETAIL)",
+        perusahaan: "PT SATU SEJAHTERA • Jakarta",
+        periode: "Periode 1–17 September 2026",
+        grandDisp: "Rp 115.550.000",
+        content: [
+          {
+            kota: "Jakarta", sales: "Budi Santoso", subTotalDisp: "Rp 66.400.000",
+            transaksi: [
+              { no: "INV-0901", tgl: "02/09", pelanggan: "PT Sinar Jaya Mulia", qty: 2, total: 31000000, totalDisp: "31.000.000" },
+              { no: "INV-0914", tgl: "08/09", pelanggan: "Toko Maju Bersama", qty: 3, total: 23400000, totalDisp: "23.400.000" },
+              { no: "INV-0920", tgl: "15/09", pelanggan: "CV Karya Nusantara", qty: 1, total: 12000000, totalDisp: "12.000.000" },
+            ],
+          },
+          {
+            kota: "Depok", sales: "Sari Wulandari", subTotalDisp: "Rp 21.400.000",
+            transaksi: [
+              { no: "INV-0905", tgl: "04/09", pelanggan: "UD Margonda Elektronik", qty: 1, total: 8500000, totalDisp: "8.500.000" },
+              { no: "INV-0922", tgl: "16/09", pelanggan: "PT Depok Solusi IT", qty: 2, total: 12900000, totalDisp: "12.900.000" },
+            ],
+          },
+          {
+            kota: "Bandung", sales: "Andi Hermawan", subTotalDisp: "Rp 27.750.000",
+            transaksi: [
+              { no: "INV-0908", tgl: "05/09", pelanggan: "CV Parahyangan Abadi", qty: 3, total: 15750000, totalDisp: "15.750.000" },
+              { no: "INV-0912", tgl: "07/09", pelanggan: "Toko Istana Komputer", qty: 2, total: 12000000, totalDisp: "12.000.000" },
+            ],
+          },
+        ],
+      },
     },
   ];
 

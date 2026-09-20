@@ -10,18 +10,18 @@
 
 <!-- ================= ASET LOKAL (tanpa internet) =================
      tailwind di-compile ke satu file, ikon & font ikut dibundel. -->
-<link rel="stylesheet" href="../assets/css/app.css?v=19681127">
-<script src="../assets/js/theme-boot.js?v=19681127"></script>
+<link rel="stylesheet" href="../assets/css/app.css?v=26045261">
+<script src="../assets/js/theme-boot.js?v=26045261"></script>
 
 <!-- Urutan penting: ikon → bahasa (i18n) → app (daftarkan komponen Alpine) → charts → Alpine -->
-<script defer src="../assets/js/icons.js?v=19681127"></script>
-<script defer src="../assets/js/i18n.js?v=19681127"></script>
-<script defer src="../assets/js/app.js?v=19681127"></script>
-<script defer src="../assets/js/lock.js?v=19681127"></script>
-<script defer src="../assets/js/notify.js?v=19681127"></script>
-<script defer src="../assets/js/aichat.js?v=19681127"></script>
-<script defer src="../assets/js/charts.js?v=19681127"></script>
-<script defer src="../assets/js/alpine.min.js?v=19681127"></script>
+<script defer src="../assets/js/icons.js?v=26045261"></script>
+<script defer src="../assets/js/i18n.js?v=26045261"></script>
+<script defer src="../assets/js/app.js?v=26045261"></script>
+<script defer src="../assets/js/lock.js?v=26045261"></script>
+<script defer src="../assets/js/notify.js?v=26045261"></script>
+<script defer src="../assets/js/aichat.js?v=26045261"></script>
+<script defer src="../assets/js/charts.js?v=26045261"></script>
+<script defer src="../assets/js/alpine.min.js?v=26045261"></script>
 <script defer src="../assets/js/satureport-tools.js"></script>
 
 </head>
@@ -591,7 +591,7 @@
               <ol class="breadcrumb"><li><a href="index.html"><i data-icon="house-door" data-size="12"></i> Home</a></li><li aria-hidden="true"><i data-icon="chevron-right" data-size="10"></i></li><li><span>Tools</span></li><li aria-hidden="true"><i data-icon="chevron-right" data-size="10"></i></li><li><span class="breadcrumb-current" aria-current="page">Report Example</span></li></ol>
             </nav>
             <h1 class="page-title">Report Example</h1>
-            <p class="page-subtitle">Galeri 12 contoh laporan siap pakai — thumbnail dirender langsung oleh mesin SatuReport</p>
+            <p class="page-subtitle">Galeri 13 contoh laporan siap pakai — thumbnail dirender langsung oleh mesin SatuReport</p>
           </div>
           <div class="page-actions"><button class="btn btn-light" onclick="window.SatuTools.muatUlang('sr-frame-example')"><i data-icon="arrow-clockwise"></i> Muat ulang</button>
 <button class="btn btn-light" onclick="window.SatuTools.buka('report-viewer')"><i data-icon="eye"></i> Buka Report Viewer</button>
@@ -657,9 +657,15 @@
 <div class="card mt-4">
   <div class="card-header">
     <h3 class="card-title"><i data-icon="journal-text" class="text-info"></i> Isi galeri</h3>
-    <div class="card-tools"><span class="badge badge-soft-primary">12 contoh</span></div>
+    <div class="card-tools"><span class="badge badge-soft-primary">13 contoh</span></div>
   </div>
   <div class="card-body !pt-2">
+    <div class="callout callout-warning mb-3">
+      <b>Kredit dan lisensi.</b>
+      <span>Aplikasi SatuReport dibuat oleh Radian Adhi C. (radianadhic) dan disertakan apa adanya (as-is) dari repositori publiknya.</span>
+      <span>Sejak 20 September 2026 repositori itu sudah memuat berkas lisensi: MIT License, hak cipta 2026 Radian Adhi C. (radianadhic) — bebas dipakai, diubah, dan dijual, termasuk untuk proyek komersial, asalkan salinan lisensi dan keterangan hak cipta disertakan.</span>
+      <span>Salinan lisensinya ikut tersimpan di folder assets/satureport/LICENSE.</span>
+    </div>
     <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
       <div>
         <h4 class="m-0 text-sm font-semibold"><i data-icon="receipt" class="text-primary" data-size="14"></i> Invoice / Faktur Penjualan</h4>
@@ -708,6 +714,10 @@
       <div>
         <h4 class="m-0 text-sm font-semibold"><i data-icon="hdd-network" class="text-primary" data-size="14"></i> Viewer Memuat File dari Server</h4>
         <p class="fs-8 text-muted-2 m-0">Contoh pemakaian parameter url: satu berkas .satureport.json dimuat lewat fetch.</p>
+      </div>
+      <div>
+        <h4 class="m-0 text-sm font-semibold"><i data-icon="diagram-3" class="text-primary" data-size="14"></i> Penjualan per Kota — Sub Report</h4>
+        <p class="fs-8 text-muted-2 m-0">Pola Sub Report master-detail: tiap baris kota diikuti daftar transaksinya dengan subtotal per kota.</p>
       </div>
     </div>
   </div>

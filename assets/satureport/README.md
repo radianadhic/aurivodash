@@ -29,7 +29,7 @@ python3 server.py 8000
 
 **🎨 Designer**
 - Elemen: **Teks, Gambar, Barcode (Code128), Grafik (bar/line/pie/donut), Pivot Table, Garis**
-- Section: Header / Content / Footer / PageHeader / PageFooter + **sub group** tak terbatas
+- Section: Header / Content / Footer / PageHeader / PageFooter + **sub group** tak terbatas — pola **sub report (master–detail)** dengan subtotal ekspresi `{Sum(total,'transaksi')}` & agregat lokal per master
 - Undo/Redo, duplikasi, snap grid, **🪄 Auto Layout** (buat layout penuh dari data JSON sekali klik)
 - Kanvas **per-halaman** (A4/Letter/Legal, portrait/landscape, margin) dengan paginasi otomatis
 
@@ -104,5 +104,9 @@ Karena seluruh aplikasi HANYA file HTML statis, repo ini bisa langsung di-host:
 (Fitur API/query butuh backend HTTP — contoh Java siap dipakai.)
 
 ---
+
+## 📄 Lisensi
+
+[MIT License](LICENSE) — bebas dipakai, diubah, didistribusikan, termasuk untuk keperluan komersial.
 
 Terinspirasi dari konsep [github.com/ankareport/ankareport](https://github.com/ankareport/ankareport); ditulis ulang mandiri dari nol dengan cakupan yang jauh lebih luas.
