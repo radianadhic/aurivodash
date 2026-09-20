@@ -1,3 +1,8 @@
 node_modules/
 .DS_Store
 *.log
+
+# Keluaran QA
+qa/node_modules/
+qa/.host-sandbox.html
+qa/sisa-terjemahan.txt

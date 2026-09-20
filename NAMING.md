@@ -17,7 +17,7 @@ Skor lengkap 14 kandidat ada di [`naming-skor.md`](naming-skor.md) dan diringkas
 | Tagline | *Dashboard perbankan yang tetap jalan saat internet mati.* |
 | Tagline EN | *Banking dashboards that keep working when the internet dies.* |
 | Paket npm | `aurivodash` |
-| Repo | `github.com/aurivodash/aurivodash` |
+| Repo | `github.com/radianadhic/aurivodash` ✅ *(dibuat 20 Sep 2026)* — organisasi `aurivodash` opsional, bisa dipindah nanti |
 | Domain utama | `aurivodash.com` (+ `.id`, `.co.id`, `.dev`, `.io`, `.app`, `.net`, `.ai`) |
 | Merek dagang | ajukan **AURIVO** lebih dulu, lalu **AURIVO DASH** |
 
@@ -27,7 +27,7 @@ Skor lengkap 14 kandidat ada di [`naming-skor.md`](naming-skor.md) dan diringkas
 |---|---|---|
 | Domain & URL | satu kata | `aurivodash.com`, `aurivodash.id` |
 | Paket npm / import | satu kata | `npm i aurivodash` |
-| Organisasi & repo GitHub | satu kata | `github.com/aurivodash` |
+| Organisasi & repo GitHub | satu kata | `github.com/radianadhic` (dipakai) · organisasi `aurivodash` masih tersedia bila nanti ingin dipisah |
 | Tagar & handle sosial | satu kata | `#AurivoDash`, `@aurivodash` |
 | Judul halaman, logo, dokumen, README | dua kata | "Aurivo Dash — dashboard perbankan" |
 

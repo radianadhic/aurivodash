@@ -1,7 +1,8 @@
 # Aurivo Dash — Template Dashboard Perbankan (Offline Ready)
 
 > **Aurivo Dash** — *dashboard perbankan yang tetap jalan saat internet mati.*
-> Paket: `aurivodash` · Repo: `github.com/aurivodash/aurivodash` · Domain: `aurivodash.com`/`.id`
+> Paket: `aurivodash` · Repo: `github.com/radianadhic/aurivodash` · Demo: `radianadhic.github.io/aurivodash`
+> Domain (rencana): `aurivodash.com`/`.id`
 > Aturan penulisan nama: **`aurivodash`** untuk yang diketik mesin (domain, paket, repo, tagar),
 > **`Aurivo Dash`** untuk yang dibaca manusia (judul, logo, dokumen). Alasan lengkap + riset
 > ketersediaan nama: [`NAMING.md`](NAMING.md).
@@ -184,6 +185,10 @@ aurivodash/
 ├─ mobile/index.html         # aplikasi nasabah (layout "mobile", dibangun dari src/pages/mobile.html)
 ├─ offline/*.html            # 23 berkas HTML mandiri (19 halaman template + 3 aplikasi laporan + index)
 ├─ index.html, login.html, register.html, 404.html
+├─ qa/                       # 20 skrip pemeriksaan Playwright + penyegar tangkapan layar
+│  ├─ jalankan-semua.mjs       #   jalankan seluruh pemeriksaan sekaligus
+│  ├─ check-*.mjs              #   halaman, tema, bahasa, offline, grid, Tools, lisensi, …
+│  └─ shot-*.mjs               #   menyegarkan berkas di preview/
 ├─ preview/*.png             # tangkapan layar
 ├─ NAMING.md                 # keputusan nama merek + riset ketersediaan (npm/domain/GitHub)
 └─ package.json              # "name": "aurivodash"
@@ -875,7 +880,51 @@ termasuk melalui `file://`.
 
 ---
 
-## 7. Lisensi & kredit
+## 7. Pemeriksaan otomatis (QA)
+
+Folder **`qa/`** berisi 20 skrip pemeriksaan [Playwright](https://playwright.dev) + 6 penyegar
+tangkapan layar. Semuanya dijalankan terhadap server statis lokal, jadi hasilnya sama dengan
+yang dilihat di peramban.
+
+```bash
+# sekali saja
+npm --prefix qa install          # pasang Playwright
+npx playwright install chromium  # unduh peramban Chromium
+
+# tiap kali menguji
+npm run serve                     # terminal 1: http://localhost:8080 (dari akar proyek)
+node qa/jalankan-semua.mjs        # terminal 2: jalankan 20 pemeriksaan sekaligus
+node qa/jalankan-semua.mjs mini   # hanya yang namanya memuat "mini"
+node qa/check-pages.mjs           # satu pemeriksaan saja
+```
+
+Skrip di `qa/` tidak memakai path absolut (letak proyek dihitung dari posisi berkas), jadi
+bisa dijalankan setelah repo di-`git clone` di folder mana pun.
+
+| Skrip | Yang diperiksa |
+|---|---|
+| `check-pages.mjs` | 20 halaman: error JS, permintaan gagal, overflow horizontal, ikon kosong |
+| `check-i18n-theme.mjs` | judul/breadcrumb/aksi per halaman + tombol bahasa & tema |
+| `check-offline.mjs` | berkas mandiri `offline/` lewat `file://` **dengan jaringan dimatikan**, termasuk di dalam iframe `sandbox="allow-scripts"` |
+| `check-i18n-offline.mjs` | mode EN pada berkas mandiri (tak ada sisa teks Indonesia) |
+| `check-menu-tables.mjs` | treeview menu **Tables** + submenu Mini Grid + berkas offline |
+| `check-satureport.mjs` | menu **Tools**: struktur, bingkai aplikasi, sinkron bahasa, layar penuh, berkas `offline/report-*.html` |
+| `check-mini-grid.mjs` | Mini Grid 1–6: virtual scroll, CRUD, filter, ekspor, muat ulang, mode server |
+| `check-ag-grid.mjs` | AG Grid Community: sortir, filter, paginasi, pilih baris, ekspor CSV |
+| `check-kartu-qris.mjs` | kartu 3D + QRIS: payload EMVCo, CRC16, unduh PNG/CSV, riwayat |
+| `check-mobile-nasabah.mjs`, `check-mobile-r4.mjs` | template nasabah: 9 layar, biometric/PIN, tagihan/top up, jadwal, push palsu |
+| `check-login-otp.mjs`, `check-lock-screen.mjs` | splash + OTP 6 digit, kunci layar & animasi memuat |
+| `check-notify.mjs`, `check-scheduler.mjs` | notifikasi push palsu + pusat notifikasi, scheduler |
+| `check-navbar.mjs`, `check-sticky-header.mjs`, `check-sidebar-light.mjs` | navbar per lebar layar, header menetap saat scroll, kontras sidebar terang |
+| `check-aichat.mjs` | asisten AI terpasang & terlihat di **29 halaman** |
+| `check-license.mjs` | berkas `LICENSE` (teks MIT kanonik), `package.json`, README, kamus EN |
+
+Tangkapan layar (tidak ikut `jalankan-semua.mjs`): `qa/shot-merek.mjs`, `shot-tools.mjs`,
+`shot-minigrid.mjs`, `shot-aichat.mjs`, `shot-panel.mjs`, `shot-r4.mjs` → menulis ke `preview/`.
+
+---
+
+## 8. Lisensi & kredit
 
 **Aurivo Dash dirilis dengan lisensi MIT** — hak cipta © 2026 **Radian Adhi C.
 (radianadhic)**. Berkas [`LICENSE`](LICENSE) ada di akar repositori (juga dinyatakan di

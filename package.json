@@ -45,12 +45,12 @@
   "dependencies": {
     "ag-grid-community": "^36.2.0"
   },
-  "homepage": "https://aurivodash.com",
+  "homepage": "https://radianadhic.github.io/aurivodash/",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/aurivodash/aurivodash.git"
+    "url": "git+https://github.com/radianadhic/aurivodash.git"
   },
   "bugs": {
-    "url": "https://github.com/aurivodash/aurivodash/issues"
+    "url": "https://github.com/radianadhic/aurivodash/issues"
   }
 }

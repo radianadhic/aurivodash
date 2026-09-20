@@ -1,0 +1,19 @@
+{
+  "name": "aurivodash-qa",
+  "version": "1.0.0",
+  "description": "Pemeriksaan otomatis (Playwright) untuk template Aurivo Dash — halaman, tema, bahasa, offline, dan aplikasi SatuReport.",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "check": "node jalankan-semua.mjs",
+    "check:pages": "node check-pages.mjs",
+    "check:offline": "node check-offline.mjs",
+    "check:license": "node check-license.mjs",
+    "check:satureport": "node check-satureport.mjs",
+    "shot": "node shot-merek.mjs"
+  },
+  "devDependencies": {
+    "playwright": "^1.63.0"
+  }
+}

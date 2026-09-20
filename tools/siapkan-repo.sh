@@ -10,7 +10,8 @@
 #
 # Pemakaian:
 #   bash tools/siapkan-repo.sh                 # pakai nilai bawaan di bawah
-#   ORG=aurivodash REPO=aurivodash bash tools/siapkan-repo.sh
+#   bash tools/siapkan-repo.sh                     # default: radianadhic/aurivodash
+   ORG=nama-org REPO=nama-repo bash tools/siapkan-repo.sh   # bila ingin organisasi sendiri
 #   VISIBILITY=public bash tools/siapkan-repo.sh
 #
 # Catatan: pembuatan ORGANISASI tidak bisa lewat gh CLI (harus dari web/pengaturan
@@ -18,7 +19,7 @@
 # ---------------------------------------------------------------------------
 set -euo pipefail
 
-ORG="${ORG:-aurivodash}"
+ORG="${ORG:-radianadhic}"
 REPO="${REPO:-aurivodash}"
 VISIBILITY="${VISIBILITY:-public}"
 BRANCH="${BRANCH:-main}"
