@@ -57,10 +57,33 @@ console.log('\n3. README');
   else fail('README tidak menaut LICENSE');
   if (/dirilis dengan lisensi MIT/i.test(md)) ok('bagian §7 menjelaskan lisensi MIT');
   else fail('§7 tidak menjelaskan lisensi MIT');
-  if (/dua komponen vendored[\s\S]{0,220}belum memuat berkas\s*\n?>?\s*lisensi/i.test(md) ||
-      (/MiniGrid/.test(md) && /SatuReport/.test(md) && /tidak\*\*\(?\s*termasuk|tidak termasuk/i.test(md)))
-    ok('README menyatakan komponen vendored tanpa lisensi TIDAK tercakup MIT');
-  else fail('README belum menyatakan pengecualian komponen vendored tanpa lisensi');
+  /* kedua komponen vendored kini punya lisensi sendiri — README harus menyebutnya */
+  const sebutSatuReport = /SatuReport[\s\S]{0,240}assets\/satureport\/LICENSE/.test(md);
+  const sebutMiniGrid = /MiniGrid[\s\S]{0,240}assets\/js\/minigrid\/LICENSE/.test(md);
+  if (sebutSatuReport && sebutMiniGrid) ok('README menyebut lisensi vendored SatuReport + MiniGrid');
+  else fail('README belum menyebut lisensi vendored (' + [sebutSatuReport ? '' : 'SatuReport', sebutMiniGrid ? '' : 'MiniGrid'].filter(Boolean).join(', ') + ')');
+  if (/belum memuat berkas lisensi|belum menyertakan berkas lisensi/i.test(md))
+    fail('README masih menyebut komponen "belum memuat berkas lisensi" (sudah usang)');
+  else ok('README tidak lagi menyebut komponen tanpa lisensi');
+}
+
+console.log('\n3b. Lisensi komponen vendored (radianadhic)');
+{
+  for (const [nama, jalur] of [
+    ['SatuReport', 'assets/satureport/LICENSE'],
+    ['MiniGrid', 'assets/js/minigrid/LICENSE'],
+  ]) {
+    const f = PROYEK + jalur;
+    if (!fs.existsSync(f)) { fail(`${nama}: ${jalur} tidak ada`); continue; }
+    const isi = fs.readFileSync(f, 'utf8');
+    if (/^MIT License/.test(isi) && /Copyright \(c\) 2026 Radian Adhi C\. \(radianadhic\)/.test(isi))
+      ok(`${nama}: MIT License © 2026 Radian Adhi C. (${jalur})`);
+    else fail(`${nama}: isi lisensi tidak sesuai (${jalur})`);
+  }
+  /* header berkas MiniGrid menyebut sumber + lisensi */
+  const grid = fs.readFileSync(PROYEK + 'assets/js/minigrid/grid.js', 'utf8').slice(0, 1200);
+  if (/radianadhic\/minigrid/.test(grid) && /7c4b69ea|MIT/.test(grid)) ok('header grid.js menyebut sumber & lisensi upstream');
+  else fail('header grid.js tidak menyebut sumber/lisensi upstream');
 }
 
 console.log('\n4. Halaman landing & berkas mandiri');

@@ -97,6 +97,8 @@ const templates = {
 };
 
 const BUILD_ID = String(Date.now()).slice(-8); // penanda cache-busting aset
+/* Versi produk dibaca dari package.json supaya footer tidak pernah tertinggal */
+const APP_VERSION = JSON.parse(read("package.json")).version;
 const iconSet = iconNames();
 const usedIcons = new Set();
 const missingIcons = new Set();
@@ -128,6 +130,7 @@ for (const file of files) {
       ? `<div class="navbar-extra hidden items-center gap-1.5 md:flex">${extracted.navExtra}<span class="nav-sep hidden md:block" aria-hidden="true"></span></div>`
       : "")
     .replaceAll("{{VERSION}}", BUILD_ID)
+    .replaceAll("{{APP_VERSION}}", APP_VERSION)
     .replaceAll("{{BODY_CLASS}}", data.bodyClass || "")
     .replaceAll("{{ASSETS}}", depthPrefix)
     .replaceAll("{{EXTRA_SCRIPTS}}", extraScripts(data.scripts, depthPrefix))

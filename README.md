@@ -599,11 +599,12 @@ tidak pernah macet). Halaman contoh menambahkan **kunci layar** template (`windo
 yang sama: paging, sortir, dan filter dikirim ke `server(params)`, hanya satu halaman ditahan
 di peramban, dan `server` boleh menolak — grid tetap menampilkan halaman terakhir.
 
-> Catatan lisensi: repositori upstream MiniGrid belum menyertakan berkas lisensi. Kode
-> pustakanya di-vendor apa adanya, dengan dua penyesuaian kecil untuk template ini: kelas
-> `mg-modal` pada empat overlay dialognya (agar `z-index` 92 dari `src/minigrid.css` berlaku)
-> dan istilah tombol “Ekspor”/“Muat ulang” pada kamus ID-nya. Sebelum dipakai di proyek
-> produksi, konfirmasi lisensinya ke pemilik repo.
+> Catatan lisensi: pustaka MiniGrid di-vendor apa adanya. Sejak 20 Sep 2026 repositori
+> upstreamnya menyertakan **MIT License, © 2026 Radian Adhi C. (radianadhic)** — salinannya
+> ada di `assets/js/minigrid/LICENSE`. Dua penyesuaian kecil tetap dipakai untuk template ini:
+> kelas `mg-modal` pada empat overlay dialognya (agar `z-index` 92 dari `src/minigrid.css`
+> berlaku) dan istilah tombol “Ekspor”/“Muat ulang” pada kamus ID-nya; versi aslinya
+> (“Export”/“Refresh”) tetap tersedia di mode Inggris.
 
 ### Kartu & QRIS
 
@@ -941,11 +942,10 @@ komersial atau tertutup — dengan satu syarat: sertakan salinan lisensi beserta
 hak cipta. Perangkat lunaknya diberikan **apa adanya, tanpa jaminan**.
 
 > **Yang tidak tercakup lisensi MIT di atas:** berkas pihak ketiga di dalam `assets/`
-> tetap memakai lisensinya masing-masing (lihat daftar di bawah). Hampir semuanya sudah
-> jelas lisensinya — **SatuReport** kini menyertakan **MIT License** sendiri
-> (`assets/satureport/LICENSE`). Satu pengecualian: **MiniGrid** (`assets/js/minigrid/`)
-> berasal dari repositori yang **belum memuat berkas lisensi**, jadi tidak termasuk dalam
-> lisensi MIT proyek ini — konfirmasi ke pemilik repo sebelum dipakai di produksi.
+> tetap memakai lisensinya masing-masing (lihat daftar di bawah). Kedua komponen yang
+> di-vendor dari repo `radianadhic` kini **menyertakan lisensinya sendiri** — **SatuReport**
+> (`assets/satureport/LICENSE`) dan **MiniGrid** (`assets/js/minigrid/LICENSE`), keduanya
+> MIT License © 2026 Radian Adhi C. (radianadhic).
 
 Komponen pihak ketiga:
 
@@ -956,8 +956,9 @@ Komponen pihak ketiga:
 - **qrcode-generator 2.0.4** — MIT, © 2009 Kazuhiko Arase
   (`assets/js/qrcode-generator.min.js`, dibangun ulang dengan `npm run qrcode`)
 - **MiniGrid** — `assets/js/minigrid/grid.js` + `export.js` dari
-  <https://github.com/radianadhic/minigrid> (di-vendor lokal; repo upstream belum
-  menyertakan berkas lisensi — konfirmasi ke pemilik repo bila akan dipakai di produksi)
+  <https://github.com/radianadhic/minigrid> (di-vendor lokal). Sejak 20 Sep 2026 repo
+  upstream menyertakan **MIT License, © 2026 Radian Adhi C. (radianadhic)** — salinannya
+  ikut di `assets/js/minigrid/LICENSE`.
 - **SatuReport** — aplikasi laporan di `assets/satureport/` dari
   <https://github.com/radianadhic/satureport> (versi 20 Sep 2026), disertakan apa adanya
   (*as-is*) termasuk berkas lisensinya: **MIT License, © 2026 Radian Adhi C. (radianadhic)**

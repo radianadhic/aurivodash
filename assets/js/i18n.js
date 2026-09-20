@@ -1,5 +1,5 @@
 /* Dibuat otomatis oleh tools/build-i18n.mjs — jangan diubah manual.
-   Kamus: src/i18n/en.json (1880 entri) · sumber mesin: src/i18n/i18n.engine.js */
+   Kamus: src/i18n/en.json (1879 entri) · sumber mesin: src/i18n/i18n.engine.js */
 window.I18N_DICT_EN = {
  " (CRUD)": " (CRUD)",
  " (mis. Status)": " (e.g. Status)",
@@ -1830,7 +1830,6 @@ window.I18N_DICT_EN = {
  "Verifikasi gagal": "Verification failed",
  "Verifikasi ulang untuk nominal ≥ Rp 1.000.000": "Re-verify for amounts ≥ Rp 1,000,000",
  "Versi": "Version",
- "Versi 1.0.0": "Version 1.0.0",
  "Versi deklaratif juga tersedia: cukup tulis": "A declarative version is also available: just write",
  "Versi payload": "Payload version",
  "Viewer Memuat File dari Server": "Viewer loads a file from the server",
@@ -1932,6 +1931,7 @@ window.I18N_DICT_EN = {
     [/^(\d+) berkas$/, "$1 files"],
     [/^(\d+) pelanggan$/, "$1 customers"],
     [/^(\d+) produk$/, "$1 products"],
+    [/^Versi (\d[\d.]*)$/, "Version $1"],
     [/^Dari tanggal$/, "From date"],
     /* MiniGrid: baris info, pager, dan statistik DOM */
     [/^(\d+)[–-](\d+) dari (\d+) \/ (\d+) · pilih (\d+)$/, "$1–$2 of $3 / $4 · $5 selected"],

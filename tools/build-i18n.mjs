@@ -40,6 +40,7 @@ const SKIP_RE = [
   /Aulia|Rani|Budi|Nadia|Saputra|Setiawati|Prakoso|Maharani|perusahaan\.id/,
   /AdminLTE|Aurivo|Tailwind|Alpine|Bootstrap|Sortable|Source Sans/,
   /^[\w.-]+\.(html|css|js|json|png|woff2)$/i, // nama berkas
+  /^Versi \d[\d.]*$/,                        // nomor versi aplikasi (diterjemahkan pola di i18n.engine.js)
 ];
 
 const textOf = (html) => {

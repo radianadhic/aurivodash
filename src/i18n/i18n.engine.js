@@ -48,6 +48,7 @@
     [/^(\d+) berkas$/, "$1 files"],
     [/^(\d+) pelanggan$/, "$1 customers"],
     [/^(\d+) produk$/, "$1 products"],
+    [/^Versi (\d[\d.]*)$/, "Version $1"],
     [/^Dari tanggal$/, "From date"],
     /* MiniGrid: baris info, pager, dan statistik DOM */
     [/^(\d+)[–-](\d+) dari (\d+) \/ (\d+) · pilih (\d+)$/, "$1–$2 of $3 / $4 · $5 selected"],

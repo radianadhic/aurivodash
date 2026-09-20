@@ -2,7 +2,8 @@
  *  minigrid/export.js — ekspor XLSX & PDF asli tanpa library (menempel ke
  *  MiniGrid.prototype; muat SETELAH grid.js).
  *  Sumber : https://github.com/radianadhic/minigrid  (file src/export.js)
- *  Versi  : commit 5703470 (19 Sep 2026). Di-vendor apa adanya.
+ *  Versi  : commit 5703470 (19 Sep 2026); lisensi MIT dari commit 7c4b69ea
+ *           (20 Sep 2026) — lihat assets/js/minigrid/LICENSE. Di-vendor apa adanya.
  * ------------------------------------------------------------------------- */
 /* ============================================================================
  * export.js — pengekspor XLSX & PDF asli tanpa dependency

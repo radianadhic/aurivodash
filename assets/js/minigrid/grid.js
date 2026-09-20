@@ -1,7 +1,9 @@
 /*! ---------------------------------------------------------------------------
  *  minigrid/grid.js — MiniGrid (data grid vanilla JS, 0 dependency)
  *  Sumber : https://github.com/radianadhic/minigrid  (file src/grid.js)
- *  Versi  : commit 5703470 (19 Sep 2026) — "javascript grid" + i18n ID/EN.
+ *  Versi  : kode = commit 5703470 (19 Sep 2026) — "javascript grid" + i18n ID/EN;
+ *           lisensi menyusul dari commit 7c4b69ea (20 Sep 2026, MIT © Radian Adhi C.).
+ *           Berkas LICENSE upstream disalin ke assets/js/minigrid/LICENSE.
  *
  *  Di-vendor apa adanya; hanya 2 penyesuaian kecil khas template ini:
  *    1) kelas "mg-modal" ditambahkan pada wadah modal (lihat src/minigrid.css:
